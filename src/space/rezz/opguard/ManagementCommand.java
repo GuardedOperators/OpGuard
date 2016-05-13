@@ -180,6 +180,7 @@ public class ManagementCommand
         if (!enabled)
         {
             Messenger.send(sender, "&cThere isn't a password yet!");
+            return;
         }
         if (args.size() != 2)
         {
