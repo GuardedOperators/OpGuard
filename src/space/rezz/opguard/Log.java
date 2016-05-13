@@ -36,7 +36,7 @@ public class Log
     
     private String now()
     {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss (aa)");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a");
         return "[" + LocalDateTime.now().format(formatter) + "]";
     }
     
@@ -47,7 +47,7 @@ public class Log
             return;
         }
         message = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', message));
-        message = now() + " " + message;
+        message = now() + " " + message + "\n";
         byte[] msg = message.getBytes();
         
         try
