@@ -12,6 +12,7 @@ public class OpGuard extends JavaPlugin
 {
     private static OpGuard instance;
     private static Log log;
+    private static boolean configUpdate = false;
     
     static OpGuard getInstance()
     {
@@ -29,6 +30,11 @@ public class OpGuard extends JavaPlugin
         {
             Messenger.broadcast(message, "opguard.warn");
         }
+    }
+    
+    public static void updatedConfig()
+    {
+        configUpdate = true;
     }
     
     @Override
@@ -55,8 +61,11 @@ public class OpGuard extends JavaPlugin
             @Override
             public void run()
             {
-                VerifiedOperators.save();
-                saveConfig();
+                if (VerifiedOperators.save() || configUpdate)
+                {
+                    saveConfig();
+                    configUpdate = false;
+                }
             }
         }
         .runTaskTimer(this, 5L, getConfig().getLong("save-interval"));

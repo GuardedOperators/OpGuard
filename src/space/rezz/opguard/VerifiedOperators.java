@@ -79,7 +79,7 @@ public class VerifiedOperators
             player.setOp(true);
             
             latest = false;
-            String message = "&f[&6VERIFIED&f] &e" + player.getName() + "&f is now op.";
+            String message = "&f[&6&lVERIFIED&f] &e" + player.getName() + "&f is now op.";
             
             OpGuard.warn("status", message);
             OpGuard.log("status", message);

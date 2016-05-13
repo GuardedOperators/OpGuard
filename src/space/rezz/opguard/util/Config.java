@@ -71,8 +71,6 @@ public class Config
             "Managing the password should be done in-game via commands."
         );
         
-        config.addDefault("password.require", true);
-        
         plugin.saveConfig();
     }
 }

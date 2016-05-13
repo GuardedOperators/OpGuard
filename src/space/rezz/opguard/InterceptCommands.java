@@ -45,7 +45,7 @@ public class InterceptCommands implements Listener
             {
                 if (cmd.length > 1)
                 {
-                    String message = "&f[&c&lWARNING&f] " + sender.getName() + " attempted to op `&c" + cmd[1] + "&f`";
+                    String message = "&f[&c&lWARNING&f] " + sender.getName() + " attempted to " + cmd[0].toLowerCase() + " `&c" + cmd[1] + "&f`";
                     
                     OpGuard.warn(attempt, message);
                     OpGuard.log(attempt, message);

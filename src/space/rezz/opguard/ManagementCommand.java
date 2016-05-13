@@ -15,9 +15,8 @@ public class ManagementCommand
     {
         boolean securityWarnings = OpGuard.getInstance().getConfig().getBoolean("warn.security-risk");
         boolean hashExists = OpGuard.getInstance().getConfig().isSet("password.hash");
-        boolean passRequired = OpGuard.getInstance().getConfig().getBoolean("password.require");
         
-        if ((!hashExists || !passRequired) && securityWarnings)
+        if (!hashExists && securityWarnings)
         {
             Messenger.send(sender, "&f[&e&lSECURITY&f] OpGuard is insecure without a password.");
         }
@@ -60,6 +59,14 @@ public class ManagementCommand
                 
             case "reset":
                 resetPassword(sender, args);
+                break;
+                
+            case "reload":
+                String status = "&f[&a&lOKAY&f] " + sender.getName() + " reloaded OpGuard's config.";
+                OpGuard.warn("status", status);
+                OpGuard.log("status", status);
+                
+                OpGuard.getInstance().reloadConfig();
                 break;
                 
             default:
@@ -177,7 +184,12 @@ public class ManagementCommand
         }
         Password pass = new Password(args.get(1));
         OpGuard.getInstance().getConfig().set("password.hash", pass.getHash());
-        Messenger.broadcast("&f[&a&lOKAY&f] " + sender.getName() + " set OpGuard's password.", "opguard.warn");
+        OpGuard.updatedConfig();
+        
+        String type = "status";
+        String message = "&f[&a&lOKAY&f] " + sender.getName() + " set OpGuard's password.";
+        OpGuard.warn(type, message);
+        OpGuard.log(type, message);
     }
     
     private static void resetPassword(CommandSender sender, List<String> args)
@@ -203,6 +215,11 @@ public class ManagementCommand
             return;
         }
         OpGuard.getInstance().getConfig().set("password.hash", null);
-        Messenger.broadcast("&f[&a&lOKAY&f] " + sender.getName() + " removed OpGuard's password.", "opguard.warn");
+        OpGuard.updatedConfig();
+        
+        String type = "status";
+        String message = "&f[&a&lOKAY&f] " + sender.getName() + " removed OpGuard's password.";
+        OpGuard.warn(type, message);
+        OpGuard.log(type, message);
     }
 }
