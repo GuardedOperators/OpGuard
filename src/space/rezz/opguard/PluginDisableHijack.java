@@ -5,6 +5,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 
+import space.rezz.opguard.util.Messenger;
+
 public class PluginDisableHijack implements Listener
 {    
     @EventHandler

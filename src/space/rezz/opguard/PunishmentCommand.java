@@ -2,6 +2,8 @@ package space.rezz.opguard;
 
 import org.bukkit.Bukkit;
 
+import space.rezz.opguard.util.Messenger;
+
 public class PunishmentCommand
 {
     public static void execute(String name)

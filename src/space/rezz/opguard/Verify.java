@@ -2,6 +2,8 @@ package space.rezz.opguard;
 
 import org.bukkit.OfflinePlayer;
 
+import space.rezz.opguard.util.Messenger;
+
 public class Verify
 {
     public static void op(OfflinePlayer player, Password password) throws Exception

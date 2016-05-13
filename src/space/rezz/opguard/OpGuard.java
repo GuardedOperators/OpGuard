@@ -5,6 +5,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import space.rezz.opguard.util.Config;
+
 public class OpGuard extends JavaPlugin
 {
     private static OpGuard instance;

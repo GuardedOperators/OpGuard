@@ -7,6 +7,8 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
+import space.rezz.opguard.util.Messenger;
+
 public class VerifiedOperators
 {
     private static List<OfflinePlayer> verified = new ArrayList<OfflinePlayer>();

@@ -9,6 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
+import space.rezz.opguard.util.Messenger;
+
 public class InterceptCommands implements Listener
 {
     @EventHandler(priority=EventPriority.LOWEST)

@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
+import space.rezz.opguard.util.Messenger;
+
 public class ManagementCommand
 {
     public static void run(CommandSender sender, String[] cmd)
