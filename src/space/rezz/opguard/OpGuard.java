@@ -10,16 +10,23 @@ import space.rezz.opguard.util.Config;
 public class OpGuard extends JavaPlugin
 {
     private static OpGuard instance;
+    private static Log log;
     
     static OpGuard getInstance()
     {
         return instance;
     }
     
+    public static void log(String type, String message)
+    {
+        log.append(type, message);
+    }
+    
     @Override
     public void onEnable()
     {
         instance = this;
+        log = new Log(this, "guard");
         Config.load(this);
         
         VerifiedOperators.addExistingOperators();

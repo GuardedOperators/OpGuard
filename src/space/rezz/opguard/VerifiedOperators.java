@@ -41,6 +41,7 @@ public class VerifiedOperators
     public static boolean inspect()
     {
         boolean punish = OpGuard.getInstance().getConfig().getBoolean("punish.plugin-attempt");
+        boolean passInspection = true;
         
         for (OfflinePlayer player : Bukkit.getOperators())
         {
@@ -55,12 +56,13 @@ public class VerifiedOperators
                         "&f[&c&lWARNING&f] A plugin has attempted to op `&c" + player.getName() + "&f`", 
                         "opguard.warn"
                     );
-                    if (punish)
-                    {
-                        PunishmentCommand.execute(player.getName());
-                    }
                 }
-                return false;
+                if (punish)
+                {
+                    PunishmentCommand.execute(player.getName());
+                }
+                
+                passInspection = false;
             }
         }
         int size = verified.size();
@@ -71,7 +73,7 @@ public class VerifiedOperators
             latest = false;
         }
         
-        return true;
+        return passInspection;
     }
     
     static void addOperator(OfflinePlayer player)
