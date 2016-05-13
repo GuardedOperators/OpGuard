@@ -36,10 +36,9 @@ public class VerifiedOperators
         }
     }
     
-    public static boolean inspect()
+    public static void inspect()
     {
         boolean punish = OpGuard.getInstance().getConfig().getBoolean("punish.plugin-attempt");
-        boolean passInspection = true;
         
         for (OfflinePlayer player : Bukkit.getOperators())
         {
@@ -56,8 +55,6 @@ public class VerifiedOperators
                 {
                     PunishmentCommand.execute(player.getName());
                 }
-                
-                passInspection = false;
             }
         }
         int size = verified.size();
@@ -67,8 +64,6 @@ public class VerifiedOperators
         {
             latest = false;
         }
-        
-        return passInspection;
     }
     
     static void addOperator(OfflinePlayer player)
