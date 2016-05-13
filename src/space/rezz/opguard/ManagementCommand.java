@@ -14,10 +14,10 @@ public class ManagementCommand
     public static void run(CommandSender sender, String[] cmd)
     {
         boolean securityWarnings = OpGuard.getInstance().getConfig().getBoolean("warn.security-risks");
-        boolean hashIsSet = OpGuard.getInstance().getConfig().isSet("password.hash");
+        boolean hashExists = OpGuard.getInstance().getConfig().isSet("password.hash");
         boolean passRequired = OpGuard.getInstance().getConfig().getBoolean("password.require");
         
-        if ((!hashIsSet || !passRequired) && securityWarnings)
+        if ((!hashExists || !passRequired) && securityWarnings)
         {
             Messenger.send(sender, "&f[&e&lSECURITY&f] OpGuard is insecure without a password.");
         }
@@ -36,11 +36,6 @@ public class ManagementCommand
         
         switch (args.get(0).toLowerCase())
         {
-            case "hash":
-                Password pw = new Password((args.size() >= 2)? args.get(1) : "password");
-                Messenger.send(sender, pw.getHash());
-                break;
-                
             case "op":
                 op(sender, args, true);
                 break;
@@ -81,89 +76,59 @@ public class ManagementCommand
     
     private static void op(CommandSender sender, List<String> args, boolean op)
     {
-        String arg = args.get(0);
+        String arg = args.get(0).toLowerCase();
         String hash = OpGuard.getInstance().getConfig().getString("password.hash");
+        String type = "status";
+        String message = null;
+        
         boolean enabled = (hash != null);
-        OfflinePlayer player;
-        Password pass = null;
         boolean online = false;
+        
+        OfflinePlayer player;
         
         if (op)
         {
             online = OpGuard.getInstance().getConfig().getBoolean("only-op-if-online");
         }
         
+        if (enabled && args.size() != 3)
+        {
+            Messenger.send(sender, "&c&oCorrect Usage:&f /opguard " + arg + " <player> <password>");
+            return;
+        }
+        else if (!enabled && args.size() != 2)
+        {
+            Messenger.send(sender, "&c&oCorrect Usage:&f /opguard " + arg + " <player>");
+            return;
+        }
+        
         try
         {
-            if (enabled)
+            player = getPlayer(args.get(1), online);
+            Password pass = (enabled) ? new Password(args.get(2)) : null;
+            
+            if (op)
             {
-                if (args.size() == 3)
-                {
-                    player = getPlayer(args.get(1), online);
-                    pass = new Password(args.get(2));
-                    
-                    if (op)
-                    {
-                        Verify.op(player, pass);
-                        Messenger.broadcast
-                        (
-                            "&f[&a&lOKAY&f] " + sender.getName() + "&f set op for `&7" + 
-                            player.getName() + "&f`", 
-                            "opguard.warn"
-                        );
-                    }
-                    else
-                    {
-                        Verify.deop(player, pass);
-                        Messenger.broadcast
-                        (
-                            "&f[&a&lOKAY&f] " + sender.getName() + "&f removed op from `&7" + 
-                            player.getName() + "&f`", 
-                            "opguard.warn"
-                        );
-                    }
-                }
-                else
-                {
-                    Messenger.send(sender, "&c&oCorrect Usage:&f /opguard " + arg + " <player> <password>");
-                }
+                Verify.op(player, pass);
+                message = "&f[&a&lOKAY&f] " + sender.getName() + "&f set op for `&7" + player.getName() + "&f`";
             }
             else
             {
-                if (args.size() == 2)
-                {
-                    player = getPlayer(args.get(1), online);
-                    
-                    if (op)
-                    {
-                        Verify.op(player, pass);
-                        Messenger.broadcast
-                        (
-                            "&f[&a&lOKAY&f] " + sender.getName() + "&f set op for `&7" + 
-                            player.getName() + "&f`", 
-                            "opguard.warn"
-                        );
-                    }
-                    else
-                    {
-                        Verify.deop(player, pass);
-                        Messenger.broadcast
-                        (
-                            "&f[&a&lOKAY&f] " + sender.getName() + "&f removed op from `&7" + 
-                            player.getName() + "&f`", 
-                            "opguard.warn"
-                        );
-                    }
-                }
-                else
-                {
-                    Messenger.send(sender, "&c&oCorrect Usage:&f /opguard " + arg + " <player>");
-                }
+                Verify.deop(player, pass);
+                message = "&f[&a&lOKAY&f] " + sender.getName() + "&f removed op from `&7" + player.getName() + "&f`";
             }
         }
         catch (Exception e)
         {
             Messenger.send(sender, e.getMessage());
+        }
+        finally
+        {
+            if (message != null)
+            {
+                OpGuard.warn(type, message);
+                OpGuard.log(type, message);
+            }
         }
     }
     

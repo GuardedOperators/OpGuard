@@ -29,12 +29,10 @@ public class Config
          */
         
         config.addDefault("log.enabled", true);
+        config.addDefault("log.status", true);
         config.addDefault("log.plugin-attempt", true);
         config.addDefault("log.console-attempt", true);
         config.addDefault("log.player-attempt", true);
-        config.addDefault("log.password-management", true);
-        config.addDefault("log.successful-op", true);
-        config.addDefault("log.successful-deop", true);
         
         /*
          * 
@@ -42,10 +40,11 @@ public class Config
          * 
          */
         
+        config.addDefault("warn.status", true);
         config.addDefault("warn.plugin-attempt", true);
         config.addDefault("warn.console-attempt", true);
         config.addDefault("warn.player-attempt", true);
-        config.addDefault("warn.security-risks", true);
+        config.addDefault("warn.security-risk", true);
         
         /*
          * 

@@ -2,8 +2,6 @@ package space.rezz.opguard;
 
 import org.bukkit.OfflinePlayer;
 
-import space.rezz.opguard.util.Messenger;
-
 public class Verify
 {
     public static void op(OfflinePlayer player, Password password) throws Exception
@@ -23,7 +21,7 @@ public class Verify
         if (checkPassword(password))
         {
             player.setOp(false);
-            Messenger.broadcast("&f[&6&lVERIFIED&f] &e" + player.getName() + "&f is no longer op.", "opguard.warn");
+            OpGuard.warn("status", "&f[&6&lVERIFIED&f] &e" + player.getName() + "&f is no longer op.");
         }
         else
         {

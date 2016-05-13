@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import space.rezz.opguard.util.Config;
+import space.rezz.opguard.util.Messenger;
 
 public class OpGuard extends JavaPlugin
 {
@@ -20,6 +21,14 @@ public class OpGuard extends JavaPlugin
     public static void log(String type, String message)
     {
         log.append(type, message);
+    }
+    
+    public static void warn(String type, String message)
+    {
+        if (getInstance().getConfig().getBoolean("warn." + type))
+        {
+            Messenger.broadcast(message, "opguard.warn");
+        }
     }
     
     @Override

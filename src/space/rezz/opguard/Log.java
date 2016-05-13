@@ -7,6 +7,7 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -45,6 +46,7 @@ public class Log
         {
             return;
         }
+        message = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', message));
         message = now() + " " + message;
         byte[] msg = message.getBytes();
         

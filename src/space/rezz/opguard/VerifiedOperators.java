@@ -7,8 +7,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-import space.rezz.opguard.util.Messenger;
-
 public class VerifiedOperators
 {
     private static List<OfflinePlayer> verified = new ArrayList<OfflinePlayer>();
@@ -49,14 +47,11 @@ public class VerifiedOperators
             {
                 player.setOp(false);
                 
-                if (OpGuard.getInstance().getConfig().getBoolean("warn.plugin-attempt"))
-                {
-                    Messenger.broadcast
-                    (
-                        "&f[&c&lWARNING&f] A plugin has attempted to op `&c" + player.getName() + "&f`", 
-                        "opguard.warn"
-                    );
-                }
+                String message = "&f[&c&lWARNING&f] A plugin has attempted to op `&c" + player.getName() + "&f`";
+                
+                OpGuard.warn("plugin-attempt", message);
+                OpGuard.log("plugin-attempt", message);
+                
                 if (punish)
                 {
                     PunishmentCommand.execute(player.getName());
@@ -82,12 +77,16 @@ public class VerifiedOperators
         {
             verified.add(player);
             player.setOp(true);
+            
             latest = false;
-            Messenger.broadcast("&f[&6VERIFIED&f] &e" + player.getName() + "&f is now op.", "opguard.warn");
+            String message = "&f[&6VERIFIED&f] &e" + player.getName() + "&f is now op.";
+            
+            OpGuard.warn("status", message);
+            OpGuard.log("status", message);
         }
     }
     
-    public static void save()
+    public static boolean save()
     {
         if (!latest)
         {
@@ -100,7 +99,10 @@ public class VerifiedOperators
             OpGuard.getInstance().getConfig().set("verified", uuids);
             
             latest = true;
+            
+            return true;
         }
+        return false;
     }
 }
 

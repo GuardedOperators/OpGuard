@@ -2,8 +2,6 @@ package space.rezz.opguard;
 
 import org.bukkit.Bukkit;
 
-import space.rezz.opguard.util.Messenger;
-
 public class PunishmentCommand
 {
     public static void execute(String name)
@@ -12,6 +10,11 @@ public class PunishmentCommand
         command = command.replaceAll("(%player%)", name);
         
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-        Messenger.broadcast("&f[&a&lOKAY&f] Punished `&7" + name + "&f` for attempting to gain op.", "opguard.warn");
+        
+        String type = "status";
+        String message = "&f[&a&lOKAY&f] Punished `&7" + name + "&f` for attempting to gain op.";
+        
+        OpGuard.warn(type, message);
+        OpGuard.log(type, message);
     }
 }
