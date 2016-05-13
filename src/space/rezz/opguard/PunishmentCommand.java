@@ -15,6 +15,7 @@ public class PunishmentCommand
         String message = "&f[&a&lOKAY&f] Punished `&7" + name + "&f` for attempting to gain op.";
         
         OpGuard.warn(type, message);
+        OpGuard.log(type, "Executed punishment command: /" + command);
         OpGuard.log(type, message);
     }
 }
