@@ -71,7 +71,15 @@ public class ManagementCommand
     
     private static void usage(CommandSender sender)
     {
-        Messenger.send(sender, "OpGuard v1.0");
+        String usage 
+               = "&f[&6&lOpGuard &6v" + OpGuard.getInstance().getDescription().getVersion() + " Usage&f]\n";
+        usage += "&e/opguard op <player> <password (if set)>\n";
+        usage += "&e/opguard deop <player> <password (if set)>\n";
+        usage += "&e/opguard list\n";
+        usage += "&e/opguard password <new password>\n";
+        usage += "&e/opguard reset <current password>";
+        
+        Messenger.send(sender, usage);
     }
     
     private static void op(CommandSender sender, List<String> args, boolean op)
