@@ -18,6 +18,8 @@ public class Log
     
     public Log(JavaPlugin plugin, String name)
     {
+        plugin.getDataFolder().mkdirs();
+        
         this.file = new File(plugin.getDataFolder() + "/" + name + ".log");
         this.config = plugin.getConfig();
         

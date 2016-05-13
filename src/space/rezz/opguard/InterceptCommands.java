@@ -38,7 +38,6 @@ public class InterceptCommands implements Listener
         boolean player = (sender instanceof Player);
         
         String attempt = (player) ? "player-attempt" : "console-attempt";
-        String message = "&f[&c&lWARNING&f] " + sender.getName() + " attempted to op `&c" + cmd[1] + "&f`";
         
         if (cmd.length > 0)
         {
@@ -46,6 +45,8 @@ public class InterceptCommands implements Listener
             {
                 if (cmd.length > 1)
                 {
+                    String message = "&f[&c&lWARNING&f] " + sender.getName() + " attempted to op `&c" + cmd[1] + "&f`";
+                    
                     OpGuard.warn(attempt, message);
                     OpGuard.log(attempt, message);
                     
