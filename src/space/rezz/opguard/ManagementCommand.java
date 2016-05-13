@@ -13,7 +13,7 @@ public class ManagementCommand
 {
     public static void run(CommandSender sender, String[] cmd)
     {
-        boolean securityWarnings = OpGuard.getInstance().getConfig().getBoolean("warn.security-risks");
+        boolean securityWarnings = OpGuard.getInstance().getConfig().getBoolean("warn.security-risk");
         boolean hashExists = OpGuard.getInstance().getConfig().isSet("password.hash");
         boolean passRequired = OpGuard.getInstance().getConfig().getBoolean("password.require");
         

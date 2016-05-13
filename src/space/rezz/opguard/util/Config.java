@@ -55,7 +55,7 @@ public class Config
         config.addDefault("punish.plugin-attempt", true);
         config.addDefault("punish.console-attempt", true);
         config.addDefault("punish.player-attempt", false);
-        config.addDefault("punish.command", "ban %player% Attempting ForceOp");
+        config.addDefault("punish.command", "ban %player% Attempting to gain op");
         
         /*
          * 
