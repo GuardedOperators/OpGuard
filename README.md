@@ -6,6 +6,8 @@ OpGuard is a Spigot plugin that protects against op exploits &amp; malicious plu
 
 ## Config
 
+### Global Section
+
 | Option                           | Description                      |
 |----------------------------------|----------------------------------|
 | inspection-interval | Amount of time *in ticks* OpGuard should verify the op list. |
@@ -16,3 +18,10 @@ OpGuard is a Spigot plugin that protects against op exploits &amp; malicious plu
 | | **Default Value:** `true` |
 | shutdown-on-disable | If true, OpGuard will stop the server if another plugin attempts to disable it. |
 | | **Default Value:** `false` |
+
+### Log Section
+
+| Option                           | Description                      |
+|----------------------------------|----------------------------------|
+| enabled | Whether or not logging should occur. |
+| | **Default Value:** `true` |
