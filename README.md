@@ -25,13 +25,13 @@ OpGuard is a Spigot plugin that protects against op exploits &amp; malicious plu
 |----------------------------------|----------------------------------|
 | enabled | Whether or not logging should occur. |
 | | **Default Value:** `true` |
-| status | Whether or not OpGuard should log status messages. |
+| status | Log status messages. |
 | | **Default Value:** `true` |
-| plugin-attempt | Whether or not OpGuard should log op attempts from other plugins. |
+| plugin-attempt | Log op attempts from other plugins. |
 | | **Default Value:** `true` |
-| console-attempt | Whether or not OpGuard should log op attempts from the console. |
+| console-attempt | Log op attempts from the console. |
 | | **Default Value:** `true` |
-| player-attempt | Whether or not OpGuard should log op attempts from online players. |
+| player-attempt | Log op attempts from online players. |
 | | **Default Value:** `true` |
 
 ### Warn Section
@@ -48,3 +48,17 @@ OpGuard is a Spigot plugin that protects against op exploits &amp; malicious plu
 | | **Default Value:** `true` |
 | security-risk | Recieve security warnings if OpGuard's password isn't set. |
 | | **Default Value:** `true` |
+
+### Punish
+
+| Option                           | Description                      |
+|----------------------------------|----------------------------------|
+| plugin-attempt | Punish players from plugin op attempts. |
+| | **Default Value:** `true` |
+| console-attempt | Punish players from console op attempts. |
+| | **Default Value:** `true` |
+| player-attempt | Punish players from online player op attempts. |
+| | **Default Value:** `false` *True is not recommended here, you could end up punishing innocent players.* |
+| command | The command OpGuard should run to punish players. |
+| | **Default Value:** `ban %player% Attempting to gain op` |
+| | The placeholder **%player%** is replaced with the player attempting to gain op. |
