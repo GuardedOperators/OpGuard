@@ -26,12 +26,19 @@ OpGuard is a Spigot plugin that protects against op exploits &amp; malicious plu
   * Returns an "unknown command" message when someone attempts /op or /deop
 
 * **Log and notify staff of op attempts**
+ 
+## Usage
+
+
 
 ## Permissions
 
+| Permission Node | Grants Access To |
+|-----------------|------------------|
+| **opguard.manage** | Ability to use `/opguard` |
+| **opguard.warn** | Recieves notifications from OpGuard |
 
-
-
+Players with op have both permissions by default.
 
 ## Configuration
 
