@@ -49,7 +49,7 @@ OpGuard is a Spigot plugin that protects against op exploits &amp; malicious plu
 | security-risk | Recieve security warnings if OpGuard's password isn't set. |
 | | **Default Value:** `true` |
 
-### Punish
+### Punish Section
 
 | Option                           | Description                      |
 |----------------------------------|----------------------------------|
@@ -61,3 +61,13 @@ OpGuard is a Spigot plugin that protects against op exploits &amp; malicious plu
 | | **Default Value:** `false` <br> *Enabling this option is not recommended: innocent players are likely to be punished.* |
 | command | The command OpGuard should run to punish players. |
 | | **Default Value:** `ban %player% Attempting to gain op` <br> The placeholder **%player%** is replaced with the player attempting to gain op. |
+
+### Password Section
+
+This section shoult **not** be modified manually, but rather with in-game commands. This is where OpGuard stores information about its password; changing even a single character could render the password unusable (assuming it's set).
+
+Only mess with this section if you know what you're doing.
+
+### Verified Section
+
+OpGuard stores verified op users here. This section, like the password section, should **not** be modified manually. All updates to the verified section are done automatically by OpGuard.
