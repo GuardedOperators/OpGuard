@@ -32,7 +32,6 @@ public class VerifiedOperators
         else
         {
             verified.addAll(Bukkit.getOperators());
-            save();
         }
     }
     

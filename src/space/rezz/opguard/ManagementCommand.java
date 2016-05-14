@@ -84,7 +84,8 @@ public class ManagementCommand
         usage += "&e/opguard deop <player> <password (if set)>\n";
         usage += "&e/opguard list\n";
         usage += "&e/opguard password <new password>\n";
-        usage += "&e/opguard reset <current password>";
+        usage += "&e/opguard reset <current password>\n";
+        usage += "&e/opguard reload";
         
         Messenger.send(sender, usage);
     }
