@@ -58,7 +58,6 @@ OpGuard is a Spigot plugin that protects against op exploits &amp; malicious plu
 | console-attempt | Punish players from console op attempts. |
 | | **Default Value:** `true` |
 | player-attempt | Punish players from online player op attempts. |
-| | **Default Value:** `false` *enabling this option is not recommended: innocent players are likely to be punished.* |
+| | **Default Value:** `false` <br> *Enabling this option is not recommended: innocent players are likely to be punished.* |
 | command | The command OpGuard should run to punish players. |
-| | **Default Value:** `ban %player% Attempting to gain op` |
-| | The placeholder **%player%** is replaced with the player attempting to gain op. |
+| | **Default Value:** `ban %player% Attempting to gain op` <br> The placeholder **%player%** is replaced with the player attempting to gain op. |
