@@ -25,3 +25,26 @@ OpGuard is a Spigot plugin that protects against op exploits &amp; malicious plu
 |----------------------------------|----------------------------------|
 | enabled | Whether or not logging should occur. |
 | | **Default Value:** `true` |
+| status | Whether or not OpGuard should log status messages. |
+| | **Default Value:** `true` |
+| plugin-attempt | Whether or not OpGuard should log op attempts from other plugins. |
+| | **Default Value:** `true` |
+| console-attempt | Whether or not OpGuard should log op attempts from the console. |
+| | **Default Value:** `true` |
+| player-attempt | Whether or not OpGuard should log op attempts from online players. |
+| | **Default Value:** `true` |
+
+### Warn Section
+
+| Option                           | Description                      |
+|----------------------------------|----------------------------------|
+| status | Recieve notifications about OpGuard's status. |
+| | **Default Value:** `true` |
+| plugin-attempt | Recieve notifications about op attempts from other plugins. |
+| | **Default Value:** `true` |
+| console-attempt | Recieve notifications about op attempts from the console. |
+| | **Default Value:** `true` |
+| player-attempt | Recieve notifications about op attempts from online players. |
+| | **Default Value:** `true` |
+| security-risk | Recieve security warnings if OpGuard's password isn't set. |
+| | **Default Value:** `true` |
