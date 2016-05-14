@@ -27,16 +27,27 @@ OpGuard is a Spigot plugin that protects against op exploits &amp; malicious plu
 
 * **Log and notify staff of op attempts**
  
-## Usage
+## Command Usage
 
+**Command:** `/opguard` 
 
+**Alias:** `/og`
+
+| Command             | Description         |
+|---------------------|---------------------|
+| `/opguard op <player> <password (if set)>` | Gives op to a player. <br> If OpGuard's password is set, it **must** be included. |
+| `/opguard deop <player> <password (if set)>` | Removes op from a player. <br> If OpGuard's password is set, it **must** be included. |
+| `/opguard list` | List all players with op. |
+| `/opguard password <new password>` | Set OpGuard's password. <br> This will only work if OpGuard has no password set. |
+| `/opguard reset <current password>` | Removes OpGuard's password. <br> The current password must be correct to remove. |
+| `/opguard reload` | Reload OpGuard's config. |
 
 ## Permissions
 
 | Permission Node | Grants Access To |
 |-----------------|------------------|
-| **opguard.manage** | Ability to use `/opguard` |
-| **opguard.warn** | Recieves notifications from OpGuard |
+| opguard.manage | Use `/opguard` |
+| opguard.warn | Recieves notifications from OpGuard |
 
 Players with op have both permissions by default.
 
