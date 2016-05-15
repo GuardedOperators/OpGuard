@@ -21,6 +21,7 @@ public class Config
         config.addDefault("save-interval", 1200L);
         config.addDefault("only-op-if-online", true);
         config.addDefault("shutdown-on-disable", false);
+        config.addDefault("metrics", true);
         
         /*
          * 
@@ -56,6 +57,14 @@ public class Config
         config.addDefault("punish.console-attempt", true);
         config.addDefault("punish.player-attempt", false);
         config.addDefault("punish.command", "ban %player% Attempting to gain op");
+        
+        /*
+         * 
+         *  MANAGEMENT
+         * 
+         */
+        
+        config.addDefault("manage.password-in-game", true);
         
         /*
          * 

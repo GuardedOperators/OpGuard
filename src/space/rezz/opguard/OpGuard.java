@@ -78,14 +78,17 @@ public class OpGuard extends JavaPlugin
         plugin.registerEvents(new PluginDisableHijack(), this);
         plugin.registerEvents(new InterceptCommands(), this);
         
-        try 
+        if (getConfig().getBoolean("metrics"))
         {
-            MetricsLite metrics = new MetricsLite(this);
-            metrics.start();
-        } 
-        catch (IOException e) 
-        {
-            // Failed to submit the stats.
+            try 
+            {
+                MetricsLite metrics = new MetricsLite(this);
+                metrics.start();
+            } 
+            catch (IOException e) 
+            {
+                // Failed to submit the stats.
+            }
         }
     }
     

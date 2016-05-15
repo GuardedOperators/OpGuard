@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import space.rezz.opguard.util.Messenger;
 
@@ -170,9 +171,15 @@ public class ManagementCommand
     
     private static void setPassword(CommandSender sender, List<String> args)
     {
+        boolean inGame = OpGuard.getInstance().getConfig().getBoolean("manage.password-in-game");
         String hash = OpGuard.getInstance().getConfig().getString("password.hash");
         boolean enabled = (hash != null);
         
+        if (!inGame && sender instanceof Player)
+        {
+            Messenger.send(sender, "&cOnly console may manage the password.");
+            return;
+        }
         if (enabled)
         {
             Messenger.send(sender, "&cPassword is already set! Reset the password to modify.");
@@ -195,9 +202,15 @@ public class ManagementCommand
     
     private static void resetPassword(CommandSender sender, List<String> args)
     {
+        boolean inGame = OpGuard.getInstance().getConfig().getBoolean("manage.password-in-game");
         String hash = OpGuard.getInstance().getConfig().getString("password.hash");
         boolean enabled = (hash != null);
         
+        if (!inGame && sender instanceof Player)
+        {
+            Messenger.send(sender, "&cOnly console may manage the password.");
+            return;
+        }
         if (!enabled)
         {
             Messenger.send(sender, "&cThere isn't a password yet!");
