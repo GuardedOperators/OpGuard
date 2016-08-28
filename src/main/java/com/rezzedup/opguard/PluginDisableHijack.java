@@ -1,11 +1,10 @@
-package space.rezz.opguard;
+package com.rezzedup.opguard;
 
+import com.rezzedup.opguard.util.Messenger;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
-
-import space.rezz.opguard.util.Messenger;
 
 public class PluginDisableHijack implements Listener
 {    

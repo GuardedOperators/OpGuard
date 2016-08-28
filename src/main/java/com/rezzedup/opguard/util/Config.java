@@ -1,4 +1,4 @@
-package space.rezz.opguard.util;
+package com.rezzedup.opguard.util;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;

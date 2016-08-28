@@ -1,15 +1,15 @@
-package space.rezz.opguard;
+package com.rezzedup.opguard;
 
 import java.io.IOException;
 
+import com.rezzedup.opguard.util.Config;
+import com.rezzedup.opguard.util.Messenger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import space.rezz.opguard.metrics.MetricsLite;
-import space.rezz.opguard.util.Config;
-import space.rezz.opguard.util.Messenger;
+import com.rezzedup.opguard.metrics.MetricsLite;
 
 public class OpGuard extends JavaPlugin
 {

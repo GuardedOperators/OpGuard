@@ -1,4 +1,4 @@
-package space.rezz.opguard;
+package com.rezzedup.opguard;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

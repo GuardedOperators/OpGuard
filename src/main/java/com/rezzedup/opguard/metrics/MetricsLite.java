@@ -1,4 +1,4 @@
-package space.rezz.opguard.metrics;
+package com.rezzedup.opguard.metrics;
 
 /*
  * Copyright 2011-2013 Tyler Blair. All rights reserved.

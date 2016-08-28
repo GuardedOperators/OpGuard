@@ -1,14 +1,13 @@
-package space.rezz.opguard;
+package com.rezzedup.opguard;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.rezzedup.opguard.util.Messenger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import space.rezz.opguard.util.Messenger;
 
 public class ManagementCommand
 {

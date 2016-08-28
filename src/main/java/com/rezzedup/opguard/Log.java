@@ -1,4 +1,4 @@
-package space.rezz.opguard;
+package com.rezzedup.opguard;
 
 import java.io.File;
 import java.io.IOException;

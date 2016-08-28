@@ -1,4 +1,4 @@
-package space.rezz.opguard;
+package com.rezzedup.opguard;
 
 import org.bukkit.Bukkit;
 

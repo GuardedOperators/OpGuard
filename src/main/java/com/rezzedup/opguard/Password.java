@@ -1,4 +1,4 @@
-package space.rezz.opguard;
+package com.rezzedup.opguard;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;

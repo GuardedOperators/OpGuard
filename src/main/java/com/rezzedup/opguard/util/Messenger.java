@@ -1,4 +1,4 @@
-package space.rezz.opguard.util;
+package com.rezzedup.opguard.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
