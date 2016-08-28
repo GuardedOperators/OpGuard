@@ -2,10 +2,7 @@ package com.rezzedup.opguard;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
@@ -29,7 +26,7 @@ public class InterceptCommands implements Listener
         }
     }
     
-    public boolean cancel(CommandSender sender, String command, Cancellable event)
+    public boolean cancel(CommandSender sender, String command, Event event)
     {
         String[] cmd = command.split(" ");
         
@@ -64,7 +61,11 @@ public class InterceptCommands implements Listener
                     return true;
                 }
                 ManagementCommand.run(sender, cmd);
-                event.setCancelled(true);
+
+                if (event instanceof Cancellable)
+                {
+                    ((Cancellable) event).setCancelled(true);
+                }
             }
         }
         return false;
