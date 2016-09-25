@@ -38,7 +38,7 @@ public class InterceptCommands implements Listener
         
         if (cmd.length > 0)
         {
-            if (cmd[0].toLowerCase().matches("((?:\\/)?(?:de)?op)"))
+            if (cmd[0].toLowerCase().matches("^[\\/]?(de)?op$"))
             {
                 if (cmd.length > 1)
                 {
@@ -54,7 +54,7 @@ public class InterceptCommands implements Listener
                 }
                 return true;
             }
-            else if (cmd[0].toLowerCase().matches("((?:\\/)?o(?:g)?(?:pguard)?)"))
+            else if (cmd[0].toLowerCase().matches("^[\\/]?o(g|pguard)$"))
             {
                 if (!sender.hasPermission("opguard.manage"))
                 {
