@@ -11,6 +11,7 @@
 
     <properties>
         <author>RezzedUp</author>
+        <loadbefore>[Vault, Essentials, EssentialsX, PlugMan, PermissionsEx, GroupManager]</loadbefore>
         <!-- Spigot/Bukkit versions -->
         <api-version>1.10.2-R0.1-SNAPSHOT</api-version>
     </properties>

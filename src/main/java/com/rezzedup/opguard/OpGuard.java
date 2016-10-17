@@ -1,7 +1,7 @@
 package com.rezzedup.opguard;
 
-import java.io.IOException;
-
+import com.rezzedup.opguard.metrics.MetricsLite;
+import com.rezzedup.opguard.nms.GuardedOpList;
 import com.rezzedup.opguard.util.Config;
 import com.rezzedup.opguard.util.Messenger;
 import org.bukkit.Bukkit;
@@ -9,7 +9,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.rezzedup.opguard.metrics.MetricsLite;
+import java.io.IOException;
 
 public class OpGuard extends JavaPlugin
 {
@@ -46,6 +46,15 @@ public class OpGuard extends JavaPlugin
         instance = this;
         log = new Log(this, "guard");
         Config.load(this);
+        
+        try
+        {
+            GuardedOpList.inject();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         
         VerifiedOperators.addExistingOperators();
         
