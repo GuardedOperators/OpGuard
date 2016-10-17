@@ -1,7 +1,6 @@
 package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.metrics.MetricsLite;
-import com.rezzedup.opguard.nms.GuardedOpList;
 import com.rezzedup.opguard.util.Config;
 import com.rezzedup.opguard.util.Messenger;
 import org.bukkit.Bukkit;
@@ -47,15 +46,6 @@ public class OpGuard extends JavaPlugin
         log = new Log(this, "guard");
         Config.load(this);
         
-        try
-        {
-            GuardedOpList.inject();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        
         VerifiedOperators.addExistingOperators();
         
         new BukkitRunnable()
@@ -84,6 +74,7 @@ public class OpGuard extends JavaPlugin
         
         PluginManager plugin = Bukkit.getPluginManager();
         
+        plugin.registerEvents(new GuardedPlayer.GuardedEventInjector(), this);
         plugin.registerEvents(new PluginDisableHijack(), this);
         plugin.registerEvents(new InterceptCommands(), this);
         
