@@ -56,13 +56,14 @@ import java.util.UUID;
 public class WrappedPlayer implements Player
 {
     protected final Player player;
+    
     // For ProtocolLib compatibility
     protected Object handle;
     
     public WrappedPlayer(Player player)
     {
         this.player = player;
-        
+    
         try
         {
             Class<? extends Player> playerClass = player.getClass();
@@ -76,15 +77,15 @@ public class WrappedPlayer implements Player
         }
     }
     
+    public Object getHandle()
+    {
+        return handle;
+    }
+    
     @Override
     public boolean equals(Object object)
     {
         return player.equals(object);
-    }
-    
-    public Object getHandle()
-    {
-        return handle;
     }
     
     @Override
