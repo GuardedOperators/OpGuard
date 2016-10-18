@@ -43,6 +43,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.HashSet;
@@ -55,16 +56,35 @@ import java.util.UUID;
 public class WrappedPlayer implements Player
 {
     protected final Player player;
+    // For ProtocolLib compatibility
+    protected Object handle;
     
     public WrappedPlayer(Player player)
     {
         this.player = player;
+        
+        try
+        {
+            Class<? extends Player> playerClass = player.getClass();
+            Field handleField = playerClass.getDeclaredField("handle");
+            handleField.setAccessible(true);
+            handle = handleField.get(playerClass);
+        }
+        catch (Exception e)
+        {
+            handle = null;
+        }
     }
     
     @Override
     public boolean equals(Object object)
     {
         return player.equals(object);
+    }
+    
+    public Object getHandle()
+    {
+        return handle;
     }
     
     @Override
