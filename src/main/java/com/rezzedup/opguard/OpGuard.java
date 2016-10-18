@@ -3,12 +3,15 @@ package com.rezzedup.opguard;
 import com.rezzedup.opguard.metrics.MetricsLite;
 import com.rezzedup.opguard.util.Config;
 import com.rezzedup.opguard.util.Messenger;
+import com.rezzedup.opguard.wrapper.GuardedPlayer;
+import com.rezzedup.opguard.wrapper.GuardedServer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 public class OpGuard extends JavaPlugin
 {
@@ -46,6 +49,8 @@ public class OpGuard extends JavaPlugin
         log = new Log(this, "guard");
         Config.load(this);
         
+        injectServer();
+        
         VerifiedOperators.addExistingOperators();
         
         new BukkitRunnable()
@@ -71,13 +76,13 @@ public class OpGuard extends JavaPlugin
             }
         }
         .runTaskTimer(this, 5L, getConfig().getLong("save-interval"));
+    
+        new AbstractEventRegistrar(this).registerAbstractListener(new GuardedPlayer.EventInjector());
         
         PluginManager plugin = Bukkit.getPluginManager();
     
         plugin.registerEvents(new PluginDisableHijack(), this);
         plugin.registerEvents(new InterceptCommands(), this);
-        
-        new AbstractEventRegistrar(this).registerAbstractListener(new GuardedPlayer.EventInjector());
     
         if (getConfig().getBoolean("metrics"))
         {
@@ -90,6 +95,23 @@ public class OpGuard extends JavaPlugin
             {
                 // Failed to submit the stats.
             }
+        }
+    }
+    
+    private void injectServer()
+    {
+        try
+        {
+            GuardedServer guarded = new GuardedServer(Bukkit.getServer());
+    
+            Field server = Bukkit.class.getDeclaredField("server");
+            server.setAccessible(true);
+            
+            server.set(Bukkit.class, guarded);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
     

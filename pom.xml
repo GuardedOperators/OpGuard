@@ -7,7 +7,7 @@
     <groupId>com.rezzedup</groupId>
     <artifactId>opguard</artifactId>
     <name>OpGuard</name>
-    <version>2.0.1</version>
+    <version>3.0.0</version>
 
     <properties>
         <author>RezzedUp</author>

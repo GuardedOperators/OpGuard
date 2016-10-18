@@ -1,4 +1,4 @@
-package com.rezzedup.opguard;
+package com.rezzedup.opguard.wrapper;
 
 import org.bukkit.Achievement;
 import org.bukkit.Effect;
@@ -1764,6 +1764,5 @@ public class WrappedPlayer implements Player
     {
         return player.launchProjectile(aClass, vector);
     }
-    
     
 }

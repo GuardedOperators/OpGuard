@@ -1,10 +1,13 @@
-package com.rezzedup.opguard;
+package com.rezzedup.opguard.wrapper;
 
+import com.rezzedup.opguard.AbstractEventRegistrar;
+import com.rezzedup.opguard.PluginStackChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.lang.reflect.Field;
 
@@ -36,6 +39,11 @@ public class GuardedPlayer extends WrappedPlayer
         @AbstractEventRegistrar.AbstractEventHandler(priority = EventPriority.LOWEST)
         public <T extends PlayerEvent> void inject(T event)
         {
+            if (event instanceof PlayerMoveEvent)
+            {
+                return;
+            }
+            
             try
             {
                 Field playerField = PlayerEvent.class.getDeclaredField("player");
