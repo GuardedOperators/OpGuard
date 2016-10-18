@@ -74,7 +74,6 @@ public class OpGuard extends JavaPlugin
         
         PluginManager plugin = Bukkit.getPluginManager();
     
-        //plugin.registerEvents(new PlayerEventInjector(), this);
         plugin.registerEvents(new PluginDisableHijack(), this);
         plugin.registerEvents(new InterceptCommands(), this);
         

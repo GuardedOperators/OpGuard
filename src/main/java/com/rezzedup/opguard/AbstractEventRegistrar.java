@@ -1,5 +1,11 @@
 package com.rezzedup.opguard;
 
+/*
+ *  AbstractEventRegistrar created by jkcclemens on GitHub 
+ *  Repository: https://github.com/jkcclemens/AbstractEventRegistrar
+ *  License: GPL-3.0 https://github.com/jkcclemens/AbstractEventRegistrar/blob/master/LICENSE
+ */
+
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;

@@ -1,10 +1,7 @@
 package com.rezzedup.opguard;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEvent;
@@ -26,7 +23,7 @@ public class GuardedPlayer extends WrappedPlayer
         if (stack.foundPlugin())
         {
             String name = stack.getPlugin().getName();
-            Bukkit.broadcastMessage("\n\nPlugin " + name + " tried to give OP to " + getName() + "\n\n");
+            Bukkit.broadcastMessage("---\n\nPlugin " + name + " tried to give OP to " + getName() + "\n\n---");
         }
         else
         {
@@ -39,8 +36,6 @@ public class GuardedPlayer extends WrappedPlayer
         @AbstractEventRegistrar.AbstractEventHandler(priority = EventPriority.LOWEST)
         public <T extends PlayerEvent> void inject(T event)
         {
-            Bukkit.broadcastMessage(ChatColor.GOLD + "Recieved event.");
-    
             try
             {
                 Field playerField = PlayerEvent.class.getDeclaredField("player");
