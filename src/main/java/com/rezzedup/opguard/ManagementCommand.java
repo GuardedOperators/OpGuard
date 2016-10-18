@@ -3,6 +3,7 @@ package com.rezzedup.opguard;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.rezzedup.opguard.api.OpGuardAPI;
 import com.rezzedup.opguard.util.Messenger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -11,10 +12,17 @@ import org.bukkit.entity.Player;
 
 public class ManagementCommand
 {
-    public static void run(CommandSender sender, String[] cmd)
+    private final OpGuardAPI api;
+    
+    public ManagementCommand(OpGuardAPI api)
     {
-        boolean securityWarnings = OpGuard.getInstance().getConfig().getBoolean("warn.security-risk");
-        boolean hashExists = OpGuard.getInstance().getConfig().isSet("password.hash");
+        this.api = api;
+    }
+    
+    public void run(CommandSender sender, String[] cmd)
+    {
+        boolean securityWarnings = api.getConfig().getBoolean("warn.security-risk");
+        boolean hashExists = api.getConfig().isSet("password.hash");
         
         if (!hashExists && securityWarnings)
         {
@@ -63,10 +71,10 @@ public class ManagementCommand
                 
             case "reload":
                 String status = "&f[&a&lOKAY&f] " + sender.getName() + " reloaded OpGuard's config.";
-                OpGuard.warn("status", status);
-                OpGuard.log("status", status);
+                api.warn("status", status);
+                api.log("status", status);
                 
-                OpGuard.getInstance().reloadConfig();
+                //OpGuardAPI.reloadConfig();
                 break;
                 
             default:
@@ -76,10 +84,10 @@ public class ManagementCommand
         
     }
     
-    private static void usage(CommandSender sender)
+    private void usage(CommandSender sender)
     {
         String usage 
-               = "&f[&6&lOpGuard &6v" + OpGuard.getInstance().getDescription().getVersion() + " Usage&f]\n";
+               = "&f[&6&lOpGuard &6v" + api.getPlugin().getDescription().getVersion() + " Usage&f]\n";
         usage += "&e/opguard op <player> <password (if set)>\n";
         usage += "&e/opguard deop <player> <password (if set)>\n";
         usage += "&e/opguard list\n";
@@ -90,10 +98,10 @@ public class ManagementCommand
         Messenger.send(sender, usage);
     }
     
-    private static void op(CommandSender sender, List<String> args, boolean op)
+    private void op(CommandSender sender, List<String> args, boolean op)
     {
         String arg = args.get(0).toLowerCase();
-        String hash = OpGuard.getInstance().getConfig().getString("password.hash");
+        String hash = api.getConfig().getString("password.hash");
         String type = "status";
         String message = null;
         
@@ -104,7 +112,7 @@ public class ManagementCommand
         
         if (op)
         {
-            online = OpGuard.getInstance().getConfig().getBoolean("only-op-if-online");
+            online = api.getConfig().getBoolean("only-op-if-online");
         }
         
         if (enabled && args.size() != 3)
@@ -142,14 +150,14 @@ public class ManagementCommand
         {
             if (message != null)
             {
-                OpGuard.warn(type, message);
-                OpGuard.log(type, message);
+                api.warn(type, message);
+                api.log(type, message);
             }
         }
     }
     
     @SuppressWarnings("deprecation")
-    private static OfflinePlayer getPlayer(String name, boolean online) throws Exception
+    private OfflinePlayer getPlayer(String name, boolean online) throws Exception
     {
         OfflinePlayer player;
         if (online)
@@ -168,10 +176,10 @@ public class ManagementCommand
         }
     }
     
-    private static void setPassword(CommandSender sender, List<String> args)
+    private void setPassword(CommandSender sender, List<String> args)
     {
-        boolean inGame = OpGuard.getInstance().getConfig().getBoolean("manage.password-in-game");
-        String hash = OpGuard.getInstance().getConfig().getString("password.hash");
+        boolean inGame = api.getConfig().getBoolean("manage.password-in-game");
+        String hash = api.getConfig().getString("password.hash");
         boolean enabled = (hash != null);
         
         if (!inGame && sender instanceof Player)
@@ -190,19 +198,19 @@ public class ManagementCommand
             return;
         }
         Password pass = new Password(args.get(1));
-        OpGuard.getInstance().getConfig().set("password.hash", pass.getHash());
-        OpGuard.updatedConfig();
+        api.getConfig().set("password.hash", pass.getHash());
+        //OpGuard.updatedConfig();
         
         String type = "status";
         String message = "&f[&a&lOKAY&f] " + sender.getName() + " set OpGuard's password.";
-        OpGuard.warn(type, message);
-        OpGuard.log(type, message);
+        api.warn(type, message);
+        api.log(type, message);
     }
     
-    private static void resetPassword(CommandSender sender, List<String> args)
+    private void resetPassword(CommandSender sender, List<String> args)
     {
-        boolean inGame = OpGuard.getInstance().getConfig().getBoolean("manage.password-in-game");
-        String hash = OpGuard.getInstance().getConfig().getString("password.hash");
+        boolean inGame = api.getConfig().getBoolean("manage.password-in-game");
+        String hash = api.getConfig().getString("password.hash");
         boolean enabled = (hash != null);
         
         if (!inGame && sender instanceof Player)
@@ -227,12 +235,12 @@ public class ManagementCommand
             Messenger.send(sender, "&cIncorrect password.");
             return;
         }
-        OpGuard.getInstance().getConfig().set("password.hash", null);
-        OpGuard.updatedConfig();
+        api.getConfig().set("password.hash", null);
+        //OpGuard.updatedConfig();
         
         String type = "status";
         String message = "&f[&a&lOKAY&f] " + sender.getName() + " removed OpGuard's password.";
-        OpGuard.warn(type, message);
-        OpGuard.log(type, message);
+        api.warn(type, message);
+        api.log(type, message);
     }
 }

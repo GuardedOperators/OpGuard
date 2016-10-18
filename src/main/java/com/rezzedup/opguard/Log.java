@@ -8,20 +8,19 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 public class Log
 {
-    private File file;
-    private FileConfiguration config;
+    protected final Plugin plugin;
+    protected final File file;
     
-    public Log(JavaPlugin plugin, String name)
+    public Log(Plugin plugin, String name)
     {
         plugin.getDataFolder().mkdirs();
         
-        this.file = new File(plugin.getDataFolder() + "/" + name + ".log");
-        this.config = plugin.getConfig();
+        this.plugin = plugin;
+        this.file = new File(plugin.getDataFolder(), name + ".log");
         
         if (!this.file.exists())
         {
@@ -42,12 +41,8 @@ public class Log
         return "[" + LocalDateTime.now().format(formatter) + "]";
     }
     
-    public void append(String type, String message)
+    public void append(String message)
     {
-        if (!config.getBoolean("log." + type) || !config.getBoolean("log.enabled"))
-        {
-            return;
-        }
         message = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', message));
         message = now() + " " + message + "\n";
         byte[] msg = message.getBytes();

@@ -1,14 +1,28 @@
 package com.rezzedup.opguard;
 
+import com.rezzedup.opguard.api.OpGuardAPI;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.*;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
 public class InterceptCommands implements Listener
 {
-    @EventHandler(priority=EventPriority.LOWEST)
+    private final OpGuardAPI api;
+    
+    public InterceptCommands(OpGuardAPI API) 
+    {
+        this.api = API;
+        API.registerEvents(this);
+    }
+    
+    
+    @EventHandler(priority= EventPriority.LOWEST)
     public void onPlayerCommand(PlayerCommandPreprocessEvent event)
     {
         if (cancel(event.getPlayer(), event.getMessage(), event))
@@ -30,11 +44,11 @@ public class InterceptCommands implements Listener
     {
         String[] cmd = command.split(" ");
         
-        boolean punishConsole = OpGuard.getInstance().getConfig().getBoolean("punish.console-attempt");
-        boolean punishPlayer = OpGuard.getInstance().getConfig().getBoolean("punish.player-attempt");
-        boolean player = (sender instanceof Player);
+        boolean punishConsole = api.getConfig().getBoolean("punish.console-attempt");
+        boolean punishPlayer = api.getConfig().getBoolean("punish.player-attempt");
+        boolean isPlayer = (sender instanceof Player);
         
-        String attempt = (player) ? "player-attempt" : "console-attempt";
+        String attempt = (isPlayer) ? "player-attempt" : "console-attempt";
         
         if (cmd.length > 0)
         {
@@ -42,14 +56,16 @@ public class InterceptCommands implements Listener
             {
                 if (cmd.length > 1)
                 {
-                    String message = "&f[&c&lWARNING&f] " + sender.getName() + " attempted to " + cmd[0].toLowerCase() + " `&c" + cmd[1] + "&f`";
+                    String name = cmd[1];
+                    String message = "&f[&c&lWARNING&f] " + sender.getName() + " attempted to " + 
+                                     cmd[0].toLowerCase() + " `&c" + name + "&f`";
                     
-                    OpGuard.warn(attempt, message);
-                    OpGuard.log(attempt, message);
+                    api.warn(attempt, message);
+                    api.log(attempt, message);
                     
-                    if ((!player && punishConsole) || (player && punishPlayer))
+                    if ((!isPlayer && punishConsole) || (isPlayer && punishPlayer))
                     {
-                        PunishmentCommand.execute(cmd[1]);
+                        api.punish(name);
                     }
                 }
                 return true;
@@ -60,7 +76,8 @@ public class InterceptCommands implements Listener
                 {
                     return true;
                 }
-                ManagementCommand.run(sender, cmd);
+                
+                api.getManagementCommand().run(sender, cmd);
 
                 if (event instanceof Cancellable)
                 {

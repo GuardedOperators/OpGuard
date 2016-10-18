@@ -1,6 +1,7 @@
 package com.rezzedup.opguard.wrapper;
 
 import com.rezzedup.opguard.PluginStackChecker;
+import com.rezzedup.opguard.api.OpGuardAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,15 +12,17 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 
 public class GuardedPlayer extends WrappedPlayer
 {
-    public GuardedPlayer(Player implementation)
+    private final OpGuardAPI api;
+    
+    public GuardedPlayer(Player implementation, OpGuardAPI api)
     {
         super(implementation);
+        this.api = api;
     }
     
     @Override
@@ -30,6 +33,7 @@ public class GuardedPlayer extends WrappedPlayer
         if (stack.foundPlugin())
         {
             String name = stack.getPlugin().getName();
+            //api.punish(getName());
             Bukkit.broadcastMessage("---\n\nPlugin " + name + " tried to give OP to " + getName() + "\n\n---");
         }
         else
@@ -40,9 +44,12 @@ public class GuardedPlayer extends WrappedPlayer
     
     public static class EventInjector implements Listener
     {
-        public EventInjector(Plugin plugin)
+        private final OpGuardAPI api;
+        
+        public EventInjector(OpGuardAPI api)
         {
-            Bukkit.getPluginManager().registerEvents(this, plugin);
+            this.api = api;
+            api.registerEvents(this);
         }
         
         private void inject(PlayerEvent event)
@@ -58,7 +65,7 @@ public class GuardedPlayer extends WrappedPlayer
                 playerField.setAccessible(true);
         
                 Player player = (Player) playerField.get(event);
-                GuardedPlayer guarded = new GuardedPlayer(player);
+                GuardedPlayer guarded = new GuardedPlayer(player, api);
                 
                 playerField.set(event, guarded);
             }

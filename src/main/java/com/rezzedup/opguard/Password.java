@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Password
 {
-    String hash;
+    private String hash;
     
     public Password(String plaintext)
     {
