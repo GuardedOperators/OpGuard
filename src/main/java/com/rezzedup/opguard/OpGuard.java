@@ -73,7 +73,7 @@ public class OpGuard extends JavaPlugin
         }
         .runTaskTimer(this, 5L, getConfig().getLong("save-interval"));
     
-        new AbstractEventRegistrar(this).registerAbstractListener(new GuardedPlayer.EventInjector());
+        new GuardedPlayer.EventInjector(this);
         
         PluginManager plugin = Bukkit.getPluginManager();
     

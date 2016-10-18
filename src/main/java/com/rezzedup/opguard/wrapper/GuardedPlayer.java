@@ -1,13 +1,17 @@
 package com.rezzedup.opguard.wrapper;
 
-import com.rezzedup.opguard.AbstractEventRegistrar;
 import com.rezzedup.opguard.PluginStackChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 
@@ -36,10 +40,14 @@ public class GuardedPlayer extends WrappedPlayer
     
     public static class EventInjector implements Listener
     {
-        @AbstractEventRegistrar.AbstractEventHandler(priority = EventPriority.LOWEST)
-        public <T extends PlayerEvent> void inject(T event)
+        public EventInjector(Plugin plugin)
         {
-            if (event instanceof PlayerMoveEvent)
+            Bukkit.getPluginManager().registerEvents(this, plugin);
+        }
+        
+        private void inject(PlayerEvent event)
+        {
+            if (event.getPlayer() instanceof GuardedPlayer)
             {
                 return;
             }
@@ -51,7 +59,7 @@ public class GuardedPlayer extends WrappedPlayer
         
                 Player player = (Player) playerField.get(event);
                 GuardedPlayer guarded = new GuardedPlayer(player);
-        
+                
                 playerField.set(event, guarded);
             }
             catch (Exception e)
@@ -59,5 +67,31 @@ public class GuardedPlayer extends WrappedPlayer
                 e.printStackTrace();
             }
         }
+    
+        @EventHandler(priority = EventPriority.LOWEST)
+        public void on(AsyncPlayerChatEvent event)
+        {
+            inject(event);
+        }
+    
+        @SuppressWarnings("deprecation")
+        @EventHandler(priority = EventPriority.LOWEST)
+        public void on(PlayerChatEvent event)
+        {
+            inject(event);
+        }
+    
+        @EventHandler(priority = EventPriority.LOWEST)
+        public void on(PlayerCommandPreprocessEvent event)
+        {
+            inject(event);
+        }
+    
+        @EventHandler(priority = EventPriority.LOWEST)
+        public void on(PlayerInteractEvent event)
+        {
+            inject(event);
+        }
+        
     }
 }
