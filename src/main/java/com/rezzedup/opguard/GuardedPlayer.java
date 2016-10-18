@@ -1,6 +1,7 @@
 package com.rezzedup.opguard;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -33,19 +34,21 @@ public class GuardedPlayer extends WrappedPlayer
         }
     }
     
-    public static class GuardedEventInjector implements Listener
+    public static class EventInjector implements Listener
     {
-        @EventHandler(priority = EventPriority.LOWEST)
-        public void inject(Event event)
+        @AbstractEventRegistrar.AbstractEventHandler(priority = EventPriority.LOWEST)
+        public <T extends PlayerEvent> void inject(T event)
         {
+            Bukkit.broadcastMessage(ChatColor.GOLD + "Recieved event.");
+    
             try
             {
                 Field playerField = PlayerEvent.class.getDeclaredField("player");
                 playerField.setAccessible(true);
-                
+        
                 Player player = (Player) playerField.get(event);
                 GuardedPlayer guarded = new GuardedPlayer(player);
-                
+        
                 playerField.set(event, guarded);
             }
             catch (Exception e)

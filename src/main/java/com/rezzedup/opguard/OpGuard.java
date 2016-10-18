@@ -73,11 +73,13 @@ public class OpGuard extends JavaPlugin
         .runTaskTimer(this, 5L, getConfig().getLong("save-interval"));
         
         PluginManager plugin = Bukkit.getPluginManager();
-        
-        plugin.registerEvents(new GuardedPlayer.GuardedEventInjector(), this);
+    
+        //plugin.registerEvents(new PlayerEventInjector(), this);
         plugin.registerEvents(new PluginDisableHijack(), this);
         plugin.registerEvents(new InterceptCommands(), this);
         
+        new AbstractEventRegistrar(this).registerAbstractListener(new GuardedPlayer.EventInjector());
+    
         if (getConfig().getBoolean("metrics"))
         {
             try 
