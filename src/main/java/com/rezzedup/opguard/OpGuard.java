@@ -1,6 +1,5 @@
 package com.rezzedup.opguard;
 
-import com.rezzedup.opguard.api.Authenticator;
 import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
 import com.rezzedup.opguard.api.Verifier;
@@ -55,7 +54,6 @@ public class OpGuard extends JavaPlugin
         private final Config config;
         private final ExecutableCommand command;
         private final Verifier verifier;
-        private final Authenticator auth;
     
         private GuardedDependencies(OpGuard instance) 
         {
@@ -64,7 +62,6 @@ public class OpGuard extends JavaPlugin
             this.config = new OpGuardConfig(instance);
             this.command = new OpGuardCommand(this);
             this.verifier = new OpVerifier();
-            this.auth = verifier.generateAuth();
             
             new GuardedPlayer.EventInjector(this);
             new InterceptCommands(this);

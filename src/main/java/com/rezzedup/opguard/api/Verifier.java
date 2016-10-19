@@ -10,13 +10,7 @@ public interface Verifier extends PasswordHandler
 {
     public Collection<OfflinePlayer> getVerifiedOperators();
     
-    public boolean check(Password password);
-    
-    //public boolean op(GuardedPlayer player, Password password);
-    
     public boolean op(OfflinePlayer player, Password password);
-    
-    //public boolean deop(GuardedPlayer player, Password password);
     
     public boolean deop(OfflinePlayer player, Password password);
     

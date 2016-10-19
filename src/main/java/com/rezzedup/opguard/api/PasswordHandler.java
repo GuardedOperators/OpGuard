@@ -4,11 +4,11 @@ import com.rezzedup.opguard.Password;
 
 public interface PasswordHandler
 {
-    public Authenticator generateAuth();
+    public void setPassword(Password password);
     
-    public void setPassword(Authenticator auth, Password password);
+    public void removePassword(Password password);
     
-    public void removePassword(Authenticator auth, Password password);
+    public Password getPassword();
     
-    public Password getPassword(Authenticator auth);
+    public boolean check(Password password);
 }
