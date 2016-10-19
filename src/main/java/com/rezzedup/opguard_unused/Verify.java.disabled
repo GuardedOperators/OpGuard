@@ -1,5 +1,7 @@
-package com.rezzedup.opguard;
+package com.rezzedup.opguard_unused;
 
+import com.rezzedup.opguard.OpGuard;
+import com.rezzedup.opguard.Password;
 import org.bukkit.OfflinePlayer;
 
 public class Verify

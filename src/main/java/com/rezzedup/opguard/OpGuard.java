@@ -24,8 +24,6 @@ public class OpGuard extends JavaPlugin
         dependencies.updateDependencies(new GuardedDependencies(this));
         Config.load(this);
         
-        VerifiedOperators.addExistingOperators();
-        
 //        new BukkitRunnable()
 //        {
 //            @Override
@@ -99,14 +97,14 @@ public class OpGuard extends JavaPlugin
         private final OpGuard instance;
         private final GuardLog log;
         private final FileConfiguration config;
-        private final ManagementCommand command;
+        private final OpGuardCommand command;
     
         private GuardedDependencies(OpGuard instance) 
         {
             this.instance = instance;
             this.log = new GuardLog(instance, "guard");
             this.config = instance.getConfig();
-            this.command = new ManagementCommand(this);
+            this.command = new OpGuardCommand(this);
             
             new GuardedPlayer.EventInjector(this);
             new InterceptCommands(this);
@@ -147,7 +145,7 @@ public class OpGuard extends JavaPlugin
         }
     
         @Override
-        public ManagementCommand getManagementCommand()
+        public OpGuardCommand getCommand()
         {
             return command;
         }

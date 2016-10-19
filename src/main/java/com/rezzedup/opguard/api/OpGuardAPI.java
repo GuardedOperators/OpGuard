@@ -1,6 +1,6 @@
 package com.rezzedup.opguard.api;
 
-import com.rezzedup.opguard.ManagementCommand;
+import com.rezzedup.opguard.OpGuardCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -17,7 +17,7 @@ public interface OpGuardAPI
     
     public void warn(String type, String message);
     
-    public ManagementCommand getManagementCommand();
+    public OpGuardCommand getCommand();
     
     public void punish(String username);
 }

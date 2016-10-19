@@ -10,11 +10,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ManagementCommand
+public class OpGuardCommand
 {
     private final OpGuardAPI api;
     
-    public ManagementCommand(OpGuardAPI api)
+    public OpGuardCommand(OpGuardAPI api)
     {
         this.api = api;
     }
@@ -133,12 +133,12 @@ public class ManagementCommand
             
             if (op)
             {
-                Verify.op(player, pass);
+                //Verify.op(player, pass);
                 message = "&f[&a&lOKAY&f] " + sender.getName() + "&f set op for `&7" + player.getName() + "&f`";
             }
             else
             {
-                Verify.deop(player, pass);
+                //Verify.deop(player, pass);
                 message = "&f[&a&lOKAY&f] " + sender.getName() + "&f removed op from `&7" + player.getName() + "&f`";
             }
         }

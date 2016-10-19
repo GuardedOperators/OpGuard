@@ -77,7 +77,7 @@ public class InterceptCommands implements Listener
                     return true;
                 }
                 
-                api.getManagementCommand().run(sender, cmd);
+                api.getCommand().run(sender, cmd);
 
                 if (event instanceof Cancellable)
                 {
