@@ -19,8 +19,29 @@ public enum Attempt
         return key;
     }
     
-    public String getKey()
+    public static boolean isValid(String value)
     {
-        return key;
+        return enumOf(value) != null;
+    }
+    
+    public static Attempt enumOf(String value)
+    {
+        for (Attempt type : values())
+        {
+            if (type.toString().equalsIgnoreCase(value))
+            {
+                return type;
+            }
+        }
+        switch (value.toLowerCase())
+        {
+            case "player":
+                return PLAYER;
+            case "console":
+                return CONSOLE;
+            case "plugin":
+                return PLUGIN;
+        }
+        return null;
     }
 }

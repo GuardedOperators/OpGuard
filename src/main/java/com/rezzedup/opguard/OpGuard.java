@@ -1,54 +1,30 @@
 package com.rezzedup.opguard;
 
+import com.rezzedup.opguard.api.Authenticator;
+import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
+import com.rezzedup.opguard.api.Verifier;
 import com.rezzedup.opguard.metrics.MetricsLite;
-import com.rezzedup.opguard.util.Config;
-import com.rezzedup.opguard.util.Messenger;
 import com.rezzedup.opguard.wrapper.GuardedPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 
 public class OpGuard extends JavaPlugin
 {
-    private final DependencyWrapper dependencies = new DependencyWrapper();
+    //private final DependencyWrapper api = new DependencyWrapper();
     
     @Override
     public void onEnable()
     {
-        dependencies.updateDependencies(new GuardedDependencies(this));
-        Config.load(this);
+        new GuardedDependencies(this);
         
-//        new BukkitRunnable()
-//        {
-//            @Override
-//            public void run()
-//            {
-//                VerifiedOperators.inspect();
-//            }
-//        }
-//        .runTaskTimer(this, 5L, getConfig().getLong("inspection-interval"));
-//        
-//        new BukkitRunnable()
-//        {
-//            @Override
-//            public void run()
-//            {
-//                if (VerifiedOperators.save() || configUpdate)
-//                {
-//                    saveConfig();
-//                    configUpdate = false;
-//                }
-//            }
-//        }
-//        .runTaskTimer(this, 5L, getConfig().getLong("save-interval"));
-        
-        PluginManager plugin = Bukkit.getPluginManager();
+        // TODO: Schedule runnables
         
         if (getConfig().getBoolean("metrics"))
         {
@@ -57,10 +33,7 @@ public class OpGuard extends JavaPlugin
                 MetricsLite metrics = new MetricsLite(this);
                 metrics.start();
             } 
-            catch (IOException e) 
-            {
-                // Failed to submit the stats.
-            }
+            catch (IOException e) {}
         }
     }
     
@@ -70,41 +43,28 @@ public class OpGuard extends JavaPlugin
         Bukkit.getScheduler().cancelTasks(this);
     }
     
-    private static final class DependencyWrapper
+    /*private static final class DependencyWrapper
     {
         private GuardedDependencies dependencies;
-        
-        private void updateDependencies(GuardedDependencies update)
-        {
-            if (update.getClass().getCanonicalName().equals(GuardedDependencies.class.getCanonicalName()))
-            {
-                dependencies = update;
-            }
-            else 
-            {
-                throw new IllegalStateException("Cannot replace dependencies with foreign object.");
-            }
-        }
-        
-        private GuardedDependencies getDependencies()
-        {
-            return dependencies;
-        }
-    }
+    }*/
     
     private static final class GuardedDependencies implements OpGuardAPI
     {
         private final OpGuard instance;
         private final GuardLog log;
-        private final FileConfiguration config;
-        private final OpGuardCommand command;
+        private final Config config;
+        private final ExecutableCommand command;
+        private final Verifier verifier;
+        private final Authenticator auth;
     
         private GuardedDependencies(OpGuard instance) 
         {
             this.instance = instance;
             this.log = new GuardLog(instance, "guard");
-            this.config = instance.getConfig();
+            this.config = new OpGuardConfig(instance);
             this.command = new OpGuardCommand(this);
+            this.verifier = new OpVerifier();
+            this.auth = verifier.generateAuth();
             
             new GuardedPlayer.EventInjector(this);
             new InterceptCommands(this);
@@ -120,7 +80,13 @@ public class OpGuard extends JavaPlugin
         @Override
         public FileConfiguration getConfig()
         {
-            return config;
+            return config.get();
+        }
+    
+        @Override
+        public void reloadConfig()
+        {
+            config.reload();
         }
     
         @Override
@@ -145,9 +111,9 @@ public class OpGuard extends JavaPlugin
         }
     
         @Override
-        public OpGuardCommand getCommand()
+        public void run(CommandSender sender, String[] args)
         {
-            return command;
+            command.execute(sender, args);
         }
     
         @Override

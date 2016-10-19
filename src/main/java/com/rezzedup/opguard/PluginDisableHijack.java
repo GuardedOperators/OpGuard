@@ -1,7 +1,6 @@
 package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.api.OpGuardAPI;
-import com.rezzedup.opguard.util.Messenger;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

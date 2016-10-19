@@ -6,7 +6,7 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.Collection;
 
-public interface Verifier
+public interface Verifier extends PasswordHandler
 {
     public Collection<OfflinePlayer> getVerifiedOperators();
     

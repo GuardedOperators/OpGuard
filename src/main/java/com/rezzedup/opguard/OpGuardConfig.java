@@ -1,14 +1,20 @@
-package com.rezzedup.opguard.util;
+package com.rezzedup.opguard;
 
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
-public class Config
+public class OpGuardConfig extends Config
 {
-    public static void load(JavaPlugin plugin)
+    private Plugin plugin;
+    
+    public OpGuardConfig(Plugin plugin)
     {
-        FileConfiguration config = plugin.getConfig();
-        
+        super(plugin);
+        this.plugin = plugin;
+    }
+    
+    @Override
+    protected void load()
+    {
         config.options().copyDefaults(true);
         
         /*
@@ -16,7 +22,7 @@ public class Config
          *  OPTIONS
          * 
          */
-        
+    
         config.addDefault("inspection-interval", 4L);
         config.addDefault("save-interval", 1200L);
         config.addDefault("only-op-if-online", true);
@@ -28,7 +34,7 @@ public class Config
          *  LOGGING
          * 
          */
-        
+    
         config.addDefault("log.enabled", true);
         config.addDefault("log.status", true);
         config.addDefault("log.plugin-attempt", true);
@@ -40,7 +46,7 @@ public class Config
          *  WARNINGS
          * 
          */
-        
+    
         config.addDefault("warn.status", true);
         config.addDefault("warn.plugin-attempt", true);
         config.addDefault("warn.console-attempt", true);
@@ -52,7 +58,7 @@ public class Config
          *  PUNISHMENTS
          * 
          */
-        
+    
         config.addDefault("punish.plugin-attempt", true);
         config.addDefault("punish.console-attempt", true);
         config.addDefault("punish.player-attempt", false);
@@ -63,23 +69,24 @@ public class Config
          *  MANAGEMENT
          * 
          */
-        
+    
         config.addDefault("manage.password-in-game", true);
         
         /*
-         * 
-         *  PASSWORD
+         *
+         *  UNSAFE
          * 
          */
         
-        config.addDefault("password.info", " --- ");
-        config.set
-        (
-            "password.info", "[WARNING]\n" +
-            "Editing this section manually could break your password (if set).\n" +
-            "Managing the password should be done in-game via commands."
-        );
+        config.addDefault("unsafe.info", "---\nDo not modify this section manually!\nYou may lose data in future updates.\n---");
+        config.addDefault("unsafe.version", plugin.getDescription().getVersion());
         
+        save();
+    }
+    
+    @Override
+    public void save()
+    {
         plugin.saveConfig();
     }
 }

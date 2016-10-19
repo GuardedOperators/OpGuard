@@ -1,16 +1,17 @@
 package com.rezzedup.opguard;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
-import com.rezzedup.opguard.util.Messenger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class OpGuardCommand
+public class OpGuardCommand implements ExecutableCommand
 {
     private final OpGuardAPI api;
     
@@ -19,7 +20,7 @@ public class OpGuardCommand
         this.api = api;
     }
     
-    public void run(CommandSender sender, String[] cmd)
+    public void execute(CommandSender sender, String[] cmd)
     {
         boolean securityWarnings = api.getConfig().getBoolean("warn.security-risk");
         boolean hashExists = api.getConfig().isSet("password.hash");
@@ -34,12 +35,8 @@ public class OpGuardCommand
             usage(sender);
             return;
         }
-        List<String> args = new ArrayList<String>();
         
-        for (int i = 1; i < cmd.length; i++)
-        {
-            args.add(cmd[i]);
-        }
+        List<String> args = Arrays.asList(Arrays.copyOfRange(cmd, 1, cmd.length));
         
         switch (args.get(0).toLowerCase())
         {
