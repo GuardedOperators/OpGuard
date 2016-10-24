@@ -1,5 +1,0 @@
-name: OpGuard
-main: com.rezzedup.opguard.OpGuard
-version: 3.0.0
-author: RezzedUp
-loadbefore: [Vault, Essentials, EssentialsX, PlugMan, PermissionsEx, GroupManager]
