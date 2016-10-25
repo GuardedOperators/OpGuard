@@ -1,4 +1,4 @@
-<img src="http://i.imgur.com/le8Nqlv.png"></img>
+![](branding/logo.png)
 
 ---
 
