@@ -14,21 +14,21 @@
 # Remember: 20 ticks = 1 second, so 4 ticks = 1/5 of a second.
 # This value cannot be negative or zero.
 # Default: 4
-inspection-interval: @(inspection-interval)
+inspection-interval: @(inspection-interval | 4)
 
 # If true, OpGuard will only op players if they're online.
 # Default: true
-only-op-if-online: @(only-op-if-online)
+only-op-if-online: @(only-op-if-online | true)
 
 # If true, OpGuard's password can be managed with in-game commands.
 # If false, only console can modify OpGuard's password.
 # Default: true
-manage-password-in-game: @(manage.password-in-game)
+manage-password-in-game: @(manage.password-in-game | true)
 
 # If true, OpGuard will shut the server down if it is disabled.
 # Enable this option if you don't want other plugins to disable OpGuard.
 # Default: false
-shutdown-on-disable: @(shutdown-on-disable)
+shutdown-on-disable: @(shutdown-on-disable | false)
 
 # If true, OpGuard will lock its commands, preventing new operators from
 # being added and preventing its password from being modified.
@@ -42,23 +42,23 @@ lock: false
 
 # If false, all OpGuard logging will be disabled.
 # Default: true
-enable-logging: @(log.enabled)
+enable-logging: @(log.enabled | true)
 
 # Log status messages.
 # Default: true
-log-status-messages: @(log.status)
+log-status-messages: @(log.status | true)
 
 # Log when a plugin attempts to give op.
 # Default: true
-log-plugin-attempts: @(log.plugin-attempt)
+log-plugin-attempts: @(log.plugin-attempt | true)
 
 # Log when the console attempts to give op.
 # Default: true
-log-console-attempts: @(log.console-attempt)
+log-console-attempts: @(log.console-attempt | true)
 
 # Log when a player attempts to use /op.
 # Default: true
-log-player-attempts: @(log.player-attempt)
+log-player-attempts: @(log.player-attempt | true)
 
 # ------------------------- #
 #   MESSAGES AND WARNINGS   #
@@ -66,7 +66,7 @@ log-player-attempts: @(log.player-attempt)
 
 #@ TODO: Clarify status messages
 # Default: true
-enable-status-messages: @(warn.status)
+enable-status-messages: @(warn.status | true)
 
 # Prefix for warnings.
 # Default: '&c(&4&lWarn&c)'
@@ -78,11 +78,11 @@ warn-emphasis-color: '&c'
 
 # If true, OpGuard will display warnings whenever a plugin attempts to give op.
 # Default: true
-warn-plugin-attempts: @(warn.plugin-attempt)
+warn-plugin-attempts: @(warn.plugin-attempt | true)
 
 # If true, OpGuard will display warnings whenever console attempts  to use /op.
 # Default: true
-warn-console-op-attempts: @(warn.console-attempt)
+warn-console-op-attempts: @(warn.console-attempt | true)
 
 # If true, OpGuard will display warnings whenever console incorrectly uses /opguard.
 # Default: true
@@ -90,7 +90,7 @@ warn-console-opguard-attempts: true
 
 # If true, OpGuard will display warnings whenever a player attempts to use /op.
 # Default: true
-warn-player-op-attempts: @(warn.player-attempt)
+warn-player-op-attempts: @(warn.player-attempt | true)
 
 # If true, OpGuard will display warnings whenever a player incorrectly uses /opguard.
 # Default: true
@@ -102,7 +102,7 @@ security-prefix: '&e(&6&lSecurity&e)'
 
 # If true, OpGuard will display warnings when it lacks a password.
 # Default: true
-enable-security-messages: @(warn.security-risk)
+enable-security-messages: @(warn.security-risk | true)
 
 # --------------- #
 #   PUNISHMENTS   #
@@ -110,23 +110,23 @@ enable-security-messages: @(warn.security-risk)
 
 # If true, OpGuard will ban players that other plugins attempt to op.
 # Default: true
-punish-plugin-attempts: @(punish.plugin-attempt)
+punish-plugin-attempts: @(punish.plugin-attempt | true)
 
 # If true, OpGuard will ban players that console attempts to op.
 # Default: true
-punish-console-attempt: @(punish.console-attempt)
+punish-console-attempt: @(punish.console-attempt | true)
   
 # A list of commands to run when punishing a player.
 # Default:
 # - ban %player% Attempting to gain op
 punishment-commands:
-- @(punish.command)
+- @(punish.command | ban %player% Attempting to gain op)
 
 # ----------- #
 #   METRICS   #
 # ----------- #
 
-metrics: true
+metrics: @(metrics | true)
 
 # Do not modify this value, it may affect config updates in the future.
 version: ${version}

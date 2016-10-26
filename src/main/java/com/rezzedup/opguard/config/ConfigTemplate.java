@@ -30,6 +30,11 @@ public class ConfigTemplate
         this(new InputStreamReader(stream));
     }
     
+    public ConfigTemplate(Class clazz, String resource)
+    {
+        this(clazz.getClassLoader().getResourceAsStream(resource));
+    }
+    
     public List<String> apply(FileConfiguration config)
     {
         List<String> lines = new ArrayList<>();
@@ -72,7 +77,21 @@ public class ConfigTemplate
             if (matcher.find())
             {
                 String origin = matcher.group(1);
-                line = line.replaceAll(regex, config.getString(origin, "not found"));
+                String[] options = origin.split(" *\\| *");
+                String value = "<Template Error: No default value found>";
+                
+                for (String option : options)
+                {
+                    value = option;
+                    
+                    if (config.contains(option, true))
+                    {
+                        value = config.getString(option);
+                        break;
+                    }
+                }
+    
+                line = line.replaceAll(regex, value);
             }
             
             lines.add(line);

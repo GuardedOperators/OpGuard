@@ -36,14 +36,15 @@ public class OpGuardConfig extends Config
     
     private void migrateConfig(FileConfiguration old)
     {
-        Messenger.broadcast("Migrating...");
-        
-        InputStream stream = this.getClass().getClassLoader().getResourceAsStream("config.template.yml");
-        ConfigTemplate template = new ConfigTemplate(stream);
+        ConfigTemplate template = new ConfigTemplate(this.getClass(), "config.template.yml");
         List<String> lines = template.apply(old);
         
         File dir = plugin.getDataFolder();
-        file.renameTo(new File(dir, "config.yml.old"));
+        
+        if (file.exists())
+        {
+            file.renameTo(new File(dir, "config.yml.old"));
+        }
         
         try
         {
