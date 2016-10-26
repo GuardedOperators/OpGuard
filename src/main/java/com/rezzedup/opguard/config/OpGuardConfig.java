@@ -7,7 +7,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +35,7 @@ public class OpGuardConfig extends Config
     
     private void migrateConfig(FileConfiguration old)
     {
-        ConfigTemplate template = new ConfigTemplate(this.getClass(), "config.template.yml");
+        ConfigurationTemplate template = new ConfigurationTemplate(this.getClass(), "config.template.yml");
         List<String> lines = template.apply(old);
         
         File dir = plugin.getDataFolder();

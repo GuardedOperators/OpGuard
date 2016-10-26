@@ -1,10 +1,13 @@
-#@ [config.yml template file] (For reordering OpGuard 1.x and 2.x's config)
+#@ [config.yml template file] 
+#@ For reordering OpGuard 1.x and 2.x's config
+#@
+#@ Schema:
+#@ - @(<previous config.yml path> | <previous config.yml path> | ... | <default value>)
 #@
 #@ About:
-#@
-#@   Every '@()' statement will be replaced with the previous configuration file's value.
-#@   All '#@' comments will be ignored in the newly-created config.yml file.
-#@
+#@ - Every '@()' statement will be replaced with the previous configuration file's value.
+#@ - Multiple options may be defined within each '@()' statement, where the last option is the default value.
+#@ - All '#@' comments will be ignored in the newly-created config.yml file.
 
 # --------------------- #
 # OpGuard Configuration #

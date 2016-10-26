@@ -4,35 +4,19 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ConfigTemplate
+public class ConfigurationTemplate
 {
     private final BufferedReader reader;
     
-    public ConfigTemplate(BufferedReader reader)
+    public ConfigurationTemplate(Class clazz, String resource)
     {
-        this.reader = reader;
-    }
-    
-    public ConfigTemplate(InputStreamReader reader)
-    {
-        this(new BufferedReader(reader));
-    }
-    
-    public ConfigTemplate(InputStream stream)
-    {
-        this(new InputStreamReader(stream));
-    }
-    
-    public ConfigTemplate(Class clazz, String resource)
-    {
-        this(clazz.getClassLoader().getResourceAsStream(resource));
+        reader = new BufferedReader(new InputStreamReader(clazz.getClassLoader().getResourceAsStream(resource)));
     }
     
     public List<String> apply(FileConfiguration config)
@@ -56,7 +40,6 @@ public class ConfigTemplate
         List<String> lines = new ArrayList<>();
         String regex = "@\\((.+)\\)$";
         Pattern replaceable = Pattern.compile(regex);
-    
         String line;
         
         while ((line = reader.readLine()) != null)
