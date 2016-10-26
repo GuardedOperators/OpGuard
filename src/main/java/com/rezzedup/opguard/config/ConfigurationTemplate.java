@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 public class ConfigurationTemplate
 {
     private final BufferedReader reader;
+    private List<String> content;
     
     public ConfigurationTemplate(Class clazz, String resource)
     {
@@ -21,6 +22,11 @@ public class ConfigurationTemplate
     
     public List<String> apply(FileConfiguration config)
     {
+        if (content != null)
+        {
+            return content;
+        }
+        
         List<String> lines = new ArrayList<>();
         
         try
@@ -32,7 +38,12 @@ public class ConfigurationTemplate
             io.printStackTrace();
         }
         
-        return lines;
+        return content = lines;
+    }
+    
+    public List<String> getLines()
+    {
+        return content;
     }
     
     private List<String> applyTemplate(FileConfiguration config) throws IOException

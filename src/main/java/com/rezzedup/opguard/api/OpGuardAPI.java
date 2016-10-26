@@ -16,9 +16,9 @@ public interface OpGuardAPI
     
     public void registerEvents(Listener listener);
     
-    public void log(String type, String message);
+    public void log(String message);
     
-    public void warn(String type, String message);
+    public void warn(String message);
     
     public void run(CommandSender sender, String[] args);
     

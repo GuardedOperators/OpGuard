@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class MigratableConfig extends Config
+public class MigratableConfig extends BaseConfig
 {
     public MigratableConfig(Plugin plugin)
     {

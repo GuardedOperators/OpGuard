@@ -1,6 +1,6 @@
 package com.rezzedup.opguard.api;
 
-public interface SavableConfig extends BasicConfig
+public interface SavableConfig extends Config
 {
     public void save();
     

@@ -1,9 +1,9 @@
 package com.rezzedup.opguard;
 
+import com.rezzedup.opguard.api.Config;
 import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
 import com.rezzedup.opguard.api.Verifier;
-import com.rezzedup.opguard.config.Config;
 import com.rezzedup.opguard.config.MigratableConfig;
 import com.rezzedup.opguard.metrics.MetricsLite;
 import com.rezzedup.opguard.wrapper.GuardedPlayer;
@@ -47,16 +47,16 @@ public class OpGuard extends JavaPlugin
     private static final class GuardedDependencies implements OpGuardAPI
     {
         private final OpGuard instance;
-        private final GuardLog log;
         private final Config config;
+        private final Log log;
         private final ExecutableCommand command;
         private final Verifier verifier;
     
         private GuardedDependencies(OpGuard instance) 
         {
             this.instance = instance;
-            this.log = new GuardLog(instance, "guard");
             this.config = new MigratableConfig(instance);
+            this.log = new Log(instance, "guard");
             this.command = new OpGuardCommand(this);
             this.verifier = new OpVerifier();
             
@@ -90,18 +90,15 @@ public class OpGuard extends JavaPlugin
         }
     
         @Override
-        public void log(String type, String message)
+        public void log(String message)
         {
-            log.append(type, message);
+            log.append(message);
         }
-    
+        
         @Override
-        public void warn(String type, String message)
+        public void warn(String message)
         {
-            if (getConfig().getBoolean("warn." + type))
-            {
-                Messenger.broadcast(message, "opguard.warn");
-            }
+            Messenger.broadcast(message, "opguard.warn");
         }
     
         @Override
@@ -113,17 +110,24 @@ public class OpGuard extends JavaPlugin
         @Override
         public void punish(String username)
         {
-            String command = getConfig().getString("punish.command");
-            command = command.replaceAll("(%player%)", username);
+            FileConfiguration config = getConfig();
+            boolean log = config.getBoolean("log-punishments");
+            
+            for (String command : config.getStringList("punishment-commands"))
+            {
+                command = command.replaceAll("(%player%)", username);
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+            }
     
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+            String prefix = config.getString("okay-prefix");
+            String message = prefix + "&f Punished `&7" + username + "&f` for attempting to gain op.";
     
-            String type = "status";
-            String message = "&f[&a&lOKAY&f] Punished `&7" + username + "&f` for attempting to gain op.";
-    
-            warn(type, message);
-            log(type, "Executed punishment command: /" + command);
-            log(type, message);
+            warn(message);
+            
+            if (log)
+            {
+                log(message);
+            }
         }
     }
 }

@@ -28,6 +28,10 @@ only-op-if-online: @(only-op-if-online | true)
 # Default: true
 manage-password-in-game: @(manage.password-in-game | true)
 
+# If true, OpGuard will disable plugins that have been caught setting op.
+# Default: true
+disable-malicious-plugins-when-caught: true
+
 # If true, OpGuard will shut the server down if it is disabled.
 # Enable this option if you don't want other plugins to disable OpGuard.
 # Default: false
@@ -63,13 +67,13 @@ log-console-attempts: @(log.console-attempt | true)
 # Default: true
 log-player-attempts: @(log.player-attempt | true)
 
+# Logs commands executed when a player is punished.
+# Default: true
+log-punishments: true
+
 # ------------------------- #
 #   MESSAGES AND WARNINGS   #
 # ------------------------- #
-
-#@ TODO: Clarify status messages
-# Default: true
-enable-status-messages: @(warn.status | true)
 
 # Prefix for warnings.
 # Default: '&c(&4&lWarn&c)'
@@ -107,17 +111,25 @@ security-prefix: '&e(&6&lSecurity&e)'
 # Default: true
 enable-security-messages: @(warn.security-risk | true)
 
+# Prefix for general status messages.
+# Default: '&a(&2&lOkay&a)'
+okay-prefix: '&a(&2&lOkay&a)'
+
 # --------------- #
 #   PUNISHMENTS   #
 # --------------- #
 
-# If true, OpGuard will ban players that other plugins attempt to op.
+# If true, OpGuard will punish players that other plugins attempt to op.
 # Default: true
 punish-plugin-attempts: @(punish.plugin-attempt | true)
 
-# If true, OpGuard will ban players that console attempts to op.
+# If true, OpGuard will punish players when the console attempts to use /op.
 # Default: true
-punish-console-attempt: @(punish.console-attempt | true)
+punish-console-op-attempts: @(punish.console-attempt | true)
+
+# If true, OpGuard will punish players when console incorrectly uses /opguard.
+# Default: false
+punish-console-opguard-attempts: false
   
 # A list of commands to run when punishing a player.
 # Default:

@@ -3,6 +3,7 @@ package com.rezzedup.opguard.wrapper;
 import com.rezzedup.opguard.PluginStackChecker;
 import com.rezzedup.opguard.api.OpGuardAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,13 +29,38 @@ public class GuardedPlayer extends WrappedPlayer
     @Override
     public void setOp(boolean value)
     {
+        FileConfiguration config = api.getConfig();
         PluginStackChecker stack = new PluginStackChecker();
     
-        if (stack.foundPlugin())
+        if (value && stack.foundPlugin())
         {
             String name = stack.getPlugin().getName();
-            //api.punish(getName());
-            Bukkit.broadcastMessage("---\n\nPlugin " + name + " tried to give OP to " + getName() + "\n\n---");
+            String prefix = config.getString("warn-prefix");
+            String emphasis = config.getString("warn-emphasis-color");
+            String caught = prefix + " &fThe plugin `" + emphasis + "&f` tried giving op to `" + emphasis + getName() + "&f`";
+            boolean warn = config.getBoolean("warn-plugin-attempts");
+            
+            if (warn)
+            {
+                api.warn(caught);
+            }
+            if (config.getBoolean("punish-plugin-attempts"))
+            {
+                api.punish(getName());
+            }
+            if (config.getBoolean("disable-malicious-plugins-when-caught"))
+            {
+                Bukkit.getPluginManager().disablePlugin(stack.getPlugin());
+                
+                if (warn)
+                {
+                    api.warn
+                    (
+                        config.getString("okay-prefix") + " &fDisabled the plugin &7" + name + 
+                        "&f. Please remove it from your server as soon as possible."
+                    );
+                }
+            }
         }
         else
         {

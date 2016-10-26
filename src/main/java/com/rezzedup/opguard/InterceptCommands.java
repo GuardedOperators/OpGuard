@@ -2,6 +2,7 @@ package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.api.OpGuardAPI;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -22,7 +23,7 @@ public class InterceptCommands implements Listener
     }
     
     
-    @EventHandler(priority= EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerCommand(PlayerCommandPreprocessEvent event)
     {
         if (cancel(event.getPlayer(), event.getMessage(), event))
@@ -31,12 +32,14 @@ public class InterceptCommands implements Listener
         }
     }
     
-    @EventHandler(priority=EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onConsoleCommand(ServerCommandEvent event)
     {        
-        if (cancel(event.getSender(), event.getCommand(), event))
+        String command = event.getCommand();
+        
+        if (cancel(event.getSender(), command, event))
         {
-            event.setCommand("");
+            event.setCommand("opguard:intercepted(" + command + ")");
         }
     }
     
@@ -44,26 +47,48 @@ public class InterceptCommands implements Listener
     {
         String[] cmd = command.split(" ");
         
-        boolean punishConsole = api.getConfig().getBoolean("punish.console-attempt");
-        boolean punishPlayer = api.getConfig().getBoolean("punish.player-attempt");
-        boolean isPlayer = (sender instanceof Player);
+        FileConfiguration config = api.getConfig();
+        String prefix = config.getString("warn-prefix");
+        String emphasis = config.getString("warn-emphasis-color");
         
-        String attempt = (isPlayer) ? "player-attempt" : "console-attempt";
+        boolean isPlayer = (sender instanceof Player);
         
         if (cmd.length > 0)
         {
-            if (cmd[0].toLowerCase().matches("^[\\/]?(de)?op$"))
+            String base = cmd[0].toLowerCase();
+            
+            if (base.matches("^[\\/]?op$"))
             {
                 if (cmd.length > 1)
                 {
+                    boolean log = false;
+                    boolean warn = false;
+                    boolean punish = false;
+                    
                     String name = cmd[1];
-                    String message = "&f[&c&lWARNING&f] " + sender.getName() + " attempted to " + 
-                                     cmd[0].toLowerCase() + " `&c" + name + "&f`";
+                    String message = sender.getName() + " attempted to " + base + " `" + emphasis + name + "&r`";
                     
-                    api.warn(attempt, message);
-                    api.log(attempt, message);
+                    if (isPlayer)
+                    {
+                        warn = config.getBoolean("warn-player-op-attempts");
+                        log = config.getBoolean("log-player-attempts");
+                    }
+                    else
+                    {
+                        warn = config.getBoolean("warn-console-op-attempts");
+                        log = config.getBoolean("log-console-attempts");
+                        punish = config.getBoolean("punish-console-op-attempts");
+                    }
                     
-                    if ((!isPlayer && punishConsole) || (isPlayer && punishPlayer))
+                    if (warn)
+                    {
+                        api.warn(message);
+                    }
+                    if (log)
+                    {
+                        api.log(message);
+                    }
+                    if (punish)
                     {
                         api.punish(name);
                     }

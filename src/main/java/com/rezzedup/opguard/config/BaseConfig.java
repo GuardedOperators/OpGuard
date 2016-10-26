@@ -1,6 +1,6 @@
 package com.rezzedup.opguard.config;
 
-import com.rezzedup.opguard.api.BasicConfig;
+import com.rezzedup.opguard.api.Config;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,13 +9,13 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 
-public abstract class Config implements BasicConfig
+public abstract class BaseConfig implements Config
 {
     protected final Plugin plugin;
     protected final File file;
     protected FileConfiguration config;
     
-    public Config(Plugin plugin, File file)
+    public BaseConfig(Plugin plugin, File file)
     {
         this.plugin = plugin;
         
@@ -33,18 +33,20 @@ public abstract class Config implements BasicConfig
         load();
     }
     
-    public Config(Plugin plugin)
+    public BaseConfig(Plugin plugin)
     {
         this(plugin, null);
     }
     
     protected abstract void load();
     
+    @Override
     public FileConfiguration get()
     {
         return config;
     }
     
+    @Override
     public void reload()
     {
         try
