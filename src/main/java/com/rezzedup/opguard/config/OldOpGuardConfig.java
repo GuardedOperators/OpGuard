@@ -1,12 +1,13 @@
-package com.rezzedup.opguard;
+package com.rezzedup.opguard.config;
 
 import org.bukkit.plugin.Plugin;
 
-public class OpGuardConfig extends Config
+@Deprecated
+public class OldOpGuardConfig extends Config
 {
     private Plugin plugin;
     
-    public OpGuardConfig(Plugin plugin)
+    public OldOpGuardConfig(Plugin plugin)
     {
         super(plugin);
         this.plugin = plugin;
@@ -79,7 +80,7 @@ public class OpGuardConfig extends Config
          */
         
         config.addDefault("unsafe.info", "---\nDo not modify this section manually!\nYou may lose data in future updates.\n---");
-        config.addDefault("unsafe.version", plugin.getDescription().getVersion());
+        //config.addDefault("unsafe.version", plugin.getDescription().getVersion());
         
         save();
     }

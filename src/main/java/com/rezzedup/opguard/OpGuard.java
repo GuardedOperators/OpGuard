@@ -3,6 +3,8 @@ package com.rezzedup.opguard;
 import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
 import com.rezzedup.opguard.api.Verifier;
+import com.rezzedup.opguard.config.Config;
+import com.rezzedup.opguard.config.OpGuardConfig;
 import com.rezzedup.opguard.metrics.MetricsLite;
 import com.rezzedup.opguard.wrapper.GuardedPlayer;
 import org.bukkit.Bukkit;

@@ -104,7 +104,7 @@ security-prefix: '&e(&6&lSecurity&e)'
 # Default: true
 enable-security-messages: @(warn.security-risk)
 
-# ----------------#
+# --------------- #
 #   PUNISHMENTS   #
 # --------------- #
 
@@ -122,7 +122,7 @@ punish-console-attempt: @(punish.console-attempt)
 punishment-commands:
 - @(punish.command)
 
-# ------------#
+# ----------- #
 #   METRICS   #
 # ----------- #
 

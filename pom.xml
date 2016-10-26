@@ -8,6 +8,7 @@
     <artifactId>opguard</artifactId>
     <name>OpGuard</name>
     <version>3.0.0</version>
+    <packaging>jar</packaging>
 
     <properties>
         <author>RezzedUp</author>
@@ -42,6 +43,7 @@
     </dependencies>
 
     <build>
+        <defaultGoal>clean package install</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -61,6 +63,5 @@
             </resource>
         </resources>
     </build>
-
     
 </project>
