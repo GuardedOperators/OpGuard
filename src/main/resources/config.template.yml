@@ -1,0 +1,132 @@
+#@ [config.yml template file] (For reordering OpGuard 1.x and 2.x's config)
+#@
+#@ About:
+#@
+#@   Every '@()' statement will be replaced with the previous configuration file's value.
+#@   All '#@' comments will be ignored in the newly-created config.yml file.
+#@
+
+# --------------------- #
+# OpGuard Configuration #
+# --------------------- #
+
+# Duration of time (in ticks) that OpGuard should verify the op list.
+# Remember: 20 ticks = 1 second, so 4 ticks = 1/5 of a second.
+# This value cannot be negative or zero.
+# Default: 4
+inspection-interval: @(inspection-interval)
+
+# If true, OpGuard will only op players if they're online.
+# Default: true
+only-op-if-online: @(only-op-if-online)
+
+# If true, OpGuard's password can be managed with in-game commands.
+# If false, only console can modify OpGuard's password.
+# Default: true
+manage-password-in-game: @(manage.password-in-game)
+
+# If true, OpGuard will shut the server down if it is disabled.
+# Enable this option if you don't want other plugins to disable OpGuard.
+# Default: false
+shutdown-on-disable: @(shutdown-on-disable)
+
+# If true, OpGuard will lock its commands, preventing new operators from
+# being added and preventing its password from being modified.
+# The only way to unlock is to change the value to false and restart the server.
+# Default: false
+lock: false
+
+# ----------- #
+#   LOGGING   #
+# ----------- #
+
+# If false, all OpGuard logging will be disabled.
+# Default: true
+enable-logging: @(log.enabled)
+
+# Log status messages.
+# Default: true
+log-status-messages: @(log.status)
+
+# Log when a plugin attempts to give op.
+# Default: true
+log-plugin-attempts: @(log.plugin-attempt)
+
+# Log when the console attempts to give op.
+# Default: true
+log-console-attempts: @(log.console-attempt)
+
+# Log when a player attempts to use /op.
+# Default: true
+log-player-attempts: @(log.player-attempt)
+
+# ------------------------- #
+#   MESSAGES AND WARNINGS   #
+# ------------------------- #
+
+#@ TODO: Clarify status messages
+# Default: true
+enable-status-messages: @(warn.status)
+
+# Prefix for warnings.
+# Default: '&c(&4&lWarn&c)'
+warn-prefix: '&c(&4&lWarn&c)'
+
+# Color to use in warnings for emphasis
+# Default: '&c'
+warn-emphasis-color: '&c'
+
+# If true, OpGuard will display warnings whenever a plugin attempts to give op.
+# Default: true
+warn-plugin-attempts: @(warn.plugin-attempt)
+
+# If true, OpGuard will display warnings whenever console attempts  to use /op.
+# Default: true
+warn-console-op-attempts: @(warn.console-attempt)
+
+# If true, OpGuard will display warnings whenever console incorrectly uses /opguard.
+# Default: true
+warn-console-opguard-attempts: true
+
+# If true, OpGuard will display warnings whenever a player attempts to use /op.
+# Default: true
+warn-player-op-attempts: @(warn.player-attempt)
+
+# If true, OpGuard will display warnings whenever a player incorrectly uses /opguard.
+# Default: true
+warn-player-opguard-attempts: true
+
+# Prefix for security warnings.
+# Default: '&e(&6&lSecurity&e)&r'
+security-prefix: '&e(&6&lSecurity&e)'
+
+# If true, OpGuard will display warnings when it lacks a password.
+# Default: true
+enable-security-messages: @(warn.security-risk)
+
+# ----------------#
+#   PUNISHMENTS   #
+# --------------- #
+
+# If true, OpGuard will ban players that other plugins attempt to op.
+# Default: true
+punish-plugin-attempts: @(punish.plugin-attempt)
+
+# If true, OpGuard will ban players that console attempts to op.
+# Default: true
+punish-console-attempt: @(punish.console-attempt)
+  
+# A list of commands to run when punishing a player.
+# Default:
+# - ban %player% Attempting to gain op
+punishment-commands:
+- @(punish.command)
+
+# ------------#
+#   METRICS   #
+# ----------- #
+
+metrics: true
+
+# Do not modify this value, it may affect config updates in the future.
+version: ${version}
