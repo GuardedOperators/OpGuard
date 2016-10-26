@@ -4,7 +4,7 @@ import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
 import com.rezzedup.opguard.api.Verifier;
 import com.rezzedup.opguard.config.Config;
-import com.rezzedup.opguard.config.OpGuardConfig;
+import com.rezzedup.opguard.config.MigratableConfig;
 import com.rezzedup.opguard.metrics.MetricsLite;
 import com.rezzedup.opguard.wrapper.GuardedPlayer;
 import org.bukkit.Bukkit;
@@ -44,11 +44,6 @@ public class OpGuard extends JavaPlugin
         Bukkit.getScheduler().cancelTasks(this);
     }
     
-    /*private static final class DependencyWrapper
-    {
-        private GuardedDependencies dependencies;
-    }*/
-    
     private static final class GuardedDependencies implements OpGuardAPI
     {
         private final OpGuard instance;
@@ -61,7 +56,7 @@ public class OpGuard extends JavaPlugin
         {
             this.instance = instance;
             this.log = new GuardLog(instance, "guard");
-            this.config = new OpGuardConfig(instance);
+            this.config = new MigratableConfig(instance);
             this.command = new OpGuardCommand(this);
             this.verifier = new OpVerifier();
             

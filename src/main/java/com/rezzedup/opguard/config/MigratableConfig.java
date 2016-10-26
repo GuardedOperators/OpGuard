@@ -1,6 +1,5 @@
 package com.rezzedup.opguard.config;
 
-import com.rezzedup.opguard.Messenger;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -13,9 +12,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class OpGuardConfig extends Config
+public class MigratableConfig extends Config
 {
-    public OpGuardConfig(Plugin plugin)
+    public MigratableConfig(Plugin plugin)
     {
         super(plugin);
     }
@@ -23,13 +22,10 @@ public class OpGuardConfig extends Config
     @Override
     protected void load()
     {
+        // Check version in the future.
         if (!config.contains("version"))
         {
             migrateConfig(config);
-        }
-        else
-        {
-            Messenger.broadcast("Version exists: " + config.getString("version"));
         }
     }
     
@@ -42,7 +38,18 @@ public class OpGuardConfig extends Config
         
         if (file.exists())
         {
-            file.renameTo(new File(dir, "config.yml.old"));
+            String name = "config.yml.old";
+            File rename = new File(dir, name);
+            int version = 0;
+            
+            while (rename.exists())
+            {
+                version += 1;
+                String updatedName = name + version;
+                rename = new File(dir, updatedName);
+            }
+            
+            file.renameTo(rename);
         }
         
         try
@@ -58,10 +65,5 @@ public class OpGuardConfig extends Config
         {
             io.printStackTrace();
         }
-    
-        Messenger.broadcast("&aCompleted migration: &2&l" + config.getString("version"));
     }
-    
-    @Override
-    public void save() {}
 }
