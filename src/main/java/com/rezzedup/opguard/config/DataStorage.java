@@ -23,14 +23,14 @@ public class DataStorage extends BaseConfig implements SavableConfig
     }
     
     @Override
-    public void save()
+    public boolean save()
     {
-        
+        return true;
     }
     
     @Override
-    public void save(boolean async)
+    public boolean save(boolean async)
     {
-        
+        return true;
     }
 }

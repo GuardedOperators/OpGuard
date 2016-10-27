@@ -72,8 +72,8 @@ log-player-attempts: @(log.player-attempt | true)
 # ------------------------- #
 
 # Prefix for warnings.
-# Default: '&c(&4&lWarn&c)'
-warn-prefix: '&c(&4&lWarn&c)'
+# Default: '&cOpGuard (&4&lWarning&c)&7:'
+warn-prefix: '&cOpGuard (&4&lWarning&c)&7:'
 
 # Color to use in warnings for emphasis
 # Default: '&c'
@@ -100,16 +100,16 @@ warn-player-op-attempts: @(warn.player-attempt | true)
 warn-player-opguard-attempts: true
 
 # Prefix for security warnings.
-# Default: '&e(&6&lSecurity&e)&r'
-security-prefix: '&e(&6&lSecurity&e)'
+# Default: '&eOpGuard (&6&lSecurity&e)&7:'
+security-prefix: '&eOpGuard (&6&lSecurity&e)&7:'
 
 # If true, OpGuard will display warnings when it lacks a password.
 # Default: true
 enable-security-warnings: @(warn.security-risk | true)
 
 # Prefix for general status messages.
-# Default: '&a(&2&lOkay&a)'
-okay-prefix: '&a(&2&lOkay&a)'
+# Default: '&aOpGuard (&2&lOkay&a)&7:'
+okay-prefix: '&aOpGuard (&2&lOkay&a)&7:'
 
 # --------------- #
 #   PUNISHMENTS   #

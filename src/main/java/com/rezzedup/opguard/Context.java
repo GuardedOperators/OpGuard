@@ -106,25 +106,25 @@ public class Context
         return this;
     }
     
-    public Context warning()
+    public Context warning(String message)
     {
         resetStatus();
         warn = true;
-        return this;
+        return setMessage(message);
     }
     
-    public Context okay()
+    public Context okay(String message)
     {
         resetStatus();
         okay = true;
-        return this;
+        return setMessage(message);
     }
     
-    public Context securityRisk()
+    public Context securityRisk(String message)
     {
         resetStatus();
         security = true;
-        return this;
+        return setMessage(message);
     }
     
     public Context punish()

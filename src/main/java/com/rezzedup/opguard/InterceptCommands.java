@@ -21,22 +21,23 @@ public class InterceptCommands implements Listener
         API.registerEvents(this);
     }
     
-    
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerCommand(PlayerCommandPreprocessEvent event)
     {
+        String command = event.getMessage().split("\\/| ")[0];
+        
         if (cancel(event.getPlayer(), event.getMessage(), event))
         {
-            event.setMessage("/");
+            event.setMessage("/opguard:intercepted(" + command + ")");
         }
     }
     
     @EventHandler(priority = EventPriority.LOWEST)
     public void onConsoleCommand(ServerCommandEvent event)
     {        
-        String command = event.getCommand();
+        String command = event.getCommand().split("\\/| ")[0];
         
-        if (cancel(event.getSender(), command, event))
+        if (cancel(event.getSender(), event.getCommand(), event))
         {
             event.setCommand("opguard:intercepted(" + command + ")");
         }
@@ -67,12 +68,8 @@ public class InterceptCommands implements Listener
                 if (cmd.length > 1)
                 {
                     String name = cmd[1];
-                    
-                    context.setMessage(sender.getName() + " attempted to " + base + " `<!>" + name + "&f`").warning();
-                    
-                    api.warn(context);
-                    api.log(context);
-                    api.punish(context, name);
+                    context.warning(sender.getName() + " attempted to " + base + " `<!>" + name + "&f`");
+                    api.warn(context).log(context).punish(context, name);
                 }
                 
                 return true;
@@ -81,8 +78,8 @@ public class InterceptCommands implements Listener
             {
                 if (!sender.hasPermission("opguard.manage"))
                 {
-                    context.incorrectlyUsedOpGuard(); // TODO: context message
-                    
+                    context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to access OpGuard.");
+                    api.warn(context).log(context);
                     return true;
                 }
                 

@@ -16,13 +16,13 @@ public interface OpGuardAPI
     
     public void registerEvents(Listener listener);
     
-    public void log(Context context);
+    public OpGuardAPI log(Context context);
     
-    public void log(String message);
+    public OpGuardAPI log(String message);
     
-    public void warn(Context context);
+    public OpGuardAPI warn(Context context);
     
-    public void warn(String message);
+    public OpGuardAPI warn(String message);
     
     public void run(CommandSender sender, String[] args);
     

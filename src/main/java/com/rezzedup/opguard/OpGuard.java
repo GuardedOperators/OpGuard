@@ -90,36 +90,40 @@ public class OpGuard extends JavaPlugin
         }
         
         @Override
-        public void log(Context context)
+        public OpGuardAPI log(Context context)
         {
             if (context.hasMessage() && context.isLoggable())
             {
                 log(context.getMessage());
             }
+            return this;
         }
     
         @Override
-        public void log(String message)
+        public OpGuardAPI log(String message)
         {
             if (getConfig().getBoolean("enable-logging"))
             {
                 log.append(message);
             }
+            return this;
         }
         
         @Override
-        public void warn(Context context)
+        public OpGuardAPI warn(Context context)
         {
             if (context.hasMessage() && context.isWarnable())
             {
                 warn(context.getMessage());
             }
+            return this;
         }
         
         @Override
-        public void warn(String message)
+        public OpGuardAPI warn(String message)
         {
             Messenger.broadcast(message, "opguard.warn");
+            return this;
         }
     
         @Override
@@ -146,7 +150,7 @@ public class OpGuard extends JavaPlugin
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
             }
     
-            context.setMessage("Punished `&7" + username + "&f` for attempting to gain op.").warning();
+            context.okay("Punished `&7" + username + "&f` for attempting to gain op.");
     
             warn(context);
             log(context);

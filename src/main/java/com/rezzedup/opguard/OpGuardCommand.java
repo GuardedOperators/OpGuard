@@ -67,7 +67,7 @@ public class OpGuardCommand implements ExecutableCommand
                 break;
                 
             case "reload":
-                Context status = new Context(api).okay().setMessage(sender.getName() + " reloaded OpGuard's config.");
+                Context status = new Context(api).okay(sender.getName() + " reloaded OpGuard's config.");
                 api.warn(status);
                 api.log(status);
                 
@@ -129,12 +129,12 @@ public class OpGuardCommand implements ExecutableCommand
             if (op)
             {
                 //Verify.op(player, pass);
-                context.setMessage(sender.getName() + "&f set op for `&7" + player.getName() + "&f`");
+                context.okay(sender.getName() + "&f set op for `&7" + player.getName() + "&f`");
             }
             else
             {
                 //Verify.deop(player, pass);
-                context.setMessage(sender.getName() + "&f removed op from `&7" + player.getName() + "&f`");
+                context.okay(sender.getName() + "&f removed op from `&7" + player.getName() + "&f`");
             }
         }
         catch (Exception e)
@@ -143,7 +143,6 @@ public class OpGuardCommand implements ExecutableCommand
         }
         finally
         {
-            context.okay();
             api.warn(context);
             api.log(context);
         }
@@ -193,7 +192,7 @@ public class OpGuardCommand implements ExecutableCommand
         api.getConfig().set("password.hash", pass.getHash());
         //OpGuard.updatedConfig();
         
-        Context context = new Context(api).setMessage(sender.getName() + " set OpGuard's password.").okay();
+        Context context = new Context(api).okay(sender.getName() + " set OpGuard's password.");
         api.warn(context);
         api.log(context);
     }
@@ -229,7 +228,7 @@ public class OpGuardCommand implements ExecutableCommand
         api.getConfig().set("password.hash", null);
         //OpGuard.updatedConfig();
         
-        Context context = new Context(api).setMessage(sender.getName() + " removed OpGuard's password.").okay();
+        Context context = new Context(api).okay(sender.getName() + " removed OpGuard's password.");
         api.warn(context);
         api.log(context);
     }

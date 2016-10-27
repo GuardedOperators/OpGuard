@@ -4,18 +4,21 @@ import com.rezzedup.opguard.api.Verifier;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class OpVerifier implements Verifier
 {
     private static final class OpListWrapper
     {
-        private static final Set<OfflinePlayer> verified = new HashSet<>();
+        private static final Map<UUID, OfflinePlayer> verified = new HashMap<>();
         
         private static Set<OfflinePlayer> getCopy()
         {
-            return new HashSet<>(verified);
+            return new HashSet<>(verified.values());
         }
     }
     
@@ -70,7 +73,7 @@ public class OpVerifier implements Verifier
     {
         if (check(password))
         {
-            // TODO: add to verified list
+            OpListWrapper.verified.put(player.getUniqueId(), player);
             player.setOp(true);
             return true;
         }
@@ -82,7 +85,7 @@ public class OpVerifier implements Verifier
     {
         if (check(password))
         {
-            // TODO: remove from verified list
+            OpListWrapper.verified.remove(player.getUniqueId());
             player.setOp(false);
             return true;
         }
@@ -92,6 +95,12 @@ public class OpVerifier implements Verifier
     @Override
     public boolean save()
     {
-        return false;
+        return save(true);
+    }
+    
+    @Override
+    public boolean save(boolean async)
+    {
+        return true;
     }
 }
