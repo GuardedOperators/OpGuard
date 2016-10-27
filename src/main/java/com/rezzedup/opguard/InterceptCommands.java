@@ -2,7 +2,6 @@ package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.api.OpGuardAPI;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -46,12 +45,16 @@ public class InterceptCommands implements Listener
     public boolean cancel(CommandSender sender, String command, Event event)
     {
         String[] cmd = command.split(" ");
+        Context context = new Context(api);
         
-        FileConfiguration config = api.getConfig();
-        String prefix = config.getString("warn-prefix");
-        String emphasis = config.getString("warn-emphasis-color");
-        
-        boolean isPlayer = (sender instanceof Player);
+        if (sender instanceof Player)
+        {
+            context.playerAttempt();
+        }
+        else 
+        {
+            context.consoleAttempt();
+        }
         
         if (cmd.length > 0)
         {
@@ -59,46 +62,27 @@ public class InterceptCommands implements Listener
             
             if (base.matches("^[\\/]?op$"))
             {
+                context.setOp();
+                
                 if (cmd.length > 1)
                 {
-                    boolean log = false;
-                    boolean warn = false;
-                    boolean punish = false;
-                    
                     String name = cmd[1];
-                    String message = sender.getName() + " attempted to " + base + " `" + emphasis + name + "&r`";
                     
-                    if (isPlayer)
-                    {
-                        warn = config.getBoolean("warn-player-op-attempts");
-                        log = config.getBoolean("log-player-attempts");
-                    }
-                    else
-                    {
-                        warn = config.getBoolean("warn-console-op-attempts");
-                        log = config.getBoolean("log-console-attempts");
-                        punish = config.getBoolean("punish-console-op-attempts");
-                    }
+                    context.setMessage(sender.getName() + " attempted to " + base + " `<!>" + name + "&f`").warning();
                     
-                    if (warn)
-                    {
-                        api.warn(message);
-                    }
-                    if (log)
-                    {
-                        api.log(message);
-                    }
-                    if (punish)
-                    {
-                        api.punish(name);
-                    }
+                    api.warn(context);
+                    api.log(context);
+                    api.punish(context, name);
                 }
+                
                 return true;
             }
             else if (cmd[0].toLowerCase().matches("^[\\/]?o(g|pguard)$"))
             {
                 if (!sender.hasPermission("opguard.manage"))
                 {
+                    context.incorrectlyUsedOpGuard(); // TODO: context message
+                    
                     return true;
                 }
                 
