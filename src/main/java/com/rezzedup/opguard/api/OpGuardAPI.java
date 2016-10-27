@@ -1,6 +1,6 @@
 package com.rezzedup.opguard.api;
 
-import com.rezzedup.opguard.OpGuardCommand;
+import com.rezzedup.opguard.Context;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
@@ -16,11 +16,15 @@ public interface OpGuardAPI
     
     public void registerEvents(Listener listener);
     
+    public void log(Context context);
+    
     public void log(String message);
+    
+    public void warn(Context context);
     
     public void warn(String message);
     
     public void run(CommandSender sender, String[] args);
     
-    public void punish(String username);
+    public void punish(Context context, String username);
 }

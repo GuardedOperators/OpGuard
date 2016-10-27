@@ -1,5 +1,6 @@
 package com.rezzedup.opguard.wrapper;
 
+import com.rezzedup.opguard.Context;
 import com.rezzedup.opguard.PluginStackChecker;
 import com.rezzedup.opguard.api.OpGuardAPI;
 import org.bukkit.Bukkit;
@@ -35,31 +36,27 @@ public class GuardedPlayer extends WrappedPlayer
         if (value && stack.foundPlugin())
         {
             String name = stack.getPlugin().getName();
-            String prefix = config.getString("warn-prefix");
-            String emphasis = config.getString("warn-emphasis-color");
-            String caught = prefix + " &fThe plugin `" + emphasis + "&f` tried giving op to `" + emphasis + getName() + "&f`";
-            boolean warn = config.getBoolean("warn-plugin-attempts");
             
-            if (warn)
-            {
-                api.warn(caught);
-            }
-            if (config.getBoolean("punish-plugin-attempts"))
-            {
-                api.punish(getName());
-            }
+            Context context = new Context(api)
+                .pluginAttempt()
+                .setOp()
+                .setMessage("The plugin `<!>" + name + "&f` tried giving op to `<!>" + getName() + "&f`")
+                .warning();
+            
+            api.warn(context);
+            api.log(context);
+            
             if (config.getBoolean("disable-malicious-plugins-when-caught"))
             {
                 Bukkit.getPluginManager().disablePlugin(stack.getPlugin());
                 
-                if (warn)
-                {
-                    api.warn
-                    (
-                        config.getString("okay-prefix") + " &fDisabled the plugin &7" + name + 
-                        "&f. Please remove it from your server as soon as possible."
-                    );
-                }
+                context = context.copy().okay().setMessage
+                (
+                    "Disabled the plugin &7" + name + "&f. Please remove it from your server as soon as possible."
+                );
+                
+                api.warn(context);
+                api.log(context);
             }
         }
         else

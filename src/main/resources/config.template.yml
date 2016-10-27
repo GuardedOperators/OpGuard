@@ -51,9 +51,9 @@ lock: false
 # Default: true
 enable-logging: @(log.enabled | true)
 
-# Log status messages.
-# Default: true
-log-status-messages: @(log.status | true)
+#@# Log status messages.
+#@# Default: true
+#@log-status-messages: @(log.status | true)
 
 # Log when a plugin attempts to give op.
 # Default: true
@@ -66,10 +66,6 @@ log-console-attempts: @(log.console-attempt | true)
 # Log when a player attempts to use /op.
 # Default: true
 log-player-attempts: @(log.player-attempt | true)
-
-# Logs commands executed when a player is punished.
-# Default: true
-log-punishments: true
 
 # ------------------------- #
 #   MESSAGES AND WARNINGS   #
@@ -109,7 +105,7 @@ security-prefix: '&e(&6&lSecurity&e)'
 
 # If true, OpGuard will display warnings when it lacks a password.
 # Default: true
-enable-security-messages: @(warn.security-risk | true)
+enable-security-warnings: @(warn.security-risk | true)
 
 # Prefix for general status messages.
 # Default: '&a(&2&lOkay&a)'

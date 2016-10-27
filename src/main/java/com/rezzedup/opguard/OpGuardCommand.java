@@ -67,18 +67,17 @@ public class OpGuardCommand implements ExecutableCommand
                 break;
                 
             case "reload":
-                String status = "&f[&a&lOKAY&f] " + sender.getName() + " reloaded OpGuard's config.";
-                api.warn("status", status);
-                api.log("status", status);
+                Context status = new Context(api).okay().setMessage(sender.getName() + " reloaded OpGuard's config.");
+                api.warn(status);
+                api.log(status);
                 
+                // TODO: reload config
                 //OpGuardAPI.reloadConfig();
                 break;
                 
             default:
                 usage(sender);
         }
-        
-        
     }
     
     private void usage(CommandSender sender)
@@ -99,8 +98,7 @@ public class OpGuardCommand implements ExecutableCommand
     {
         String arg = args.get(0).toLowerCase();
         String hash = api.getConfig().getString("password.hash");
-        String type = "status";
-        String message = null;
+        Context context = new Context(api);
         
         boolean enabled = (hash != null);
         boolean online = false;
@@ -131,12 +129,12 @@ public class OpGuardCommand implements ExecutableCommand
             if (op)
             {
                 //Verify.op(player, pass);
-                message = "&f[&a&lOKAY&f] " + sender.getName() + "&f set op for `&7" + player.getName() + "&f`";
+                context.setMessage(sender.getName() + "&f set op for `&7" + player.getName() + "&f`");
             }
             else
             {
                 //Verify.deop(player, pass);
-                message = "&f[&a&lOKAY&f] " + sender.getName() + "&f removed op from `&7" + player.getName() + "&f`";
+                context.setMessage(sender.getName() + "&f removed op from `&7" + player.getName() + "&f`");
             }
         }
         catch (Exception e)
@@ -145,21 +143,18 @@ public class OpGuardCommand implements ExecutableCommand
         }
         finally
         {
-            if (message != null)
-            {
-                api.warn(type, message);
-                api.log(type, message);
-            }
+            context.okay();
+            api.warn(context);
+            api.log(context);
         }
     }
     
     @SuppressWarnings("deprecation")
     private OfflinePlayer getPlayer(String name, boolean online) throws Exception
     {
-        OfflinePlayer player;
         if (online)
         {
-            player = Bukkit.getPlayer(name);
+            OfflinePlayer player = Bukkit.getPlayer(name);
             
             if (player == null)
             {
@@ -198,10 +193,9 @@ public class OpGuardCommand implements ExecutableCommand
         api.getConfig().set("password.hash", pass.getHash());
         //OpGuard.updatedConfig();
         
-        String type = "status";
-        String message = "&f[&a&lOKAY&f] " + sender.getName() + " set OpGuard's password.";
-        api.warn(type, message);
-        api.log(type, message);
+        Context context = new Context(api).setMessage(sender.getName() + " set OpGuard's password.").okay();
+        api.warn(context);
+        api.log(context);
     }
     
     private void resetPassword(CommandSender sender, List<String> args)
@@ -235,9 +229,8 @@ public class OpGuardCommand implements ExecutableCommand
         api.getConfig().set("password.hash", null);
         //OpGuard.updatedConfig();
         
-        String type = "status";
-        String message = "&f[&a&lOKAY&f] " + sender.getName() + " removed OpGuard's password.";
-        api.warn(type, message);
-        api.log(type, message);
+        Context context = new Context(api).setMessage(sender.getName() + " removed OpGuard's password.").okay();
+        api.warn(context);
+        api.log(context);
     }
 }

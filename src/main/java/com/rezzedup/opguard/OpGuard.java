@@ -88,11 +88,32 @@ public class OpGuard extends JavaPlugin
         {
             Bukkit.getPluginManager().registerEvents(listener, instance);
         }
+        
+        @Override
+        public void log(Context context)
+        {
+            if (context.hasMessage() && context.isLoggable())
+            {
+                log(context.getMessage());
+            }
+        }
     
         @Override
         public void log(String message)
         {
-            log.append(message);
+            if (getConfig().getBoolean("enable-logging"))
+            {
+                log.append(message);
+            }
+        }
+        
+        @Override
+        public void warn(Context context)
+        {
+            if (context.hasMessage() && context.isWarnable())
+            {
+                warn(context.getMessage());
+            }
         }
         
         @Override
@@ -108,10 +129,16 @@ public class OpGuard extends JavaPlugin
         }
     
         @Override
-        public void punish(String username)
+        public void punish(Context context, String username)
         {
+            if (!context.isPunishable())
+            {
+                return;
+            }
+            
+            context = context.copy().punish();
+            
             FileConfiguration config = getConfig();
-            boolean log = config.getBoolean("log-punishments");
             
             for (String command : config.getStringList("punishment-commands"))
             {
@@ -119,15 +146,10 @@ public class OpGuard extends JavaPlugin
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
             }
     
-            String prefix = config.getString("okay-prefix");
-            String message = prefix + "&f Punished `&7" + username + "&f` for attempting to gain op.";
+            context.setMessage("Punished `&7" + username + "&f` for attempting to gain op.").warning();
     
-            warn(message);
-            
-            if (log)
-            {
-                log(message);
-            }
+            warn(context);
+            log(context);
         }
     }
 }
