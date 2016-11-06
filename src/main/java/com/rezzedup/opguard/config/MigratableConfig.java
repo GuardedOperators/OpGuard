@@ -31,7 +31,7 @@ public class MigratableConfig extends BaseConfig
     
     private void migrateConfig(FileConfiguration old)
     {
-        ConfigurationTemplate template = new ConfigurationTemplate(this.getClass(), "config.template.yml");
+        ConfigurationTemplate template = new ConfigurationTemplate(this, "config.template.yml");
         List<String> lines = template.apply(old);
         
         File dir = plugin.getDataFolder();

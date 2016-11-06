@@ -15,6 +15,11 @@ public class ConfigurationTemplate
     private final BufferedReader reader;
     private List<String> content;
     
+    public ConfigurationTemplate(Object instance, String resource)
+    {
+        this(instance.getClass(), resource);
+    }
+    
     public ConfigurationTemplate(Class clazz, String resource)
     {
         reader = new BufferedReader(new InputStreamReader(clazz.getClassLoader().getResourceAsStream(resource)));
