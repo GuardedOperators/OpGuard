@@ -995,6 +995,22 @@ public class WrappedPlayer implements Player
     }
     
     @Override
+    public Set<String> getScoreboardTags()
+    {
+        return player.getScoreboardTags();
+    }
+    
+    @Override
+    public boolean addScoreboardTag(String s)
+    {
+    }
+    
+    @Override
+    public boolean removeScoreboardTag(String s)
+    {
+    }
+    
+    @Override
     public boolean isFlying()
     {
         return player.isFlying();

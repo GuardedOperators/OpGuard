@@ -16,10 +16,10 @@ public class DataStorage extends BaseConfig implements SavableConfig
     @Override
     protected void load()
     {
-        if (api.getConfig().contains("verified") || api.getConfig().contains("password.hash"))
+        /*if (api.getConfig().contains("verified") || api.getConfig().contains("password.hash"))
         {
             
-        }
+        }*/
     }
     
     @Override
