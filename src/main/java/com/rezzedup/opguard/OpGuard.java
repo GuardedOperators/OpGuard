@@ -1,16 +1,14 @@
 package com.rezzedup.opguard;
 
-import com.rezzedup.opguard.api.Config;
 import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
-import com.rezzedup.opguard.api.OpGuardConfig;
+import com.rezzedup.opguard.api.config.OpGuardConfig;
 import com.rezzedup.opguard.api.Verifier;
 import com.rezzedup.opguard.config.MigratableConfig;
 import com.rezzedup.opguard.metrics.MetricsLite;
 import com.rezzedup.opguard.wrapper.GuardedPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;

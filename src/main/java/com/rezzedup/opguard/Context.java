@@ -1,7 +1,7 @@
 package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.api.OpGuardAPI;
-import com.rezzedup.opguard.api.OpGuardConfig;
+import com.rezzedup.opguard.api.config.OpGuardConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 

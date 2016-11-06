@@ -1,4 +1,4 @@
-package com.rezzedup.opguard.api;
+package com.rezzedup.opguard.api.config;
 
 import org.bukkit.configuration.file.FileConfiguration;
 

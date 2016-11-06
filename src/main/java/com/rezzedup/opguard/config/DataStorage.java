@@ -1,7 +1,7 @@
 package com.rezzedup.opguard.config;
 
 import com.rezzedup.opguard.api.OpGuardAPI;
-import com.rezzedup.opguard.api.SavableConfig;
+import com.rezzedup.opguard.api.config.SavableConfig;
 
 public class DataStorage extends BaseConfig implements SavableConfig
 {

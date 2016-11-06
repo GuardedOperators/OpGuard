@@ -1,6 +1,6 @@
 package com.rezzedup.opguard.config;
 
-import com.rezzedup.opguard.api.OpGuardConfig;
+import com.rezzedup.opguard.api.config.OpGuardConfig;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;

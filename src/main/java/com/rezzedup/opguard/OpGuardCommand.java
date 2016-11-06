@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
-import com.rezzedup.opguard.api.OpGuardConfig;
+import com.rezzedup.opguard.api.config.OpGuardConfig;
 import com.rezzedup.opguard.api.Verifier;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

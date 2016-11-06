@@ -1,8 +1,8 @@
 package com.rezzedup.opguard.api;
 
 import com.rezzedup.opguard.Context;
+import com.rezzedup.opguard.api.config.OpGuardConfig;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
