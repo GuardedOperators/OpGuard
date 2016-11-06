@@ -1,4 +1,4 @@
-![](branding/logo.png)
+![](img/logo.png)
 
 ---
 
