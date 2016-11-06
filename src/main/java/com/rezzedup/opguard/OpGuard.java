@@ -3,6 +3,7 @@ package com.rezzedup.opguard;
 import com.rezzedup.opguard.api.Config;
 import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
+import com.rezzedup.opguard.api.OpGuardConfig;
 import com.rezzedup.opguard.api.Verifier;
 import com.rezzedup.opguard.config.MigratableConfig;
 import com.rezzedup.opguard.metrics.MetricsLite;
@@ -47,7 +48,7 @@ public class OpGuard extends JavaPlugin
     private static final class GuardedDependencies implements OpGuardAPI
     {
         private final OpGuard instance;
-        private final Config config;
+        private final OpGuardConfig config;
         private final Log log;
         private final ExecutableCommand command;
         private final Verifier verifier;
@@ -72,9 +73,15 @@ public class OpGuard extends JavaPlugin
         }
     
         @Override
-        public FileConfiguration getConfig()
+        public OpGuardConfig getConfig()
         {
-            return config.get();
+            return config;
+        }
+    
+        @Override
+        public Verifier getVerifier()
+        {
+            return verifier;
         }
     
         @Override
@@ -102,7 +109,7 @@ public class OpGuard extends JavaPlugin
         @Override
         public OpGuardAPI log(String message)
         {
-            if (getConfig().getBoolean("enable-logging"))
+            if (config.loggingIsEnabled())
             {
                 log.append(message);
             }
@@ -142,18 +149,14 @@ public class OpGuard extends JavaPlugin
             
             context = context.copy().punish();
             
-            FileConfiguration config = getConfig();
-            
-            for (String command : config.getStringList("punishment-commands"))
+            for (String command : config.getPunishmentCommands())
             {
                 command = command.replaceAll("(%player%)", username);
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
             }
     
             context.okay("Punished `&7" + username + "&f` for attempting to gain op.");
-    
-            warn(context);
-            log(context);
+            warn(context).log(context);
         }
     }
 }

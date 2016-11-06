@@ -21,7 +21,7 @@ public class PluginDisableHijack implements Listener
     {
         if (event.getPlugin().equals(api.getPlugin()))
         {
-            if (api.getConfig().getBoolean("shutdown-on-disable"))
+            if (api.getConfig().canShutDownOnDisable())
             {
                 Messenger.send("&c[&fOpGuard was disabled&c] Shutting server down.");
                 Bukkit.shutdown();

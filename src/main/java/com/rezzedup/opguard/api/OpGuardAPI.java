@@ -8,23 +8,25 @@ import org.bukkit.plugin.Plugin;
 
 public interface OpGuardAPI
 {
-    public Plugin getPlugin();
+    Plugin getPlugin();
     
-    public FileConfiguration getConfig();
+    OpGuardConfig getConfig();
     
-    public void reloadConfig();
+    Verifier getVerifier();
     
-    public void registerEvents(Listener listener);
+    void reloadConfig();
     
-    public OpGuardAPI log(Context context);
+    void registerEvents(Listener listener);
     
-    public OpGuardAPI log(String message);
+    OpGuardAPI log(Context context);
     
-    public OpGuardAPI warn(Context context);
+    OpGuardAPI log(String message);
     
-    public OpGuardAPI warn(String message);
+    OpGuardAPI warn(Context context);
     
-    public void run(CommandSender sender, String[] args);
+    OpGuardAPI warn(String message);
     
-    public void punish(Context context, String username);
+    void run(CommandSender sender, String[] args);
+    
+    void punish(Context context, String username);
 }

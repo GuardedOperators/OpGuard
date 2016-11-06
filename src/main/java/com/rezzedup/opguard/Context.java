@@ -1,7 +1,9 @@
 package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.api.OpGuardAPI;
-import org.bukkit.configuration.file.FileConfiguration;
+import com.rezzedup.opguard.api.OpGuardConfig;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 
 public class Context
 {
@@ -22,11 +24,17 @@ public class Context
     private boolean warn = false;
     private boolean security = false;
     
+    // Special Action
+    
     private boolean punish = false;
+    
+    // Message that needs context
     
     private String message = "";
     
-    private final FileConfiguration config;
+    // Config
+    
+    private final OpGuardConfig config;
     
     public Context(OpGuardAPI api)
     {
@@ -106,6 +114,18 @@ public class Context
         return this;
     }
     
+    public Context attemptFrom(CommandSender sender)
+    {
+        if (sender instanceof ConsoleCommandSender)
+        {
+            return consoleAttempt();
+        }
+        else 
+        {
+            return playerAttempt();
+        }
+    }
+    
     public Context warning(String message)
     {
         resetStatus();
@@ -141,15 +161,15 @@ public class Context
         }
         if (isPlayer)
         {
-            return config.getBoolean("log-player-attempts");
+            return config.canLogPlayerAttempts();
         }
         if (isConsole)
         {
-            return config.getBoolean("log-console-attempts");
+            return config.canLogConsoleAttempts();
         }
         if (isPlugin)
         {
-            return config.getBoolean("log-plugin-attempts");
+            return config.canLogPluginAttempts();
         }
         return false;
     }
@@ -158,34 +178,34 @@ public class Context
     {
         if (security)
         {
-            return config.getBoolean("enable-security-warnings");
+            return config.canSendSecurityWarnings();
         }
         
         if (isPlayer)
         {
             if (op)
             {
-                return config.getBoolean("warn-player-op-attempts");
+                return config.canSendPlayerOpAttemptWarnings();
             }
             if (opguard)
             {
-                return config.getBoolean("warn-player-opguard-attempts");
+                return config.canSendPlayerOpGuardAttemptWarnings();
             }
         }
         else if (isConsole)
         {
             if (op)
             {
-                return config.getBoolean("warn-console-op-attempts");
+                return config.canSendConsoleOpAttemptWarnings();
             }
             if (opguard)
             {
-                return config.getBoolean("warn-console-opguard-attempts");
+                return config.canSendConsoleOpGuardAttemptWarnings();
             }
         }
         else if (isPlugin)
         {
-            return config.getBoolean("warn-plugin-attempts");
+            return config.canSendPluginAttemptWarnings();
         }
         
         return true;
@@ -195,17 +215,17 @@ public class Context
     {
         if (isPlugin)
         {
-            return config.getBoolean("punish-plugin-attempts");
+            return config.canPunishPluginAttempts();
         }
         if (isConsole)
         {
             if (op)
             {
-                return config.getBoolean("punish-console-op-attempts");
+                return config.canPunishConsoleOpAttempts();
             }
             if (opguard)
             {
-                return config.getBoolean("punish-console-opguard-attempts");
+                return config.canPunishConsoleOpGuardAttempts();
             }
         }
         return false;
@@ -215,16 +235,15 @@ public class Context
     {
         if (warn)
         {
-            message = config.getString("warn-prefix") + " &f" + 
-                message.replaceAll("<!>", config.getString("warn-emphasis-color"));
+            message = config.getWarningPrefix() + " &f" + message.replaceAll("<!>", config.getWarningEmphasisColor());
         }
         else if (okay)
         {
-            message = config.getString("okay-prefix") + " &f" + message;
+            message = config.getOkayPrefix() + " &f" + message;
         }
         else if (security)
         {
-            message = config.getString("security-prefix") + " &f" + message;
+            message = config.getSecurityPrefix() + " &f" + message;
         }
         
         return message;

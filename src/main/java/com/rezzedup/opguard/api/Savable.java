@@ -2,7 +2,7 @@ package com.rezzedup.opguard.api;
 
 public interface Savable
 {
-    public boolean save();
+    boolean save();
     
-    public boolean save(boolean async);
+    boolean save(boolean async);
 }

@@ -89,7 +89,7 @@ warn-console-op-attempts: @(warn.console-attempt | true)
 
 # If true, OpGuard will display warnings whenever console incorrectly uses /opguard.
 # Default: true
-warn-console-opguard-attempts: true
+warn-console-opguard-attempts: @(warn.console-attempt | true)
 
 # If true, OpGuard will display warnings whenever a player attempts to use /op.
 # Default: true
@@ -97,7 +97,7 @@ warn-player-op-attempts: @(warn.player-attempt | true)
 
 # If true, OpGuard will display warnings whenever a player incorrectly uses /opguard.
 # Default: true
-warn-player-opguard-attempts: true
+warn-player-opguard-attempts: @(warn.player-attempt | true)
 
 # Prefix for security warnings.
 # Default: '&eOpGuard (&6&lSecurity&e)&7:'

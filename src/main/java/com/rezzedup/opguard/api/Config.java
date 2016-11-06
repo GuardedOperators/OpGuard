@@ -4,7 +4,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public interface Config
 {
-    public void reload();
+    void reload();
     
-    public FileConfiguration get();
+    FileConfiguration get();
 }

@@ -42,7 +42,7 @@ public class GuardedPlayer extends WrappedPlayer
             
             api.warn(context).log(context);
             
-            if (api.getConfig().getBoolean("disable-malicious-plugins-when-caught"))
+            if (api.getConfig().canDisableOtherPlugins())
             {
                 Bukkit.getPluginManager().disablePlugin(stack.getPlugin());
                 

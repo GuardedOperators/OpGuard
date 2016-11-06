@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
+import com.rezzedup.opguard.api.OpGuardConfig;
+import com.rezzedup.opguard.api.Verifier;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -14,20 +16,21 @@ import org.bukkit.entity.Player;
 public class OpGuardCommand implements ExecutableCommand
 {
     private final OpGuardAPI api;
+    private final OpGuardConfig config;
+    private final Verifier verifier;
     
     public OpGuardCommand(OpGuardAPI api)
     {
         this.api = api;
+        this.config = api.getConfig();
+        this.verifier = api.getVerifier();
     }
     
     public void execute(CommandSender sender, String[] cmd)
     {
-        boolean securityWarnings = api.getConfig().getBoolean("warn.security-risk");
-        boolean hashExists = api.getConfig().isSet("password.hash");
-        
-        if (!hashExists && securityWarnings)
+        if (!verifier.hasPassword() && config.canSendSecurityWarnings())
         {
-            Messenger.send(sender, "&f[&e&lSECURITY&f] OpGuard is insecure without a password.");
+            api.warn(new Context(api).securityRisk("OpGuard is insecure without a password."));
         }
         
         if (cmd.length < 2)
@@ -41,20 +44,19 @@ public class OpGuardCommand implements ExecutableCommand
         switch (args.get(0).toLowerCase())
         {
             case "op":
-                op(sender, args, true);
+                setOp(sender, args, true);
                 break;
             case "deop":
-                op(sender, args, false);
+                setOp(sender, args, false);
                 break;
                 
             case "list":
                 List<String> names = new ArrayList<String>();
-                
-                for (OfflinePlayer player : Bukkit.getOperators())
+                for (OfflinePlayer player : verifier.getVerifiedOperators())
                 {
                     names.add(player.getName());
                 }
-                Messenger.send(sender, "&f[&e&lVERIFIED OPERATORS&f] Total: &6" + names.size());
+                Messenger.send(sender, "&f(&e&lVERIFIED OPERATORS&f) Total: &6" + names.size());
                 Messenger.send(sender, "&6" + String.join(", ", names));
                 break;
                 
@@ -68,11 +70,9 @@ public class OpGuardCommand implements ExecutableCommand
                 
             case "reload":
                 Context status = new Context(api).okay(sender.getName() + " reloaded OpGuard's config.");
-                api.warn(status);
-                api.log(status);
+                api.warn(status).log(status);
                 
                 // TODO: reload config
-                //OpGuardAPI.reloadConfig();
                 break;
                 
             default:
@@ -82,8 +82,7 @@ public class OpGuardCommand implements ExecutableCommand
     
     private void usage(CommandSender sender)
     {
-        String usage 
-               = "&f[&6&lOpGuard &6v" + api.getPlugin().getDescription().getVersion() + " Usage&f]\n";
+        String usage = "&f(&6&lOpGuard &6v" + api.getPlugin().getDescription().getVersion() + " Usage&f)\n";
         usage += "&e/opguard op <player> <password (if set)>\n";
         usage += "&e/opguard deop <player> <password (if set)>\n";
         usage += "&e/opguard list\n";
@@ -94,91 +93,81 @@ public class OpGuardCommand implements ExecutableCommand
         Messenger.send(sender, usage);
     }
     
-    private void op(CommandSender sender, List<String> args, boolean op)
+    private void setOp(CommandSender sender, List<String> args, boolean op)
     {
-        String arg = args.get(0).toLowerCase();
-        String hash = api.getConfig().getString("password.hash");
-        Context context = new Context(api);
+        String command = args.get(0).toLowerCase();
+        Context context = new Context(api).attemptFrom(sender);
+        boolean passwordEnabled = verifier.hasPassword();
+        boolean onlineOnly = op && config.canOnlyOpIfOnline();
         
-        boolean enabled = (hash != null);
-        boolean online = false;
+        if (passwordEnabled && args.size() != 3)
+        {
+            Messenger.send(sender, "&c&oCorrect Usage:&f /opguard " + command + " <player> <password>");
+            return;
+        }
+        else if (!passwordEnabled && args.size() != 2)
+        {
+            Messenger.send(sender, "&c&oCorrect Usage:&f /opguard " + command + " <player>");
+            return;
+        }
+
+        String name = args.get(1);
+        OfflinePlayer player = getPlayer(name, onlineOnly);
+        Password password = (passwordEnabled) ? new Password(args.get(2)) : null;
+    
+        if (player == null)
+        {
+            Messenger.send(sender, "&c&oError:&f " + name + " is not online.");
+            return;
+        }
         
-        OfflinePlayer player;
+        name = player.getName();
         
         if (op)
         {
-            online = api.getConfig().getBoolean("only-op-if-online");
-        }
-        
-        if (enabled && args.size() != 3)
-        {
-            Messenger.send(sender, "&c&oCorrect Usage:&f /opguard " + arg + " <player> <password>");
-            return;
-        }
-        else if (!enabled && args.size() != 2)
-        {
-            Messenger.send(sender, "&c&oCorrect Usage:&f /opguard " + arg + " <player>");
-            return;
-        }
-        
-        try
-        {
-            player = getPlayer(args.get(1), online);
-            Password pass = (enabled) ? new Password(args.get(2)) : null;
-            
-            if (op)
+            if (verifier.op(player, password))
             {
-                //Verify.op(player, pass);
-                context.okay(sender.getName() + "&f set op for `&7" + player.getName() + "&f`");
+                context.okay(sender.getName() + " set op for `&7" + name + "&f`");
+                Messenger.send(sender, "&aSuccess: &f" + name + " is now a verified operator.");
             }
-            else
+            else 
             {
-                //Verify.deop(player, pass);
-                context.okay(sender.getName() + "&f removed op from `&7" + player.getName() + "&f`");
+                context.incorrectlyUsedOpGuard()
+                    .warning(sender.getName() + " attempted to set op for `<!>" + player.getName() + "&f` using an incorrect password.");
+                Messenger.send(sender, "&c&oError:&f Incorrect password.");
             }
-        }
-        catch (Exception e)
-        {
-            Messenger.send(sender, e.getMessage());
-        }
-        finally
-        {
-            api.warn(context);
-            api.log(context);
-        }
-    }
-    
-    @SuppressWarnings("deprecation")
-    private OfflinePlayer getPlayer(String name, boolean online) throws Exception
-    {
-        if (online)
-        {
-            OfflinePlayer player = Bukkit.getPlayer(name);
-            
-            if (player == null)
-            {
-                throw new Exception("&cPlayer `&o" + name + "&c` is not online.");
-            }
-            return player;
         }
         else
         {
-            return Bukkit.getOfflinePlayer(name);
+            if (verifier.deop(player, password))
+            {
+                context.okay(sender.getName() + " removed op from `&7" + player.getName() + "&f`");
+                Messenger.send(sender, "&aSuccess: &f" + name + " is no longer a verified operator.");
+            }
+            else 
+            {
+                context.incorrectlyUsedOpGuard()
+                    .warning(sender.getName() + " attempted to remove op from `<!>" + player.getName() + "&f` using an incorrect password.");
+                Messenger.send(sender, "&c&oError:&f Incorrect password.");
+            }
         }
+        
+        api.warn(context).log(context);
+    }
+    
+    @SuppressWarnings("deprecation")
+    private OfflinePlayer getPlayer(String name, boolean online)
+    {
+        return (online) ? Bukkit.getPlayer(name) : Bukkit.getOfflinePlayer(name);
     }
     
     private void setPassword(CommandSender sender, List<String> args)
     {
-        boolean inGame = api.getConfig().getBoolean("manage.password-in-game");
-        String hash = api.getConfig().getString("password.hash");
-        boolean enabled = (hash != null);
-        
-        if (!inGame && sender instanceof Player)
+        if (preventPasswordManagement(sender))
         {
-            Messenger.send(sender, "&cOnly console may manage the password.");
             return;
         }
-        if (enabled)
+        if (verifier.hasPassword())
         {
             Messenger.send(sender, "&cPassword is already set! Reset the password to modify.");
             return;
@@ -188,29 +177,20 @@ public class OpGuardCommand implements ExecutableCommand
             Messenger.send(sender, "&c&oCorrect Usage:&f /opguard password <new-password>");
             return;
         }
-        Password pass = new Password(args.get(1));
-        api.getConfig().set("password.hash", pass.getHash());
-        //OpGuard.updatedConfig();
-        
-        Context context = new Context(api).okay(sender.getName() + " set OpGuard's password.");
-        api.warn(context);
-        api.log(context);
+        verifier.setPassword(new Password(args.get(1)));
+        Context context = new Context(api).attemptFrom(sender).okay(sender.getName() + " set OpGuard's password.");
+        api.warn(context).log(context);
     }
     
     private void resetPassword(CommandSender sender, List<String> args)
     {
-        boolean inGame = api.getConfig().getBoolean("manage.password-in-game");
-        String hash = api.getConfig().getString("password.hash");
-        boolean enabled = (hash != null);
-        
-        if (!inGame && sender instanceof Player)
+        if (preventPasswordManagement(sender))
         {
-            Messenger.send(sender, "&cOnly console may manage the password.");
             return;
         }
-        if (!enabled)
+        if (!verifier.hasPassword())
         {
-            Messenger.send(sender, "&cThere isn't a password yet!");
+            Messenger.send(sender, "&cThere is no password yet!");
             return;
         }
         if (args.size() != 2)
@@ -218,18 +198,30 @@ public class OpGuardCommand implements ExecutableCommand
             Messenger.send(sender, "&c&oCorrect Usage:&f /opguard reset <current-password>");
             return;
         }
-        Password pass = new Password(args.get(1));
         
-        if (!hash.equals(pass.getHash()))
+        Context context = new Context(api).attemptFrom(sender);
+        
+        if (verifier.removePassword(new Password(args.get(1))))
         {
-            Messenger.send(sender, "&cIncorrect password.");
-            return;
+            context.okay(sender.getName() + " removed Opguard's password.");
+            Messenger.send(sender, "&aSuccess: &fRemoved OpGuard's password.");
         }
-        api.getConfig().set("password.hash", null);
-        //OpGuard.updatedConfig();
-        
-        Context context = new Context(api).okay(sender.getName() + " removed OpGuard's password.");
-        api.warn(context);
-        api.log(context);
+        else 
+        {
+            context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to remove OpGuard's password.");
+            Messenger.send(sender, "&c&oError:&f Incorrect password.");
+        }
+
+        api.warn(context).log(context);
+    }
+    
+    private boolean preventPasswordManagement(CommandSender sender)
+    {
+        if (!config.canManagePasswordInGame() && sender instanceof Player)
+        {
+            Messenger.send(sender, "&cOnly console may manage the password.");
+            return true;
+        }
+        return false;
     }
 }

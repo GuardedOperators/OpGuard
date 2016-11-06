@@ -4,8 +4,8 @@ import com.rezzedup.opguard.api.Verifier;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -14,11 +14,11 @@ public class OpVerifier implements Verifier
 {
     private static final class OpListWrapper
     {
-        private static final Map<UUID, OfflinePlayer> verified = new HashMap<>();
+        private static final Map<UUID, OfflinePlayer> verified = new LinkedHashMap<>();
         
         private static Set<OfflinePlayer> getCopy()
         {
-            return new HashSet<>(verified.values());
+            return new LinkedHashSet<>(verified.values());
         }
     }
     
@@ -33,21 +33,20 @@ public class OpVerifier implements Verifier
     }
     
     @Override
-    public void setPassword(Password password)
+    public boolean hasPassword()
     {
-        if (PasswordWrapper.password == null && password != null)
-        {
-            PasswordWrapper.password = password;
-        }
+        return PasswordWrapper.password != null;
     }
     
     @Override
-    public void removePassword(Password password)
+    public boolean setPassword(Password password)
     {
-        if (check(password))
+        if (!hasPassword() && password != null)
         {
-            PasswordWrapper.password = null;
+            PasswordWrapper.password = password;
+            return true;
         }
+        return false;
     }
     
     @Override
@@ -57,8 +56,23 @@ public class OpVerifier implements Verifier
     }
     
     @Override
+    public boolean removePassword(Password password)
+    {
+        if (check(password))
+        {
+            PasswordWrapper.password = null;
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
     public boolean check(Password password)
     {
+        if (!hasPassword())
+        {
+            return true;
+        }
         return PasswordWrapper.password.compare(password);
     }
     
@@ -101,6 +115,7 @@ public class OpVerifier implements Verifier
     @Override
     public boolean save(boolean async)
     {
+        // TODO: save data
         return true;
     }
 }
