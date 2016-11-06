@@ -1003,11 +1003,13 @@ public class WrappedPlayer implements Player
     @Override
     public boolean addScoreboardTag(String s)
     {
+        return player.addScoreboardTag(s);
     }
     
     @Override
     public boolean removeScoreboardTag(String s)
     {
+        return player.removeScoreboardTag(s);
     }
     
     @Override
