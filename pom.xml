@@ -13,12 +13,9 @@
     <properties>
         <author>RezzedUp</author>
         <loadbefore>[Vault, Essentials, EssentialsX, PlugMan, PermissionsEx, GroupManager]</loadbefore>
-        <!-- Spigot/Bukkit versions -->
-        <api-version>1.10.2-R0.1-SNAPSHOT</api-version>
     </properties>
 
     <repositories>
-        <!-- Repo for Spigot & Bukkit API -->
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
@@ -30,20 +27,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>${api-version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Bukkit API -->
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>${api-version}</version>
+            <version>1.10.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <defaultGoal>clean package install</defaultGoal>
+        <defaultGoal>clean install</defaultGoal>
         <plugins>
             <!-- Compile project -->
             <plugin>
