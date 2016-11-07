@@ -20,8 +20,6 @@ import java.io.IOException;
 
 public class OpGuard extends JavaPlugin
 {
-    //private final DependencyWrapper api = new DependencyWrapper();
-    
     @Override
     public void onEnable()
     {

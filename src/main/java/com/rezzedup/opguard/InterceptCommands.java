@@ -15,14 +15,14 @@ public class InterceptCommands implements Listener
 {
     private final OpGuardAPI api;
     
-    public InterceptCommands(OpGuardAPI API) 
+    public InterceptCommands(OpGuardAPI api) 
     {
-        this.api = API;
-        API.registerEvents(this);
+        this.api = api;
+        api.registerEvents(this);
     }
     
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerCommand(PlayerCommandPreprocessEvent event)
+    public void on(PlayerCommandPreprocessEvent event)
     {
         String command = event.getMessage().split("\\/| ")[0];
         
@@ -33,7 +33,7 @@ public class InterceptCommands implements Listener
     }
     
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onConsoleCommand(ServerCommandEvent event)
+    public void on(ServerCommandEvent event)
     {        
         String command = event.getCommand().split("\\/| ")[0];
         
