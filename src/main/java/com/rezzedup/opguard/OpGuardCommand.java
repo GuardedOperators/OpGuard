@@ -30,7 +30,7 @@ public class OpGuardCommand implements ExecutableCommand
     {
         if (!verifier.hasPassword() && config.canSendSecurityWarnings())
         {
-            api.warn(new Context(api).securityRisk("OpGuard is insecure without a password."));
+            api.warn(sender, new Context(api).securityRisk("OpGuard is insecure without a password."));
         }
         
         if (cmd.length < 2)
@@ -52,11 +52,15 @@ public class OpGuardCommand implements ExecutableCommand
                 
             case "list":
                 List<String> names = new ArrayList<String>();
-                for (OfflinePlayer player : verifier.getVerifiedOperators())
+                verifier.getVerifiedOperators().forEach(o -> names.add(o.getName()));
+                
+                Messenger.send(sender, "&6(&e&lVerified Operators&6) &fTotal: &6" + names.size());
+                
+                if (names.size() <= 0)
                 {
-                    names.add(player.getName());
+                    names.add("No verified operators.");
                 }
-                Messenger.send(sender, "&f(&e&lVERIFIED OPERATORS&f) Total: &6" + names.size());
+                
                 Messenger.send(sender, "&6" + String.join(", ", names));
                 break;
                 
@@ -117,7 +121,7 @@ public class OpGuardCommand implements ExecutableCommand
     
         if (player == null)
         {
-            Messenger.send(sender, "&c&oError:&f " + name + " is not online.");
+            Messenger.send(sender, "&cError:&f `&7" + name + "&f` is not online.");
             return;
         }
         
@@ -132,9 +136,8 @@ public class OpGuardCommand implements ExecutableCommand
             }
             else 
             {
-                context.incorrectlyUsedOpGuard()
-                    .warning(sender.getName() + " attempted to set op for `<!>" + player.getName() + "&f` using an incorrect password.");
-                Messenger.send(sender, "&c&oError:&f Incorrect password.");
+                context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to set op for player `<!>" + name + "&f` using an incorrect password.");
+                Messenger.send(sender, "&cError:&f Incorrect password.");
             }
         }
         else
@@ -146,9 +149,8 @@ public class OpGuardCommand implements ExecutableCommand
             }
             else 
             {
-                context.incorrectlyUsedOpGuard()
-                    .warning(sender.getName() + " attempted to remove op from `<!>" + player.getName() + "&f` using an incorrect password.");
-                Messenger.send(sender, "&c&oError:&f Incorrect password.");
+                context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to remove op from player `<!>" + name + "&f` using an incorrect password.");
+                Messenger.send(sender, "&cError:&f Incorrect password.");
             }
         }
         

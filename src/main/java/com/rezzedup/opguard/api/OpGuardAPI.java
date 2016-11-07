@@ -24,6 +24,8 @@ public interface OpGuardAPI
     
     OpGuardAPI warn(Context context);
     
+    OpGuardAPI warn(CommandSender sender, Context context);
+    
     OpGuardAPI warn(String message);
     
     void run(CommandSender sender, String[] args);

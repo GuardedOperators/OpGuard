@@ -47,17 +47,17 @@ public class OpGuard extends JavaPlugin
     {
         private final OpGuard instance;
         private final OpGuardConfig config;
+        private final Verifier verifier;
         private final Log log;
         private final ExecutableCommand command;
-        private final Verifier verifier;
     
         private GuardedDependencies(OpGuard instance) 
         {
             this.instance = instance;
             this.config = new MigratableConfig(instance);
+            this.verifier = new OpVerifier();
             this.log = new Log(instance, "guard");
             this.command = new OpGuardCommand(this);
-            this.verifier = new OpVerifier();
             
             new GuardedPlayer.EventInjector(this);
             new InterceptCommands(this);
@@ -123,7 +123,17 @@ public class OpGuard extends JavaPlugin
             }
             return this;
         }
-        
+    
+        @Override
+        public OpGuardAPI warn(CommandSender sender, Context context)
+        {
+            if (context.hasMessage() && context.isWarnable())
+            {
+                Messenger.send(sender, context.getMessage());
+            }
+            return this;
+        }
+    
         @Override
         public OpGuardAPI warn(String message)
         {
