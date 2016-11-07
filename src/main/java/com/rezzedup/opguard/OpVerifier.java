@@ -141,6 +141,18 @@ public class OpVerifier implements Verifier
     }
     
     @Override
+    public boolean isVerified(UUID uuid)
+    {
+        return OpListWrapper.verified.containsKey(uuid);
+    }
+    
+    @Override
+    public boolean isVerified(OfflinePlayer player)
+    {
+        return isVerified(player.getUniqueId());
+    }
+    
+    @Override
     public boolean save()
     {
         return save(true);

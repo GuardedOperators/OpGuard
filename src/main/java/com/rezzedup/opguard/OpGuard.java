@@ -24,11 +24,18 @@ public class OpGuard extends JavaPlugin
     @Override
     public void onEnable()
     {
-        new GuardedDependencies(this);
+        OpGuardAPI api = new GuardedDependencies(this);
+        long interval = api.getConfig().getOpListInspectionInterval();
         
-        // TODO: Schedule runnables
+        if (interval <= 0)
+        {
+            Messenger.send("[OpGuard] Invalid inspection interval " + interval + ". Defaulting to 4 ticks.");
+            interval = 4;
+        }
         
-        if (getConfig().getBoolean("metrics"))
+        new VerifyOpListTask(api).runTaskTimer(this, 1L, interval);
+        
+        if (api.getConfig().metricsAreEnabled())
         {
             try 
             {

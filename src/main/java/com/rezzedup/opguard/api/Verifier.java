@@ -14,4 +14,8 @@ public interface Verifier extends PasswordHandler, Savable
     boolean op(OfflinePlayer player, Password password);
     
     boolean deop(OfflinePlayer player, Password password);
+    
+    boolean isVerified(UUID uuid);
+    
+    boolean isVerified(OfflinePlayer player);
 }
