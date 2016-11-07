@@ -2,7 +2,10 @@ package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.api.Password;
 import com.rezzedup.opguard.api.Verifier;
+import com.rezzedup.opguard.config.DataStorage;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -17,10 +20,17 @@ public class OpVerifier implements Verifier
     {
         private static final Map<UUID, OfflinePlayer> verified = new LinkedHashMap<>();
         
-        private static Set<OfflinePlayer> getCopy()
+        private static Set<UUID> getKeys()
+        {
+            return new LinkedHashSet<>(verified.keySet());
+        }
+        
+        private static Set<OfflinePlayer> getValues()
         {
             return new LinkedHashSet<>(verified.values());
         }
+        
+        
     }
     
     private static final class PasswordWrapper
@@ -28,9 +38,26 @@ public class OpVerifier implements Verifier
         private static Password password;
     }
     
-    public OpVerifier()
+    private final DataStorage storage;
+    
+    public OpVerifier(DataStorage storage)
     {
-        // TODO: Add all existing operators to ops list
+        this.storage = storage;
+        FileConfiguration data = storage.get();
+        
+        if (data.contains("hash"))
+        {
+            PasswordWrapper.password = new OpPassword(data.getString("hash"), true);
+        }
+        if (data.contains("verified"))
+        {
+            for (String operator : data.getStringList("verified"))
+            {
+                UUID uuid = UUID.fromString(operator);
+                OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+                OpListWrapper.verified.put(uuid, player);
+            }
+        }
     }
     
     @Override
@@ -45,7 +72,7 @@ public class OpVerifier implements Verifier
         if (!hasPassword() && password != null)
         {
             PasswordWrapper.password = password;
-            return true;
+            return save();
         }
         return false;
     }
@@ -62,7 +89,7 @@ public class OpVerifier implements Verifier
         if (check(password))
         {
             PasswordWrapper.password = null;
-            return true;
+            return save();
         }
         return false;
     }
@@ -80,7 +107,13 @@ public class OpVerifier implements Verifier
     @Override
     public Collection<OfflinePlayer> getVerifiedOperators()
     {
-        return OpListWrapper.getCopy();
+        return OpListWrapper.getValues();
+    }
+    
+    @Override
+    public Collection<UUID> getVerifiedUUIDs()
+    {
+        return OpListWrapper.getKeys();
     }
     
     @Override
@@ -90,7 +123,7 @@ public class OpVerifier implements Verifier
         {
             OpListWrapper.verified.put(player.getUniqueId(), player);
             player.setOp(true);
-            return true;
+            return save();
         }
         return false;
     }
@@ -102,7 +135,7 @@ public class OpVerifier implements Verifier
         {
             OpListWrapper.verified.remove(player.getUniqueId());
             player.setOp(false);
-            return true;
+            return save();
         }
         return false;
     }
@@ -116,7 +149,8 @@ public class OpVerifier implements Verifier
     @Override
     public boolean save(boolean async)
     {
-        // TODO: save data
+        storage.reset(this);
+        storage.save(async);
         return true;
     }
 }

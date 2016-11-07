@@ -17,7 +17,18 @@ public class OpPassword implements Password
     
     public OpPassword(String plaintext)
     {
-        String pass = plaintext + " :^) Enjoy!";
+        this(plaintext, false);
+    }
+    
+    public OpPassword(String input, boolean isHash)
+    {
+        if (isHash)
+        {
+            this.hash = input;
+            return;
+        }
+        
+        String pass = input + " :^) Enjoy!";
         
         try
         {
@@ -25,7 +36,7 @@ public class OpPassword implements Password
             byte[] hash = digest.digest(pass.getBytes("UTF-8"));
             StringBuilder hashed = new StringBuilder();
             
-            for (byte b : hash) 
+            for (byte b : hash)
             {
                 hashed.append(String.format("%02X", b));
             }

@@ -7,6 +7,7 @@ import com.rezzedup.opguard.api.Verifier;
 import com.rezzedup.opguard.api.message.Loggable;
 import com.rezzedup.opguard.api.message.Punishable;
 import com.rezzedup.opguard.api.message.Warnable;
+import com.rezzedup.opguard.config.DataStorage;
 import com.rezzedup.opguard.config.MigratableConfig;
 import com.rezzedup.opguard.metrics.MetricsLite;
 import com.rezzedup.opguard.wrapper.GuardedPlayer;
@@ -56,12 +57,12 @@ public class OpGuard extends JavaPlugin
         {
             this.instance = instance;
             this.config = new MigratableConfig(instance);
-            this.verifier = new OpVerifier();
+            this.verifier = new OpVerifier(new DataStorage(this));
             this.log = new Log(instance, "guard");
             this.command = new OpGuardCommand(this);
             
             new GuardedPlayer.EventInjector(this);
-            new InterceptCommands(this);
+            new CommandInterceptor(this);
             new PluginDisableHijack(this);
         }
     

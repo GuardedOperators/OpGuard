@@ -11,11 +11,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
-public class InterceptCommands implements Listener
+public class CommandInterceptor implements Listener
 {
     private final OpGuardAPI api;
     
-    public InterceptCommands(OpGuardAPI api) 
+    public CommandInterceptor(OpGuardAPI api) 
     {
         this.api = api;
         api.registerEvents(this);
@@ -24,28 +24,31 @@ public class InterceptCommands implements Listener
     @EventHandler(priority = EventPriority.LOWEST)
     public void on(PlayerCommandPreprocessEvent event)
     {
-        String command = event.getMessage().split("\\/| ")[0];
-        
         if (cancel(event.getPlayer(), event.getMessage(), event))
         {
-            event.setMessage("/opguard:intercepted(" + command + ")");
+            event.setMessage("/opguard:intercepted(" + event.getMessage().split("\\/| ")[0] + ")");
         }
     }
     
     @EventHandler(priority = EventPriority.LOWEST)
     public void on(ServerCommandEvent event)
-    {        
-        String command = event.getCommand().split("\\/| ")[0];
-        
+    {
         if (cancel(event.getSender(), event.getCommand(), event))
         {
-            event.setCommand("opguard:intercepted(" + command + ")");
+            event.setCommand("opguard:intercepted(" + event.getCommand().split("\\/| ")[0] + ")");
         }
     }
     
     public boolean cancel(CommandSender sender, String command, Event event)
     {
         String[] cmd = command.split(" ");
+        String base = cmd[0].toLowerCase();
+        
+        if (!base.matches("^[\\/]?((de)?op|o(g|pguard))$"))
+        {
+            return false;
+        }
+        
         Context context = new Context(api);
         
         if (sender instanceof Player)
@@ -57,43 +60,34 @@ public class InterceptCommands implements Listener
             context.consoleAttempt();
         }
         
-        if (cmd.length > 0)
+        if (base.matches("^[\\/]?op$"))
         {
-            String base = cmd[0].toLowerCase();
+            context.setOp();
             
-            if (base.matches("^[\\/]?op$"))
+            if (cmd.length > 1)
             {
-                context.setOp();
-                
-                if (cmd.length > 1)
-                {
-                    String name = cmd[1];
-                    context.warning(sender.getName() + " attempted to " + base + " <!>" + name);
-                    api.warn(context).log(context).punish(context, name);
-                }
-                return true;
+                String name = cmd[1];
+                context.warning(sender.getName() + " attempted to " + base + " <!>" + name);
+                api.warn(context).log(context).punish(context, name);
             }
-            else if (base.matches("^[\\/]?deop$"))
+        }
+        else if (cmd[0].toLowerCase().matches("^[\\/]?o(g|pguard)$"))
+        {
+            if (sender.hasPermission("opguard.manage"))
             {
-                return true;
-            }
-            else if (cmd[0].toLowerCase().matches("^[\\/]?o(g|pguard)$"))
-            {
-                if (!sender.hasPermission("opguard.manage"))
-                {
-                    context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to access OpGuard.");
-                    api.warn(context).log(context);
-                    return true;
-                }
-                
                 api.run(sender, cmd);
-
+    
                 if (event instanceof Cancellable)
                 {
                     ((Cancellable) event).setCancelled(true);
                 }
             }
+            else
+            {
+                context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to access OpGuard.");
+                api.warn(context).log(context);
+            }
         }
-        return false;
+        return true;
     }
 }

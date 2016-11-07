@@ -15,18 +15,18 @@ public abstract class BaseConfig implements Config
     protected final File file;
     protected FileConfiguration config;
     
-    public BaseConfig(Plugin plugin, File file)
+    public BaseConfig(Plugin plugin, String filename)
     {
         this.plugin = plugin;
         
-        if (file == null)
+        if (filename == null)
         {
             this.file = new File(plugin.getDataFolder(), "config.yml");
             this.config = plugin.getConfig();
         }
         else
         {
-            this.file = file;
+            this.file = new File(plugin.getDataFolder(), filename);
             this.config = YamlConfiguration.loadConfiguration(file);
         }
         

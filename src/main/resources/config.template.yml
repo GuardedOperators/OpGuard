@@ -57,10 +57,6 @@ lock: false
 # Default: true
 enable-logging: @(log.enabled | true)
 
-#@# Log status messages.
-#@# Default: true
-#@log-status-messages: @(log.status | true)
-
 # Log when a plugin attempts to give op.
 # Default: true
 log-plugin-attempts: @(log.plugin-attempt | true)
