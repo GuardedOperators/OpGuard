@@ -45,7 +45,8 @@ public class OpGuardCommand implements ExecutableCommand
         if (config.isLocked() && !args.get(0).equalsIgnoreCase("list"))
         {
             Messenger.send(sender, "&cOpGuard (&4&lLock&c):&f OpGuard is currently locked.");
-            Messenger.send(sender, "&rTo unlock, set &6lock&r to &e&nfalse&r in the config and &6restart&r the server.");
+            Messenger.send(sender, " &3&oTo unlock OpGuard, set &b&o&nlock&3 to &b&o&nfalse&3&o in the config and restart the server.");
+            return;
         }
         
         switch (args.get(0).toLowerCase())
@@ -88,12 +89,12 @@ public class OpGuardCommand implements ExecutableCommand
     private void usage(CommandSender sender)
     {
         String usage = "&f(&6&lOpGuard &6v" + api.getPlugin().getDescription().getVersion() + " Usage&f)\n";
-        usage += "&e/opguard op <player> <password (if set)>\n";
-        usage += "&e/opguard deop <player> <password (if set)>\n";
-        usage += "&e/opguard list\n";
-        usage += "&e/opguard password <new password>\n";
-        usage += "&e/opguard reset <current password>\n";
-        usage += "&e/opguard reload";
+        usage += "&6/&eopguard &oop &7<&fplayer&7> <&fpassword&7 (if set)>\n";
+        usage += "&6/&eopguard &odeop &7<&fplayer&7> <&fpassword&7 (if set)>\n";
+        usage += "&6/&eopguard &olist\n";
+        usage += "&6/&eopguard &opassword &7<&fnew password&7>\n";
+        usage += "&6/&eopguard &oreset &7<&fcurrent password&7>\n";
+        usage += "&6/&eopguard &oreload &7<&fpassword&7 (if set)>";
         
         Messenger.send(sender, usage);
     }
@@ -122,7 +123,7 @@ public class OpGuardCommand implements ExecutableCommand
     
         if (player == null)
         {
-            Messenger.send(sender, "&cError:&f `&7" + name + "&f` is not online.");
+            Messenger.send(sender, "&cError:&f &7" + name + "&f is not online.");
             return;
         }
         
@@ -132,12 +133,12 @@ public class OpGuardCommand implements ExecutableCommand
         {
             if (verifier.op(player, password))
             {
-                context.okay(sender.getName() + " set op for `&7" + name + "&f`");
+                context.okay(sender.getName() + " set op for &7" + name);
                 Messenger.send(sender, "&aSuccess: &f" + name + " is now a verified operator.");
             }
             else 
             {
-                context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to set op for player `<!>" + name + "&f` using an incorrect password.");
+                context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to set op for player <!>" + name + "&f using an incorrect password.");
                 Messenger.send(sender, "&cError:&f Incorrect password.");
             }
         }
@@ -145,12 +146,12 @@ public class OpGuardCommand implements ExecutableCommand
         {
             if (verifier.deop(player, password))
             {
-                context.okay(sender.getName() + " removed op from `&7" + player.getName() + "&f`");
+                context.okay(sender.getName() + " removed op from &7" + player.getName());
                 Messenger.send(sender, "&aSuccess: &f" + name + " is no longer a verified operator.");
             }
             else 
             {
-                context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to remove op from player `<!>" + name + "&f` using an incorrect password.");
+                context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to remove op from player <!>" + name + "&f using an incorrect password.");
                 Messenger.send(sender, "&cError:&f Incorrect password.");
             }
         }

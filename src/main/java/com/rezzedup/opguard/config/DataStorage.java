@@ -40,8 +40,8 @@ public class DataStorage extends BaseConfig implements SavableConfig
         
         if ((!config.contains("verified") || !config.contains("hash")) && (old.contains("verified") || old.contains("password.hash")))
         {
-            config.set("verified", (old.contains("verified")) ? old.getStringList("verified") : null);
             config.set("hash", old.getString("password.hash"));
+            config.set("verified", (old.contains("verified")) ? old.getStringList("verified") : null);
             save(false);
         }
     }
