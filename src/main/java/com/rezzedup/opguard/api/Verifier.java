@@ -1,6 +1,5 @@
 package com.rezzedup.opguard.api;
 
-import com.rezzedup.opguard.Password;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Collection;

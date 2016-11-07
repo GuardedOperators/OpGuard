@@ -2,10 +2,13 @@ package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.api.OpGuardAPI;
 import com.rezzedup.opguard.api.config.OpGuardConfig;
+import com.rezzedup.opguard.api.message.Loggable;
+import com.rezzedup.opguard.api.message.Punishable;
+import com.rezzedup.opguard.api.message.Warnable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
-public class Context
+public class Context implements Loggable, Warnable, Punishable
 {
     // Command
     
@@ -153,6 +156,7 @@ public class Context
         return this;
     }
     
+    @Override
     public boolean isLoggable()
     {
         if (punish)
@@ -174,6 +178,7 @@ public class Context
         return false;
     }
     
+    @Override
     public boolean isWarnable()
     {
         if (security)
@@ -211,6 +216,7 @@ public class Context
         return true;
     }
     
+    @Override
     public boolean isPunishable()
     {
         if (isPlugin)
@@ -249,17 +255,20 @@ public class Context
         return message;
     }
     
+    @Override
     public Context setMessage(String message)
     {
         this.message = prepareMessage(message);
         return this;
     }
     
+    @Override
     public String getMessage()
     {
         return message;
     }
     
+    @Override
     public boolean hasMessage()
     {
         return message != null && !message.isEmpty();

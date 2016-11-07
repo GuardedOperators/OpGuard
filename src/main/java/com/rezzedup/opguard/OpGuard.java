@@ -4,6 +4,9 @@ import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
 import com.rezzedup.opguard.api.config.OpGuardConfig;
 import com.rezzedup.opguard.api.Verifier;
+import com.rezzedup.opguard.api.message.Loggable;
+import com.rezzedup.opguard.api.message.Punishable;
+import com.rezzedup.opguard.api.message.Warnable;
 import com.rezzedup.opguard.config.MigratableConfig;
 import com.rezzedup.opguard.metrics.MetricsLite;
 import com.rezzedup.opguard.wrapper.GuardedPlayer;
@@ -95,7 +98,7 @@ public class OpGuard extends JavaPlugin
         }
         
         @Override
-        public OpGuardAPI log(Context context)
+        public OpGuardAPI log(Loggable context)
         {
             if (context.hasMessage() && context.isLoggable())
             {
@@ -115,7 +118,7 @@ public class OpGuard extends JavaPlugin
         }
         
         @Override
-        public OpGuardAPI warn(Context context)
+        public OpGuardAPI warn(Warnable context)
         {
             if (context.hasMessage() && context.isWarnable())
             {
@@ -125,7 +128,7 @@ public class OpGuard extends JavaPlugin
         }
     
         @Override
-        public OpGuardAPI warn(CommandSender sender, Context context)
+        public OpGuardAPI warn(CommandSender sender, Warnable context)
         {
             if (context.hasMessage() && context.isWarnable())
             {
@@ -148,14 +151,14 @@ public class OpGuard extends JavaPlugin
         }
     
         @Override
-        public void punish(Context context, String username)
+        public void punish(Punishable punishable, String username)
         {
-            if (!context.isPunishable())
+            if (!punishable.isPunishable() || !(punishable instanceof Context))
             {
                 return;
             }
             
-            context = context.copy().punish();
+            Context context = ((Context) punishable).copy().punish(); 
             
             for (String command : config.getPunishmentCommands())
             {

@@ -1,7 +1,5 @@
 package com.rezzedup.opguard.api;
 
-import com.rezzedup.opguard.Password;
-
 public interface PasswordHandler
 {
     boolean hasPassword();

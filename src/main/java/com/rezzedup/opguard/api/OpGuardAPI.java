@@ -1,7 +1,9 @@
 package com.rezzedup.opguard.api;
 
-import com.rezzedup.opguard.Context;
 import com.rezzedup.opguard.api.config.OpGuardConfig;
+import com.rezzedup.opguard.api.message.Loggable;
+import com.rezzedup.opguard.api.message.Punishable;
+import com.rezzedup.opguard.api.message.Warnable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -18,17 +20,17 @@ public interface OpGuardAPI
     
     void registerEvents(Listener listener);
     
-    OpGuardAPI log(Context context);
+    OpGuardAPI log(Loggable context);
     
     OpGuardAPI log(String message);
     
-    OpGuardAPI warn(Context context);
+    OpGuardAPI warn(Warnable context);
     
-    OpGuardAPI warn(CommandSender sender, Context context);
+    OpGuardAPI warn(CommandSender sender, Warnable context);
     
     OpGuardAPI warn(String message);
     
     void run(CommandSender sender, String[] args);
     
-    void punish(Context context, String username);
+    void punish(Punishable context, String username);
 }

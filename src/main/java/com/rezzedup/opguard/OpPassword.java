@@ -1,21 +1,21 @@
 package com.rezzedup.opguard;
 
-import com.rezzedup.opguard.api.Comparable;
+import com.rezzedup.opguard.api.Password;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class Password implements Comparable<Password>
+public class OpPassword implements Password
 {
     private String hash;
     
-    public Password(Password clone)
+    public OpPassword(Password clone)
     {
-        this.hash = clone.hash;
+        this.hash = clone.getHash();
     }
     
-    public Password(String plaintext)
+    public OpPassword(String plaintext)
     {
         String pass = plaintext + " :^) Enjoy!";
         
@@ -37,6 +37,7 @@ public class Password implements Comparable<Password>
         }
     }
     
+    @Override
     public String getHash()
     {
         return this.hash;
@@ -45,6 +46,6 @@ public class Password implements Comparable<Password>
     @Override
     public boolean compare(Password password)
     {
-        return this.hash.equalsIgnoreCase(password.hash);
+        return hash.equalsIgnoreCase(password.getHash());
     }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
+import com.rezzedup.opguard.api.Password;
 import com.rezzedup.opguard.api.config.OpGuardConfig;
 import com.rezzedup.opguard.api.Verifier;
 import org.bukkit.Bukkit;
@@ -117,7 +118,7 @@ public class OpGuardCommand implements ExecutableCommand
 
         String name = args.get(1);
         OfflinePlayer player = getPlayer(name, onlineOnly);
-        Password password = (passwordEnabled) ? new Password(args.get(2)) : null;
+        Password password = (passwordEnabled) ? new OpPassword(args.get(2)) : null;
     
         if (player == null)
         {
@@ -179,7 +180,7 @@ public class OpGuardCommand implements ExecutableCommand
             Messenger.send(sender, "&c&oCorrect Usage:&f /opguard password <new-password>");
             return;
         }
-        verifier.setPassword(new Password(args.get(1)));
+        verifier.setPassword(new OpPassword(args.get(1)));
         Context context = new Context(api).attemptFrom(sender).okay(sender.getName() + " set OpGuard's password.");
         api.warn(context).log(context);
     }
@@ -203,7 +204,7 @@ public class OpGuardCommand implements ExecutableCommand
         
         Context context = new Context(api).attemptFrom(sender);
         
-        if (verifier.removePassword(new Password(args.get(1))))
+        if (verifier.removePassword(new OpPassword(args.get(1))))
         {
             context.okay(sender.getName() + " removed Opguard's password.");
             Messenger.send(sender, "&aSuccess: &fRemoved OpGuard's password.");

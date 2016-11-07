@@ -1,5 +1,6 @@
 package com.rezzedup.opguard;
 
+import com.rezzedup.opguard.api.Password;
 import com.rezzedup.opguard.api.Verifier;
 import org.bukkit.OfflinePlayer;
 
@@ -52,7 +53,7 @@ public class OpVerifier implements Verifier
     @Override
     public Password getPassword()
     {
-        return new Password(PasswordWrapper.password);
+        return new OpPassword(PasswordWrapper.password);
     }
     
     @Override
