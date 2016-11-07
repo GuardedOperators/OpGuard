@@ -68,10 +68,13 @@ public class InterceptCommands implements Listener
                 if (cmd.length > 1)
                 {
                     String name = cmd[1];
-                    context.warning(sender.getName() + " attempted to " + base + " `<!>" + name + "&f`");
+                    context.warning(sender.getName() + " attempted to " + base + " <!>" + name);
                     api.warn(context).log(context).punish(context, name);
                 }
-                
+                return true;
+            }
+            else if (base.matches("^[\\/]?deop$"))
+            {
                 return true;
             }
             else if (cmd[0].toLowerCase().matches("^[\\/]?o(g|pguard)$"))

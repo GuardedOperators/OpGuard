@@ -12,6 +12,8 @@ public interface OpGuardConfig extends Config
     
     boolean canDisableOtherPlugins();
     
+    boolean canRenameOtherPlugins();
+    
     boolean canShutDownOnDisable();
     
     boolean isLocked();

@@ -32,6 +32,12 @@ manage-password-in-game: @(manage.password-in-game | true)
 # Default: true
 disable-malicious-plugins-when-caught: true
 
+# If true, OpGuard will rename plugin .jar files that have been caught 
+# setting op so they cannot re-enable.
+# This will only occur if the option above is also enabled (plugin disabling).
+# Default: true
+rename-malicious-plugins-when-caught: true
+
 # If true, OpGuard will shut the server down if it is disabled.
 # Enable this option if you don't want other plugins to disable OpGuard.
 # Default: false

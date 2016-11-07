@@ -1,22 +1,58 @@
 package com.rezzedup.opguard;
 
+import com.rezzedup.opguard.api.OpGuardAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.SimplePluginManager;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.File;
+import java.net.URL;
 
 public class PluginStackChecker
 {
     private final StackTraceElement[] stack;
     
     private Plugin plugin = null;
+    private StackTraceElement element = null;
     
-    public PluginStackChecker()
+    public PluginStackChecker(OpGuardAPI api)
     {
-        stack = Thread.currentThread().getStackTrace();
-        check();
+        this.stack = Thread.currentThread().getStackTrace();
+        
+        for (StackTraceElement element : stack)
+        {
+            try
+            {
+                Plugin plugin = getPluginByClass(Class.forName(element.getClassName()));
+            
+                if (plugin != null && plugin != api.getPlugin())
+                {
+                    this.plugin = plugin;
+                    this.element = element;
+                    break;
+                }
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+    
+    private Plugin getPluginByClass(Class<?> clazz)
+    {
+        ClassLoader loader = clazz.getClassLoader();
+        
+        synchronized (Bukkit.getPluginManager())
+        {
+            for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
+            {
+                if (plugin.getClass().getClassLoader() == loader)
+                {
+                    return plugin;
+                }
+            }
+        }
+        return null;
     }
     
     public boolean foundPlugin()
@@ -29,60 +65,31 @@ public class PluginStackChecker
         return plugin;
     }
     
-    private void check()
+    public StackTraceElement[] getStackTrace()
     {
-        Map<String, Plugin> plugins = getPluginPackageMap();
-        
-        for (StackTraceElement element : stack)
-        {
-            String pack = getPackage(element.getClassName());
-            
-            if (pack.startsWith("net.minecraft") || pack.startsWith("org.bukkit") || pack.startsWith("com.rezzedup.opguard"))
-            {
-                continue;
-            }
-            
-            for (String pluginPackage : plugins.keySet())
-            {
-                if (pack.startsWith(pluginPackage))
-                {
-                    plugin = plugins.get(pluginPackage);
-                    return;
-                }
-            }
-        }
+        return stack;
     }
     
-    // plugin.package.name -> Plugin
-    private Map<String, Plugin> getPluginPackageMap()
+    public StackTraceElement getPluginStackElement()
     {
-        SimplePluginManager pluginManager = (SimplePluginManager) Bukkit.getPluginManager();
-        Plugin[] plugins = pluginManager.getPlugins();
-    
-        Map<String, Plugin> packages = new LinkedHashMap<>();
-    
-        for (Plugin plugin : plugins)
-        {
-            packages.put(getPackage(plugin.getClass()), plugin);
-        }
-        
-        return packages;
+        return element;
     }
     
-    private String getPackage(Class clazz)
+    public void testJarFile()
     {
-        try
-        {
-            return getPackage(clazz.getCanonicalName());
-        }
-        catch (NullPointerException e)
-        {
-            return "null";
-        }
+        Messenger.broadcast("Plugin's JAR file: " + getPluginJar().getFile());
     }
     
-    private String getPackage(String from)
+    public URL getPluginJar()
     {
-        return from.replaceAll("/\\.[$a-z0-9_]*$/i", "");
+        Class clazz = plugin.getClass();
+        return clazz.getProtectionDomain().getCodeSource().getLocation();
+    }
+    
+    public boolean renameJarFile()
+    {
+        File current = new File(getPluginJar().getFile());
+        File replace = new File(current.toString() + ".opguard-disabled");
+        return current.renameTo(replace);
     }
 }

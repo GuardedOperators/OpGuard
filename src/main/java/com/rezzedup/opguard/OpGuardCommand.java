@@ -41,6 +41,12 @@ public class OpGuardCommand implements ExecutableCommand
         
         List<String> args = Arrays.asList(Arrays.copyOfRange(cmd, 1, cmd.length));
         
+        if (config.isLocked() && !args.get(0).equalsIgnoreCase("list"))
+        {
+            Messenger.send(sender, "&cOpGuard (&4&lLock&c):&f OpGuard is currently locked.");
+            Messenger.send(sender, "&rTo unlock, set &6lock&r to &e&nfalse&r in the config and &6restart&r the server.");
+        }
+        
         switch (args.get(0).toLowerCase())
         {
             case "op":
@@ -55,19 +61,13 @@ public class OpGuardCommand implements ExecutableCommand
                 verifier.getVerifiedOperators().forEach(o -> names.add(o.getName()));
                 
                 Messenger.send(sender, "&6(&e&lVerified Operators&6) &fTotal: &6" + names.size());
-                
-                if (names.size() <= 0)
-                {
-                    names.add("No verified operators.");
-                }
-                
+                if (names.size() <= 0) { names.add("No verified operators."); }
                 Messenger.send(sender, "&6" + String.join(", ", names));
                 break;
                 
             case "password":
                 setPassword(sender, args);
                 break;
-                
             case "reset":
                 resetPassword(sender, args);
                 break;

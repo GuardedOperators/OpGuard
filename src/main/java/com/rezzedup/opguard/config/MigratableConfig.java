@@ -93,6 +93,12 @@ public class MigratableConfig extends BaseConfig implements OpGuardConfig
     }
     
     @Override
+    public boolean canRenameOtherPlugins()
+    {
+        return canDisableOtherPlugins() && config.getBoolean("rename-malicious-plugins-when-caught");
+    }
+    
+    @Override
     public boolean canShutDownOnDisable()
     {
         return config.getBoolean("shutdown-on-disable");
