@@ -75,11 +75,6 @@ public class PluginStackChecker
         return element;
     }
     
-    public void testJarFile()
-    {
-        Messenger.broadcast("Plugin's JAR file: " + getPluginJar().getFile());
-    }
-    
     public URL getPluginJar()
     {
         Class clazz = plugin.getClass();
