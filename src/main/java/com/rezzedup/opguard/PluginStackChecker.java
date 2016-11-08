@@ -33,7 +33,7 @@ public class PluginStackChecker
             }
             catch (ClassNotFoundException e)
             {
-                throw new RuntimeException(e);
+                e.printStackTrace(); //throw new RuntimeException(e);
             }
         }
     }

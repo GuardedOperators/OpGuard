@@ -83,7 +83,7 @@ public class ConfigurationTemplate
                 {
                     value = option;
                     
-                    if (config.contains(option, true))
+                    if (config.contains(option))
                     {
                         value = config.getString(option);
                         break;
