@@ -35,8 +35,7 @@ public class GuardedPlayer extends WrappedPlayer
     
         if (value && stack.foundPlugin())
         {
-            Plugin plugin = stack.getPlugin();
-            String name = plugin.getName();
+            String name = stack.getPlugin().getName();
             
             Context context = new Context(api)
                 .pluginAttempt()
@@ -44,30 +43,7 @@ public class GuardedPlayer extends WrappedPlayer
                 .warning("The plugin <!>" + name + "&f tried giving op to <!>" + getName());
             
             api.warn(context).log(context);
-            
-            if (api.getConfig().canDisableOtherPlugins())
-            {
-                Bukkit.getPluginManager().disablePlugin(plugin);
-                
-                context = context.copy().warning
-                (
-                    "Disabled the plugin &7" + name + "&f. Please remove it from the server as soon as possible."
-                );
-                
-                api.warn(context).log(context);
-                
-                if (api.getConfig().canRenameOtherPlugins())
-                {
-                    if (stack.renameJarFile())
-                    {
-                        Messenger.send("[OpGuard] &fRenamed " + name + " plugin jar file to prevent re-enabling.");
-                    }
-                    else 
-                    {
-                        Messenger.send("[Opguard] &fUnable to rename " + name + " plugin jar file.");
-                    }
-                }
-            }
+            stack.disablePlugin(api, context);
         }
         else
         {

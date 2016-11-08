@@ -1,6 +1,7 @@
 package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.api.OpGuardAPI;
+import com.rezzedup.opguard.api.config.OpGuardConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
@@ -75,16 +76,55 @@ public class PluginStackChecker
         return element;
     }
     
-    public URL getPluginJar()
+    public File getPluginJar()
     {
         Class clazz = plugin.getClass();
-        return clazz.getProtectionDomain().getCodeSource().getLocation();
+        return new File(clazz.getProtectionDomain().getCodeSource().getLocation().getFile());
     }
     
-    public boolean renameJarFile()
+    private boolean renameJarFile()
     {
-        File current = new File(getPluginJar().getFile());
-        File replace = new File(current.toString() + ".opguard-disabled");
+        File current = getPluginJar();
+        String path = current.toString() + ".opguard-disabled";
+        File replace = new File(path);
+        int iteration = 0;
+        
+        while (replace.exists())
+        {
+            replace = new File(path + iteration++);
+        }
         return current.renameTo(replace);
+    }
+    
+    public void disablePlugin(OpGuardAPI api, Context context)
+    {
+        if (!foundPlugin())
+        {
+            throw new IllegalStateException("No plugin to disable.");
+        }
+    
+        OpGuardConfig config = api.getConfig();
+        String name = plugin.getName();
+        String jar = getPluginJar().getName();
+    
+        if (config.canDisableOtherPlugins())
+        {
+            Bukkit.getPluginManager().disablePlugin(plugin);
+            context.okay("Disabled plugin &7" + name + "&f. Remove it from the server immediately.");
+            api.warn(context).log(context);
+        
+            if (config.canRenameOtherPlugins())
+            {
+                if (renameJarFile())
+                {
+                    context.okay("Renamed plugin jar &7" + jar + "&f to prevent re-enabling.");
+                }
+                else
+                {
+                    context.warning("Unable to rename plugin jar &7" + jar);
+                }
+                api.warn(context).log(context);
+            }
+        }
     }
 }

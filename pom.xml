@@ -12,7 +12,7 @@
 
     <properties>
         <author>RezzedUp</author>
-        <loadbefore>[Vault, Essentials, EssentialsX, PlugMan, PermissionsEx, GroupManager]</loadbefore>
+        <loadbefore>[ProtocolLib, Vault, Essentials, EssentialsX, PlugMan, PermissionsEx, GroupManager]</loadbefore>
     </properties>
 
     <repositories>
