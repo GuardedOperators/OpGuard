@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
-import java.net.URL;
 
 public class PluginStackChecker
 {

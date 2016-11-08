@@ -46,6 +46,10 @@ public class DataStorage extends BaseConfig implements SavableConfig
         }
     }
     
+    // Don't ever reload...
+    @Override
+    public void reload() {}
+    
     @Override
     public boolean save()
     {

@@ -29,7 +29,7 @@ public class OpGuardCommand implements ExecutableCommand
     
     public void execute(CommandSender sender, String[] cmd)
     {
-        if (!verifier.hasPassword() && config.canSendSecurityWarnings())
+        if (!verifier.hasPassword() && config.canSendSecurityWarnings() && !(cmd.length >= 2 && cmd[1].equalsIgnoreCase("password")))
         {
             api.warn(sender, new Context(api).securityRisk("OpGuard is insecure without a password."));
         }
@@ -75,10 +75,7 @@ public class OpGuardCommand implements ExecutableCommand
                 break;
                 
             case "reload":
-                Context status = new Context(api).okay(sender.getName() + " reloaded OpGuard's config.");
-                api.warn(status).log(status);
-                
-                // TODO: reload config
+                reload(sender, args);
                 break;
                 
             default:
@@ -179,6 +176,7 @@ public class OpGuardCommand implements ExecutableCommand
         if (args.size() != 2)
         {
             Messenger.send(sender, "&c&oCorrect Usage:&f /opguard password <new-password>");
+            if (args.size() > 2) { Messenger.send(sender, "&8&o(Don't include spaces)"); }
             return;
         }
         verifier.setPassword(new OpPassword(args.get(1)));
@@ -223,9 +221,37 @@ public class OpGuardCommand implements ExecutableCommand
     {
         if (!config.canManagePasswordInGame() && sender instanceof Player)
         {
-            Messenger.send(sender, "&cOnly console may manage the password.");
+            Messenger.send(sender, "&cError: &fOnly console may manage the password.");
             return true;
         }
         return false;
+    }
+    
+    private void reload(CommandSender sender, List<String> args)
+    {
+        Context context = new Context(api).attemptFrom(sender);
+        String name = sender.getName();
+        
+        if (verifier.hasPassword())
+        {
+            if (args.size() != 2)
+            {
+                Messenger.send(sender, "&c&oCorrect Usage:&f /opguard reload <current-password>");
+                return;
+            }
+            
+            Password password = new OpPassword(args.get(1));
+            
+            if (!verifier.check(password))
+            {
+                context.incorrectlyUsedOpGuard().warning(name + " attempted to reload OpGuard's config using an incorrect password.");
+                api.warn(context).log(context);
+                return;
+            }
+        }
+        
+        api.getConfig().reload();
+        context.okay(name + " reloaded OpGuard's config.");
+        api.warn(context).log(context);
     }
 }
