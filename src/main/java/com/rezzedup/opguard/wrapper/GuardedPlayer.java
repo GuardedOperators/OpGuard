@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.lang.reflect.Field;
 
-public class GuardedPlayer extends WrappedPlayer
+public final class GuardedPlayer extends WrappedPlayer
 {
     private final OpGuardAPI api;
     
@@ -37,7 +37,7 @@ public class GuardedPlayer extends WrappedPlayer
             Context context = new Context(api)
                 .pluginAttempt()
                 .setOp()
-                .warning("The plugin <!>" + name + "&f tried giving op to <!>" + getName());
+                .warning("The plugin <!>" + name + "&f tried to op <!>" + getName());
             
             api.warn(context).log(context);
             stack.disablePlugin(api, context);

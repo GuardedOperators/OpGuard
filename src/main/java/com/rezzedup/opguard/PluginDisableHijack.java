@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 
-public class PluginDisableHijack implements Listener
+public final class PluginDisableHijack implements Listener
 {    
     private final OpGuardAPI api;
     

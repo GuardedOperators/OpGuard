@@ -7,7 +7,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 
-public class PluginStackChecker
+public final class PluginStackChecker
 {
     private final StackTraceElement[] stack;
     

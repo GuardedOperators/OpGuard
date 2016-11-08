@@ -8,7 +8,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Set;
 
-public class VerifyOpListTask extends BukkitRunnable
+public final class VerifyOpListTask extends BukkitRunnable
 {
     private final OpGuardAPI api;
     

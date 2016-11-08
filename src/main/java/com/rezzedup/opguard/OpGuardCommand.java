@@ -14,7 +14,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class OpGuardCommand implements ExecutableCommand
+public final class OpGuardCommand implements ExecutableCommand
 {
     private final OpGuardAPI api;
     private final OpGuardConfig config;

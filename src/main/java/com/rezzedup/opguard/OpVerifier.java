@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class OpVerifier implements Verifier
+public final class OpVerifier implements Verifier
 {
     private static final class OpListWrapper
     {
@@ -29,8 +29,6 @@ public class OpVerifier implements Verifier
         {
             return new LinkedHashSet<>(verified.values());
         }
-        
-        
     }
     
     private static final class PasswordWrapper

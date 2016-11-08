@@ -8,7 +8,7 @@ import com.rezzedup.opguard.api.message.Warnable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
-public class Context implements Loggable, Warnable, Punishable
+public final class Context implements Loggable, Warnable, Punishable
 {
     // Command
     

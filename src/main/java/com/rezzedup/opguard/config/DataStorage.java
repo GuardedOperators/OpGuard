@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DataStorage extends BaseConfig implements SavableConfig
+public final class DataStorage extends BaseConfig implements SavableConfig
 {
     private final OpGuardAPI api;
     

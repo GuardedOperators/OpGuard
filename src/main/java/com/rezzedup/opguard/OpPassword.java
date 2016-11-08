@@ -6,7 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class OpPassword implements Password
+public final class OpPassword implements Password
 {
     private String hash;
     

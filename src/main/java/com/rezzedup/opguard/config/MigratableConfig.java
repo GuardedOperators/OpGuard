@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class MigratableConfig extends BaseConfig implements OpGuardConfig
+public final class MigratableConfig extends BaseConfig implements OpGuardConfig
 {
     public MigratableConfig(Plugin plugin)
     {
