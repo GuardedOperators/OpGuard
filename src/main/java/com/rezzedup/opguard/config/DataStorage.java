@@ -1,7 +1,6 @@
 package com.rezzedup.opguard.config;
 
 import com.rezzedup.opguard.Context;
-import com.rezzedup.opguard.Messenger;
 import com.rezzedup.opguard.api.OpGuardAPI;
 import com.rezzedup.opguard.api.Verifier;
 import com.rezzedup.opguard.api.config.SavableConfig;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 public final class DataStorage extends BaseConfig implements SavableConfig
 {
@@ -24,11 +22,18 @@ public final class DataStorage extends BaseConfig implements SavableConfig
     {
         super(api.getPlugin(), ".opdata");
         this.api = api;
+        load(); // Second load() call so that API instance is not null.
     }
     
     @Override
     protected void load()
     {
+        // Prevent running without API instance.
+        if (api == null)
+        {
+            return;
+        }
+        
         boolean firstLoad = false;
         
         if (!file.exists())
@@ -47,20 +52,22 @@ public final class DataStorage extends BaseConfig implements SavableConfig
         {
             FileConfiguration old = plugin.getConfig();
             Context context = new Context(api);
-    
+            
             if (old.contains("verified") || old.contains("password.hash"))
             {
-                config.set("hash", old.getString("password.hash"));
+                // Transferring old data
+                config.set("hash", old.getString("password.hash")); // "old" hash can potentially be null, which is okay.
                 config.set("verified", (old.contains("verified")) ? old.getStringList("verified") : null);
                 context.okay("Migrating old data to OpGuard's new data storage format...");
             }
             else 
             {
+                // Fresh install: no old data to transfer
                 config.set("verified", getUUIDs(Bukkit.getOperators()));
                 context.okay("Loading for the first time... Adding all existing operators to the verified list.");
             }
             api.log(context).warn(context);
-            save(false);
+            save(false); // Saving the new data file; must be in sync to properly save inside OpGuard's onEnable() method.
         }
     }
     
