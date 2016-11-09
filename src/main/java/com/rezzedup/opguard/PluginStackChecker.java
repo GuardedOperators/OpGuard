@@ -31,10 +31,7 @@ public final class PluginStackChecker
                     break;
                 }
             }
-            catch (ClassNotFoundException e)
-            {
-                e.printStackTrace(); //throw new RuntimeException(e);
-            }
+            catch (ClassNotFoundException e) {} // Don't do anything: just keep going.
         }
     }
     

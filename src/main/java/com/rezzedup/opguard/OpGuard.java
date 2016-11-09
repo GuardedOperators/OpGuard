@@ -24,6 +24,8 @@ public final class OpGuard extends JavaPlugin
     @Override
     public void onEnable()
     {
+        getDataFolder().mkdir();
+        
         OpGuardAPI api = new GuardedDependencies(this);
         long interval = api.getConfig().getOpListInspectionInterval();
         
