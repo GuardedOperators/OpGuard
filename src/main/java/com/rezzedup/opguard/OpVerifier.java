@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public final class OpVerifier implements Verifier
+final class OpVerifier implements Verifier
 {
     private static final class OpListWrapper
     {
@@ -95,11 +95,7 @@ public final class OpVerifier implements Verifier
     @Override
     public boolean check(Password password)
     {
-        if (!hasPassword())
-        {
-            return true;
-        }
-        return PasswordWrapper.password.compare(password);
+        return !hasPassword() || PasswordWrapper.password.compare(password);
     }
     
     @Override

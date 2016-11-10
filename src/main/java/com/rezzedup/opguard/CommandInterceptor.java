@@ -10,7 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
-public final class CommandInterceptor implements Listener
+final class CommandInterceptor implements Listener
 {
     private final OpGuardAPI api;
     
@@ -38,7 +38,7 @@ public final class CommandInterceptor implements Listener
         }
     }
     
-    public boolean cancel(CommandSender sender, String command, Event event)
+    private boolean cancel(CommandSender sender, String command, Event event)
     {
         String[] cmd = command.split(" ");
         String base = cmd[0].toLowerCase();

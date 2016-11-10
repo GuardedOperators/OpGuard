@@ -19,7 +19,7 @@ public final class GuardedPlayer extends WrappedPlayer
 {
     private final OpGuardAPI api;
     
-    public GuardedPlayer(Player implementation, OpGuardAPI api)
+    private GuardedPlayer(Player implementation, OpGuardAPI api)
     {
         super(implementation);
         this.api = api;

@@ -12,26 +12,21 @@ import org.bukkit.plugin.Plugin;
 
 public class Log
 {
-    protected final Plugin plugin;
-    protected final File file;
+    private final Plugin plugin;
+    private final File file;
     
     public Log(Plugin plugin, String name)
     {
-        plugin.getDataFolder().mkdirs();
-        
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), name + ".log");
         
-        if (!this.file.exists())
+        try
         {
-            try
-            {
-                this.file.createNewFile();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            this.file.createNewFile();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
     }
     

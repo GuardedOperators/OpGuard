@@ -14,7 +14,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public final class OpGuardCommand implements ExecutableCommand
+final class OpGuardCommand implements ExecutableCommand
 {
     private final OpGuardAPI api;
     private final OpGuardConfig config;
@@ -59,7 +59,7 @@ public final class OpGuardCommand implements ExecutableCommand
                 break;
                 
             case "list":
-                List<String> names = new ArrayList<String>();
+                List<String> names = new ArrayList<>();
                 verifier.getVerifiedOperators().forEach(o -> names.add(o.getName()));
                 
                 Messenger.send(sender, "&6(&e&lVerified Operators&6) &fTotal: &6" + names.size());

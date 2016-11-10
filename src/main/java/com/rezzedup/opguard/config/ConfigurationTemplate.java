@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ConfigurationTemplate
+class ConfigurationTemplate
 {
     private final BufferedReader reader;
     private List<String> content;

@@ -20,7 +20,7 @@ public final class OpPassword implements Password
         this(plaintext, false);
     }
     
-    public OpPassword(String input, boolean isHash)
+    OpPassword(String input, boolean isHash)
     {
         if (isHash)
         {

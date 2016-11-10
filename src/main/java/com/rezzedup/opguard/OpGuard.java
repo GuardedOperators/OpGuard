@@ -57,17 +57,17 @@ public final class OpGuard extends JavaPlugin
     private static final class GuardedDependencies implements OpGuardAPI
     {
         private final OpGuard instance;
+        private final Log log;
         private final OpGuardConfig config;
         private final Verifier verifier;
-        private final Log log;
         private final ExecutableCommand command;
     
         private GuardedDependencies(OpGuard instance) 
         {
             this.instance = instance;
+            this.log = new Log(instance, "guard");
             this.config = new MigratableConfig(instance);
             this.verifier = new OpVerifier(new DataStorage(this));
-            this.log = new Log(instance, "guard");
             this.command = new OpGuardCommand(this);
             
             new GuardedPlayer.EventInjector(this);

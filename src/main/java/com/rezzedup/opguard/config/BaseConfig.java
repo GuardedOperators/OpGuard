@@ -9,13 +9,13 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 
-public abstract class BaseConfig implements Config
+abstract class BaseConfig implements Config
 {
     protected final Plugin plugin;
     protected final File file;
     protected FileConfiguration config;
     
-    public BaseConfig(Plugin plugin, String filename)
+    BaseConfig(Plugin plugin, String filename)
     {
         this.plugin = plugin;
         
@@ -33,7 +33,7 @@ public abstract class BaseConfig implements Config
         load();
     }
     
-    public BaseConfig(Plugin plugin)
+    BaseConfig(Plugin plugin)
     {
         this(plugin, null);
     }
