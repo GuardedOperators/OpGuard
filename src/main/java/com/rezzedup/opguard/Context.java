@@ -175,7 +175,7 @@ public final class Context implements Loggable, Warnable, Punishable
         {
             return config.canLogPluginAttempts();
         }
-        return false;
+        return true;
     }
     
     @Override

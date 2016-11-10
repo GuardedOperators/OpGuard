@@ -29,7 +29,10 @@ final class VerifyOpListTask extends BukkitRunnable
             {
                 String name = operator.getName();
                 operator.setOp(false);
-                Context context = new Context(api).pluginAttempt().setOp().warning("A plugin attempted to op <!>" + name);
+                Context context = new Context(api).pluginAttempt().setOp().warning
+                (
+                    "An unknown plugin attempted to op <!>" + name + "&f. A recently-installed plugin may be to blame."
+                );
                 api.warn(context).log(context).punish(context, name);
             }
         }
