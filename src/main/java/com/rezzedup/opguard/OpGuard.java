@@ -73,6 +73,7 @@ public final class OpGuard extends JavaPlugin
             new GuardedPlayer.EventInjector(this);
             new CommandInterceptor(this);
             new PluginDisableHijack(this);
+            new PermissionChecker(this);
         }
     
         @Override

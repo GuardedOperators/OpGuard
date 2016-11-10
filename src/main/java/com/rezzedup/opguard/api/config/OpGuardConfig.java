@@ -6,6 +6,8 @@ public interface OpGuardConfig extends Config
 {
     long getOpListInspectionInterval();
     
+    boolean canCheckPermissions();
+    
     boolean canOnlyOpIfOnline();
     
     boolean canManagePasswordInGame();

@@ -10,10 +10,11 @@ import org.bukkit.command.ConsoleCommandSender;
 
 public final class Context implements Loggable, Warnable, Punishable
 {
-    // Command
+    // Command / Cause
     
     private boolean op = false;
     private boolean opguard = false;
+    private boolean invalidPermission = false;
     
     // Source
     
@@ -67,9 +68,9 @@ public final class Context implements Loggable, Warnable, Punishable
         }
     }
     
-    private void resetCommand()
+    private void resetCause()
     {
-        op = opguard = false;
+        op = opguard = invalidPermission = false;
     }
     
     private void resetSource()
@@ -84,15 +85,22 @@ public final class Context implements Loggable, Warnable, Punishable
     
     public Context setOp()
     {
-        resetCommand();
+        resetCause();
         op = true;
         return this;
     }
     
     public Context incorrectlyUsedOpGuard()
     {
-        resetCommand();
+        resetCause();
         opguard = true;
+        return this;
+    }
+    
+    public Context hasInvalidPermissions()
+    {
+        resetCause();
+        invalidPermission = true;
         return this;
     }
     
@@ -233,6 +241,10 @@ public final class Context implements Loggable, Warnable, Punishable
             {
                 return config.canPunishConsoleOpGuardAttempts();
             }
+        }
+        if (invalidPermission)
+        {
+            return config.canCheckPermissions();
         }
         return false;
     }

@@ -19,6 +19,11 @@
 # Default: 4
 inspection-interval: @(inspection-interval | 4)
 
+# If true, OpGuard will check for players with the '*' permission node (all permissions).
+# If a player has '*' and isn't a verified operator, OpGuard will punish them.
+# Default: true
+check-permissions: true
+
 # If true, OpGuard will only op players if they're online.
 # Default: true
 only-op-if-online: @(only-op-if-online | true)

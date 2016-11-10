@@ -75,6 +75,12 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     }
     
     @Override
+    public boolean canCheckPermissions()
+    {
+        return config.getBoolean("check-permissions");
+    }
+    
+    @Override
     public boolean canOnlyOpIfOnline()
     {
         return config.getBoolean("only-op-if-online");
