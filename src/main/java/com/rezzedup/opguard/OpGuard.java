@@ -175,7 +175,7 @@ public final class OpGuard extends JavaPlugin
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
             }
     
-            context.okay("Punished &7" + username + "&f for attempting to gain op.");
+            context.okay("Punished &7" + username + "&f for attempting to gain op");
             warn(context).log(context);
         }
     }

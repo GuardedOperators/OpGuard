@@ -61,7 +61,7 @@ public final class DataStorage extends BaseConfig implements SavableConfig
             {
                 // Fresh install: no old data to transfer
                 config.set("verified", getUUIDs(Bukkit.getOperators()));
-                context.okay("Loading for the first time... Adding all existing operators to the verified list.");
+                context.okay("Loading for the first time... Adding all existing operators to the verified list");
             }
             api.warn(context).log(context);
             save(false); // Saving the new data file; must be in sync to properly save inside OpGuard's onEnable() method.

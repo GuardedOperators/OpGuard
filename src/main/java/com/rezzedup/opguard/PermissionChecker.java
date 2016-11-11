@@ -35,18 +35,15 @@ public class PermissionChecker implements Listener
     
     public void check(PlayerEvent event)
     {
-        if (!api.getConfig().canCheckPermissions())
-        {
-            return;
-        }
+        if (!api.getConfig().canCheckPermissions()) { return; }
         
         Player player = event.getPlayer();
         
         if (player.hasPermission(permission) && !api.getVerifier().isVerified(player.getUniqueId()))
         {
-            if (event instanceof Cancellable)
-            {
-                ((Cancellable) event).setCancelled(true);
+            if (event instanceof Cancellable) 
+            { 
+                ((Cancellable) event).setCancelled(true); 
             }
             
             String name = player.getName();
@@ -56,7 +53,7 @@ public class PermissionChecker implements Listener
                 .hasInvalidPermissions()
                 .warning
                 (
-                    "Player <!>" + name + "&f has access to all permissions but isn't a verified operator."
+                    "Player <!>" + name + "&f has access to all permissions but isn't a verified operator"
                 );
             
             api.warn(context).log(context).punish(context, name);

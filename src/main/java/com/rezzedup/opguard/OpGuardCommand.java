@@ -133,7 +133,7 @@ final class OpGuardCommand implements ExecutableCommand
             if (verifier.op(player, password))
             {
                 context.okay(sender.getName() + " set op for &7" + name);
-                Messenger.send(sender, "&aSuccess: &f" + name + " is now a verified operator.");
+                Messenger.send(sender, "&aSuccess: &f" + name + " is now a verified operator");
             }
             else 
             {
