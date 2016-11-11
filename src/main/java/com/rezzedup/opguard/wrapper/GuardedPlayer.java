@@ -37,11 +37,11 @@ public final class GuardedPlayer extends WrappedPlayer
             
             if (value)
             {
-                context.warning("The plugin <!>" + name + "&f tried to op <!>" + getName());
+                context.warning("The plugin <!>" + name + "&f attempted to op <!>" + getName());
             }
             else 
             {
-                context.warning("The plugin <!>" + name + "&f tried to remove op from &7" + getName());
+                context.warning("The plugin <!>" + name + "&f attempted to remove op from &7" + getName());
             }
     
             api.warn(context).log(context);
