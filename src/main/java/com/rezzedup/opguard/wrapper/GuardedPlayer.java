@@ -30,17 +30,27 @@ public final class GuardedPlayer extends WrappedPlayer
     {
         PluginStackChecker stack = new PluginStackChecker(api);
     
-        if (value && stack.foundPlugin())
+        if (stack.foundPlugin())
         {
             String name = stack.getPlugin().getName();
+            Context context = new Context(api).pluginAttempt().setOp();
             
-            Context context = new Context(api)
-                .pluginAttempt()
-                .setOp()
-                .warning("The plugin <!>" + name + "&f tried to op <!>" + getName());
+            if (value)
+            {
+                context.warning("The plugin <!>" + name + "&f tried to op <!>" + getName());
+            }
+            else 
+            {
+                context.warning("The plugin <!>" + name + "&f tried to remove op from &7" + getName());
+            }
+    
+            api.warn(context).log(context);
             
-            api.warn(context).log(context).punish(context, getName());
-            stack.disablePlugin(api, context);
+            if (value && !api.getVerifier().isVerified(getUniqueId()))
+            {
+                api.punish(context, getName());
+                stack.disablePlugin(api, context);
+            }
         }
         else
         {
