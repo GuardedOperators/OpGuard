@@ -106,14 +106,14 @@ public final class PluginStackChecker
         if (config.canDisableOtherPlugins())
         {
             Bukkit.getPluginManager().disablePlugin(plugin);
-            context.okay("Disabled plugin &7" + name + "&f. Remove it from the server immediately.");
+            context.okay("Disabled plugin &7" + name + "&f. Remove it from the server immediately");
             api.warn(context).log(context);
         
             if (config.canRenameOtherPlugins())
             {
                 if (renameJarFile())
                 {
-                    context.okay("Renamed plugin jar &7" + jar + "&f to prevent re-enabling.");
+                    context.okay("Renamed plugin jar &7" + jar + "&f to prevent re-enabling");
                 }
                 else
                 {

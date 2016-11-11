@@ -12,6 +12,7 @@ import com.rezzedup.opguard.api.Verifier;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 final class OpGuardCommand implements ExecutableCommand
@@ -31,7 +32,7 @@ final class OpGuardCommand implements ExecutableCommand
     {
         if (!verifier.hasPassword() && config.canSendSecurityWarnings() && !(cmd.length >= 2 && cmd[1].equalsIgnoreCase("password")))
         {
-            api.warn(sender, new Context(api).securityRisk("OpGuard is insecure without a password."));
+            api.warn(sender, new Context(api).securityRisk("OpGuard is insecure without a password"));
         }
         
         if (cmd.length < 2)
@@ -44,8 +45,8 @@ final class OpGuardCommand implements ExecutableCommand
         
         if (config.isLocked() && !args.get(0).equalsIgnoreCase("list"))
         {
-            Messenger.send(sender, "&cOpGuard (&4&lLock&c):&f OpGuard is currently locked.");
-            Messenger.send(sender, " &3&oTo unlock OpGuard, set &b&o&nlock&3 to &b&o&nfalse&3&o in the config and restart the server.");
+            Messenger.send(sender, "&cOpGuard (&4&lLock&c):&f OpGuard is currently locked");
+            Messenger.send(sender, " &3&oTo unlock OpGuard, set &b&o&nlock&3 to &b&o&nfalse&3&o in the config and restart the server");
             return;
         }
         
@@ -63,7 +64,7 @@ final class OpGuardCommand implements ExecutableCommand
                 verifier.getVerifiedOperators().forEach(o -> names.add(o.getName()));
                 
                 Messenger.send(sender, "&6(&e&lVerified Operators&6) &fTotal: &6" + names.size());
-                if (names.size() <= 0) { names.add("No verified operators."); }
+                if (names.size() <= 0) { names.add("No verified operators"); }
                 Messenger.send(sender, "&6" + String.join(", ", names));
                 break;
                 
@@ -120,11 +121,12 @@ final class OpGuardCommand implements ExecutableCommand
     
         if (player == null)
         {
-            Messenger.send(sender, "&cError:&f &7" + name + "&f is not online.");
+            Messenger.send(sender, "&cError:&f &7" + name + "&f is not online");
             return;
         }
         
         name = player.getName();
+        boolean punish = false;
         
         if (op)
         {
@@ -135,8 +137,16 @@ final class OpGuardCommand implements ExecutableCommand
             }
             else 
             {
-                context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to set op for player <!>" + name + "&f using an incorrect password.");
-                Messenger.send(sender, "&cError:&f Incorrect password.");
+                context.incorrectlyUsedOpGuard().warning
+                (
+                    sender.getName() + " attempted to set op for <!>" + name + "&f using an incorrect password"
+                );
+                Messenger.send(sender, "&cError:&f Incorrect password");
+                
+                if (sender instanceof ConsoleCommandSender)
+                {
+                    punish = config.canPunishConsoleOpGuardAttempts();
+                }
             }
         }
         else
@@ -144,16 +154,24 @@ final class OpGuardCommand implements ExecutableCommand
             if (verifier.deop(player, password))
             {
                 context.okay(sender.getName() + " removed op from &7" + player.getName());
-                Messenger.send(sender, "&aSuccess: &f" + name + " is no longer a verified operator.");
+                Messenger.send(sender, "&aSuccess: &f" + name + " is no longer a verified operator");
             }
             else 
             {
-                context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to remove op from player <!>" + name + "&f using an incorrect password.");
-                Messenger.send(sender, "&cError:&f Incorrect password.");
+                context.incorrectlyUsedOpGuard().warning
+                (
+                    sender.getName() + " attempted to remove op from <!>" + name + "&f using an incorrect password"
+                );
+                Messenger.send(sender, "&cError:&f Incorrect password");
             }
         }
         
         api.warn(context).log(context);
+        
+        if (punish)
+        {
+            api.punish(context, name);
+        }
     }
     
     @SuppressWarnings("deprecation")
@@ -170,7 +188,7 @@ final class OpGuardCommand implements ExecutableCommand
         }
         if (verifier.hasPassword())
         {
-            Messenger.send(sender, "&cPassword is already set! Reset the password to modify.");
+            Messenger.send(sender, "&cError:&f Password is already set. Reset the password to modify");
             return;
         }
         if (args.size() != 2)
@@ -180,7 +198,7 @@ final class OpGuardCommand implements ExecutableCommand
             return;
         }
         verifier.setPassword(new OpPassword(args.get(1)));
-        Context context = new Context(api).attemptFrom(sender).okay(sender.getName() + " set OpGuard's password.");
+        Context context = new Context(api).attemptFrom(sender).okay(sender.getName() + " set OpGuard's password");
         api.warn(context).log(context);
     }
     
@@ -205,13 +223,13 @@ final class OpGuardCommand implements ExecutableCommand
         
         if (verifier.removePassword(new OpPassword(args.get(1))))
         {
-            context.okay(sender.getName() + " removed Opguard's password.");
-            Messenger.send(sender, "&aSuccess: &fRemoved OpGuard's password.");
+            context.okay(sender.getName() + " removed Opguard's password");
+            Messenger.send(sender, "&aSuccess: &fRemoved OpGuard's password");
         }
         else 
         {
-            context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to remove OpGuard's password.");
-            Messenger.send(sender, "&c&oError:&f Incorrect password.");
+            context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to remove OpGuard's password");
+            Messenger.send(sender, "&c&oError:&f Incorrect password");
         }
 
         api.warn(context).log(context);
@@ -221,7 +239,7 @@ final class OpGuardCommand implements ExecutableCommand
     {
         if (!config.canManagePasswordInGame() && sender instanceof Player)
         {
-            Messenger.send(sender, "&cError: &fOnly console may manage the password.");
+            Messenger.send(sender, "&cError: &fOnly console may manage the password");
             return true;
         }
         return false;
@@ -244,7 +262,7 @@ final class OpGuardCommand implements ExecutableCommand
             
             if (!verifier.check(password))
             {
-                context.incorrectlyUsedOpGuard().warning(name + " attempted to reload OpGuard's config using an incorrect password.");
+                context.incorrectlyUsedOpGuard().warning(name + " attempted to reload OpGuard's config using an incorrect password");
                 api.warn(context).log(context);
                 return;
             }

@@ -90,7 +90,7 @@ final class CommandInterceptor implements Listener
             }
             else
             {
-                context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to access OpGuard.");
+                context.incorrectlyUsedOpGuard().warning(sender.getName() + " attempted to access OpGuard");
                 api.warn(context).log(context);
             }
         }
