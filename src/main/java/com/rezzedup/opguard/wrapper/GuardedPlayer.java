@@ -39,7 +39,7 @@ public final class GuardedPlayer extends WrappedPlayer
                 .setOp()
                 .warning("The plugin <!>" + name + "&f tried to op <!>" + getName());
             
-            api.warn(context).log(context);
+            api.warn(context).log(context).punish(context, getName());
             stack.disablePlugin(api, context);
         }
         else
