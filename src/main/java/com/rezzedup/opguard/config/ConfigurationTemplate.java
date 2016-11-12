@@ -1,5 +1,6 @@
 package com.rezzedup.opguard.config;
 
+import com.rezzedup.opguard.Messenger;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.BufferedReader;
@@ -82,11 +83,11 @@ class ConfigurationTemplate
                     boolean list = option.endsWith("[]");
                     value = (list) ? option.substring(0, option.length() - 2) : option;
                     
-                    if (config.contains(option))
+                    if (config.get(value) != null)
                     {
                         if (!list)
                         {
-                            value = config.getString(option);
+                            value = sanitize(config.getString(option));
                             break;
                         }
                         
@@ -97,12 +98,14 @@ class ConfigurationTemplate
                         {
                             for (String item : items)
                             {
-                                lines.add(start + item);
+                                lines.add(start + sanitize(item));
                             }
                             lineIsAdded = true;
                             break;
                         }
                     }
+                    
+                    Messenger.send("&cPrevious config does not contain option:&f " + value + "&r from " + matcher.group(0));
                 }
                 
                 line = line.replaceAll(regex, value);
@@ -117,5 +120,16 @@ class ConfigurationTemplate
         reader.close();
         
         return lines;
+    }
+    
+    private String sanitize(String value)
+    {
+        if (value.contains("@") || value.contains("&") || value.contains("#") || value.contains(":") || value.contains("[") || value.contains("]"))
+        {
+            value = value.replace("'", "''");
+            value = value.replace("\n", "\\n");
+            value =  "'" + value + "'";
+        }
+        return value;
     }
 }
