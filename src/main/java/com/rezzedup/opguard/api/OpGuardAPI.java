@@ -12,6 +12,8 @@ public interface OpGuardAPI
 {
     Plugin getPlugin();
     
+    public Version getVersion();
+    
     OpGuardConfig getConfig();
     
     Verifier getVerifier();

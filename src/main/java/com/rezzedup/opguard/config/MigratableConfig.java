@@ -1,5 +1,6 @@
 package com.rezzedup.opguard.config;
 
+import com.rezzedup.opguard.api.Version;
 import com.rezzedup.opguard.api.config.OpGuardConfig;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -23,8 +24,11 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     @Override
     protected void load()
     {
-        // Check version in the future.
-        if (!config.contains("version"))
+        // Old will be 0.0.0 if config version is null.
+        Version old = Version.of(config.getString("version"));
+        
+        // Update isAtLeast() whenever config requires updates.
+        if (!old.isAtLeast(3,1))
         {
             migrateConfig(config);
         }

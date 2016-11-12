@@ -2,6 +2,7 @@ package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
+import com.rezzedup.opguard.api.Version;
 import com.rezzedup.opguard.api.config.OpGuardConfig;
 import com.rezzedup.opguard.api.Verifier;
 import com.rezzedup.opguard.api.message.Loggable;
@@ -57,6 +58,7 @@ public final class OpGuard extends JavaPlugin
     private static final class GuardedDependencies implements OpGuardAPI
     {
         private final OpGuard instance;
+        private final Version version;
         private final Log log;
         private final OpGuardConfig config;
         private final Verifier verifier;
@@ -65,6 +67,7 @@ public final class OpGuard extends JavaPlugin
         private GuardedDependencies(OpGuard instance) 
         {
             this.instance = instance;
+            this.version = Version.of(instance.getDescription().getVersion());
             this.log = new Log(instance, "guard");
             this.config = new MigratableConfig(instance);
             this.verifier = new OpVerifier(new DataStorage(this));
@@ -80,6 +83,12 @@ public final class OpGuard extends JavaPlugin
         public Plugin getPlugin()
         {
             return instance;
+        }
+    
+        @Override
+        public Version getVersion()
+        {
+            return version;
         }
     
         @Override
