@@ -10,6 +10,8 @@ public interface OpGuardConfig extends Config
     
     boolean canOnlyOpIfOnline();
     
+    boolean canOnlyDeopIfOnline();
+    
     boolean canManagePasswordInGame();
     
     boolean canDisableOtherPlugins();
@@ -55,6 +57,10 @@ public interface OpGuardConfig extends Config
     boolean canPunishConsoleOpGuardAttempts();
     
     List<String> getPunishmentCommands();
+    
+    boolean shouldExemptCommands();
+    
+    List<String> getExemptCommands();
     
     boolean metricsAreEnabled();
     

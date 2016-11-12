@@ -3,6 +3,7 @@ package com.rezzedup.opguard.wrapper;
 import com.rezzedup.opguard.Context;
 import com.rezzedup.opguard.PluginStackChecker;
 import com.rezzedup.opguard.api.OpGuardAPI;
+import com.rezzedup.opguard.api.config.OpGuardConfig;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -107,6 +108,21 @@ public final class GuardedPlayer extends WrappedPlayer
         @EventHandler(priority = EventPriority.LOWEST)
         public void on(PlayerCommandPreprocessEvent event)
         {
+            OpGuardConfig config = api.getConfig();
+            
+            if (config.shouldExemptCommands())
+            {
+                String command = event.getMessage().replaceAll("^\\/| .*", "").toLowerCase();
+                
+                if (!command.matches("^((de)?op|o(g|pguard))$"))
+                {
+                    for (String exempt : config.getExemptCommands())
+                    {
+                        if (command.equalsIgnoreCase(exempt)) { return; }
+                    }
+                }
+            }
+            
             inject(event);
         }
     

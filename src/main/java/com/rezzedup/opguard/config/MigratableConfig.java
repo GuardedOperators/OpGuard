@@ -87,6 +87,12 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     }
     
     @Override
+    public boolean canOnlyDeopIfOnline()
+    {
+        return config.getBoolean("only-deop-if-online");
+    }
+    
+    @Override
     public boolean canManagePasswordInGame()
     {
         return config.getBoolean("manage-password-in-game");
@@ -222,6 +228,18 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     public List<String> getPunishmentCommands()
     {
         return config.getStringList("punishment-commands");
+    }
+    
+    @Override
+    public boolean shouldExemptCommands()
+    {
+        return config.getBoolean("enable-exempt-commands");
+    }
+    
+    @Override
+    public List<String> getExemptCommands()
+    {
+        return config.getStringList("exempt-commands");
     }
     
     @Override
