@@ -1,5 +1,4 @@
 #@ [config.yml template file] 
-#@ For reordering OpGuard 1.x and 2.x's config
 #@
 #@ Schema:
 #@ - @(<previous config.yml path> | <previous config.yml path> | ... | <default value>)
@@ -152,6 +151,19 @@ punish-console-opguard-attempts: @(punish-console-opguard-attempts | false)
 # - ban %player% Attempting to gain op
 punishment-commands:
 - @(punish.command | punishment-commands[] | ban %player% Attempting to gain op)
+
+# -------- #
+#   MISC   #
+# -------- #
+
+# If true, OpGuard will not interfere with commands in the exempt-commands list below.
+# Default: false
+enable-exempt-commands: false
+
+# A list of commands that OpGuard will not interfere with.
+# The option above must be true for these commands to be exempted.
+exempt-commands:
+- examplecommand
 
 # ----------- #
 #   METRICS   #
