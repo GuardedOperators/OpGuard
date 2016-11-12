@@ -80,22 +80,24 @@ class ConfigurationTemplate
                 
                 for (String option : options)
                 {
-                    boolean list = option.endsWith("[]");
-                    value = (list) ? option.substring(0, option.length() - 2) : option;
-                    
-                    if (config.get(value) != null)
+                    if (!option.endsWith("[]"))
                     {
-                        if (!list)
+                        if (config.contains(option))
                         {
                             value = sanitize(config.getString(option));
                             break;
                         }
-                        
-                        String start = line.replaceAll("- .*$", "") + "- "; // gets: '  - ' or '- ' etc.
-                        List<String> items = config.getStringList(option);
-                        
+                    }
+                    else
+                    {
+                        // Removing [] from option.
+                        List<String> items = config.getStringList(option.substring(0, option.length() - 2));
+    
                         if (items.size() > 0)
                         {
+                            // gets: '  - ' or '- ' etc.
+                            String start = line.replaceAll("- .*$", "") + "- "; 
+                            
                             for (String item : items)
                             {
                                 lines.add(start + sanitize(item));
@@ -104,8 +106,7 @@ class ConfigurationTemplate
                             break;
                         }
                     }
-                    
-                    Messenger.send("&cPrevious config does not contain option:&f " + value + "&r from " + matcher.group(0));
+                    value = option; // Default value. (Logic above has not broken away yet)
                 }
                 
                 line = line.replaceAll(regex, value);
@@ -124,7 +125,7 @@ class ConfigurationTemplate
     
     private String sanitize(String value)
     {
-        if (value.contains("@") || value.contains("&") || value.contains("#") || value.contains(":") || value.contains("[") || value.contains("]"))
+        if (value.contains("@") || value.contains("&") || value.contains("#") || value.contains(":"))
         {
             value = value.replace("'", "''");
             value = value.replace("\n", "\\n");
