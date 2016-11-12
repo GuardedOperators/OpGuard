@@ -102,7 +102,7 @@ final class OpGuardCommand implements ExecutableCommand
         String command = args.get(0).toLowerCase();
         Context context = new Context(api).attemptFrom(sender);
         boolean passwordEnabled = verifier.hasPassword();
-        boolean onlineOnly = op && config.canOnlyOpIfOnline();
+        boolean onlineOnly = (op) ? config.canOnlyOpIfOnline() : config.canOnlyDeopIfOnline();
         
         if (passwordEnabled && args.size() != 3)
         {
