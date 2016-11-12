@@ -7,7 +7,15 @@
 #@ About:
 #@ - Every '@()' statement will be replaced with the previous configuration file's value.
 #@ - Multiple options may be defined within each '@()' statement, where the last option is the default value.
+#@ - A <yml path>[] will create a list with values from the previous config.yml.
 #@ - All '#@' comments will be ignored in the newly-created config.yml file.
+
+# ------------------------------------------------------- #
+#                         OpGuard                         #
+# ------------------------------------------------------- #
+#      If you find any bugs, please report them here:     # 
+#        https://github.com/RezzedUp/OpGuard/issues       #
+# ------------------------------------------------------- #
 
 # --------------------- #
 # OpGuard Configuration #
@@ -22,26 +30,31 @@ inspection-interval: @(inspection-interval | 4)
 # If true, OpGuard will check for players with the '*' permission node (all permissions).
 # If a player has '*' and isn't a verified operator, OpGuard will punish them.
 # Default: true
-check-permissions: true
+check-permissions: @(check-permissions | true)
 
 # If true, OpGuard will only op players if they're online.
 # Default: true
 only-op-if-online: @(only-op-if-online | true)
 
+# If true, oOpGuard will only deop players if they're online.
+# This option is false by default so that any dangerous operators can be deop'd while they're offline.
+# Default: false
+only-deop-if-online: @(only-deop-if-online | false)
+
 # If true, OpGuard's password can be managed with in-game commands.
 # If false, only console can modify OpGuard's password.
 # Default: true
-manage-password-in-game: @(manage.password-in-game | true)
+manage-password-in-game: @(manage.password-in-game | manage-password-in-game | true)
 
 # If true, OpGuard will disable plugins that have been caught setting op.
 # Default: true
-disable-malicious-plugins-when-caught: true
+disable-malicious-plugins-when-caught: @(disable-malicious-plugins-when-caught | true)
 
 # If true, OpGuard will rename plugin .jar files that have been caught 
 # setting op so they cannot re-enable.
 # This will only occur if the option above is also enabled (plugin disabling).
 # Default: true
-rename-malicious-plugins-when-caught: true
+rename-malicious-plugins-when-caught: @(rename-malicious-plugins-when-caught | true)
 
 # If true, OpGuard will shut the server down if it is disabled.
 # Enable this option if you don't want other plugins to disable OpGuard.
@@ -52,7 +65,7 @@ shutdown-on-disable: @(shutdown-on-disable | false)
 # being added and preventing its password from being modified.
 # The only way to unlock is to change the value to false and restart the server.
 # Default: false
-lock: false
+lock: @(lock | false)
 
 # ----------- #
 #   LOGGING   #
@@ -60,19 +73,19 @@ lock: false
 
 # If false, all OpGuard logging will be disabled.
 # Default: true
-enable-logging: @(log.enabled | true)
+enable-logging: @(log.enabled | enable-logging | true)
 
 # Log when a plugin attempts to give op.
 # Default: true
-log-plugin-attempts: @(log.plugin-attempt | true)
+log-plugin-attempts: @(log.plugin-attempt | log-plugin-attempts | true)
 
 # Log when the console attempts to give op.
 # Default: true
-log-console-attempts: @(log.console-attempt | true)
+log-console-attempts: @(log.console-attempt | log-console-attempts | true)
 
 # Log when a player attempts to use /op.
 # Default: true
-log-player-attempts: @(log.player-attempt | true)
+log-player-attempts: @(log.player-attempt | log-player-attempts | true)
 
 # ------------------------- #
 #   MESSAGES AND WARNINGS   #
@@ -80,43 +93,43 @@ log-player-attempts: @(log.player-attempt | true)
 
 # Prefix for warnings.
 # Default: '&cOpGuard (&4&lWarning&c)&7:'
-warn-prefix: '&cOpGuard (&4&lWarning&c)&7:'
+warn-prefix: @(warn-prefix | '&cOpGuard (&4&lWarning&c)&7:')
 
 # Color to use in warnings for emphasis
 # Default: '&c'
-warn-emphasis-color: '&c'
+warn-emphasis-color: @(warn-emphasis-color | '&c')
 
 # If true, OpGuard will display warnings whenever a plugin attempts to give op.
 # Default: true
-warn-plugin-attempts: @(warn.plugin-attempt | true)
+warn-plugin-attempts: @(warn.plugin-attempt | warn-plugin-attempts | true)
 
 # If true, OpGuard will display warnings whenever console attempts  to use /op.
 # Default: true
-warn-console-op-attempts: @(warn.console-attempt | true)
+warn-console-op-attempts: @(warn.console-attempt | warn-console-op-attempts | true)
 
 # If true, OpGuard will display warnings whenever console incorrectly uses /opguard.
 # Default: true
-warn-console-opguard-attempts: @(warn.console-attempt | true)
+warn-console-opguard-attempts: @(warn.console-attempt | warn-console-opguard-attempts | true)
 
 # If true, OpGuard will display warnings whenever a player attempts to use /op.
 # Default: true
-warn-player-op-attempts: @(warn.player-attempt | true)
+warn-player-op-attempts: @(warn.player-attempt | warn-player-op-attempts | true)
 
 # If true, OpGuard will display warnings whenever a player incorrectly uses /opguard.
 # Default: true
-warn-player-opguard-attempts: @(warn.player-attempt | true)
+warn-player-opguard-attempts: @(warn.player-attempt | warn-player-opguard-attempts | true)
 
 # Prefix for security warnings.
 # Default: '&eOpGuard (&6&lSecurity&e)&7:'
-security-prefix: '&eOpGuard (&6&lSecurity&e)&7:'
+security-prefix: @(security-prefix | '&eOpGuard (&6&lSecurity&e)&7:')
 
 # If true, OpGuard will display warnings when it lacks a password.
 # Default: true
-enable-security-warnings: @(warn.security-risk | true)
+enable-security-warnings: @(warn.security-risk | enable-security-warnings | true)
 
 # Prefix for general status messages.
 # Default: '&aOpGuard (&2&lOkay&a)&7:'
-okay-prefix: '&aOpGuard (&2&lOkay&a)&7:'
+okay-prefix: @(okay-prefix | '&aOpGuard (&2&lOkay&a)&7:')
 
 # --------------- #
 #   PUNISHMENTS   #
@@ -124,21 +137,21 @@ okay-prefix: '&aOpGuard (&2&lOkay&a)&7:'
 
 # If true, OpGuard will punish players that other plugins attempt to op.
 # Default: true
-punish-plugin-attempts: @(punish.plugin-attempt | true)
+punish-plugin-attempts: @(punish.plugin-attempt | punish-plugin-attempts | true)
 
 # If true, OpGuard will punish players when the console attempts to use /op.
 # Default: true
-punish-console-op-attempts: @(punish.console-attempt | true)
+punish-console-op-attempts: @(punish.console-attempt | punish-console-op-attempts | true)
 
 # If true, OpGuard will punish players when console incorrectly uses /opguard.
 # Default: false
-punish-console-opguard-attempts: false
+punish-console-opguard-attempts: @(punish-console-opguard-attempts | false)
   
 # A list of commands to run when punishing a player.
 # Default:
 # - ban %player% Attempting to gain op
 punishment-commands:
-- @(punish.command | ban %player% Attempting to gain op)
+- @(punish.command | punishment-commands[] | ban %player% Attempting to gain op)
 
 # ----------- #
 #   METRICS   #
