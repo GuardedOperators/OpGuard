@@ -65,12 +65,10 @@ class ConfigurationTemplate
             
             if (line.isEmpty())
             {
-                if (lines.isEmpty() || !line.equals(pure))
-                {
-                    continue;
-                }
+                if (lines.isEmpty() || !line.equals(pure)) { continue; }
             }
             
+            boolean lineIsAdded = false;
             Matcher matcher = replaceable.matcher(line);
             
             if (matcher.find())
@@ -81,19 +79,39 @@ class ConfigurationTemplate
                 
                 for (String option : options)
                 {
-                    value = option;
+                    boolean list = option.endsWith("[]");
+                    value = (list) ? option.substring(0, option.length() - 2) : option;
                     
                     if (config.contains(option))
                     {
-                        value = config.getString(option);
-                        break;
+                        if (!list)
+                        {
+                            value = config.getString(option);
+                            break;
+                        }
+                        
+                        String start = line.replaceAll("- .*$", "") + "- "; // gets: '  - ' or '- ' etc.
+                        List<String> items = config.getStringList(option);
+                        
+                        if (items.size() > 0)
+                        {
+                            for (String item : items)
+                            {
+                                lines.add(start + item);
+                            }
+                            lineIsAdded = true;
+                            break;
+                        }
                     }
                 }
-    
+                
                 line = line.replaceAll(regex, value);
             }
             
-            lines.add(line);
+            if (!lineIsAdded) 
+            {
+                lines.add(line); 
+            }
         }
         
         reader.close();
