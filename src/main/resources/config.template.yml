@@ -164,7 +164,7 @@ enable-exempt-commands: @(enable-exempt-commands | false)
 # The option above must be true for these commands to be exempted.
 # Add a command here if OpGuard is causing errors when using it.
 exempt-commands:
-- @(exempt-commands | examplecommand)
+- @(exempt-commands[] | examplecommand)
 
 # ----------- #
 #   METRICS   #
