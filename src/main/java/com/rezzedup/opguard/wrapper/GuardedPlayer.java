@@ -96,6 +96,7 @@ public final class GuardedPlayer extends WrappedPlayer
                     if (command instanceof VanillaCommand)
                     {
                         exempt.add(command.getName());
+                        exempt.add("minecraft:" + command.getName());
                     }
                 }
             }
