@@ -158,12 +158,13 @@ punishment-commands:
 
 # If true, OpGuard will not interfere with commands in the exempt-commands list below.
 # Default: false
-enable-exempt-commands: false
+enable-exempt-commands: @(enable-exempt-commands | false)
 
 # A list of commands that OpGuard will not interfere with.
 # The option above must be true for these commands to be exempted.
+# Add a command here if OpGuard is causing errors when using it.
 exempt-commands:
-- examplecommand
+- @(exempt-commands | examplecommand)
 
 # ----------- #
 #   METRICS   #
