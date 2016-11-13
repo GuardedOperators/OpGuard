@@ -1,6 +1,5 @@
 package com.rezzedup.opguard.config;
 
-import com.rezzedup.opguard.Messenger;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.BufferedReader;

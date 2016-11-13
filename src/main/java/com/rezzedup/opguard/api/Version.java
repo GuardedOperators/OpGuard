@@ -2,10 +2,6 @@ package com.rezzedup.opguard.api;
 
 public class Version implements Comparable<Version>
 {
-    private int major;
-    private int minor;
-    private int patch;
-    
     public static Version of(String value)
     {
         Version version = new Version(0, 0, 0);
@@ -31,12 +27,16 @@ public class Version implements Comparable<Version>
     
     private static void setup(Version instance, String version) throws ArrayIndexOutOfBoundsException, NumberFormatException
     {
-        String[] parts = version.split(".");
+        String[] parts = version.split("\\.");
         
         instance.major = Integer.valueOf(parts[0]);
         instance.minor = Integer.valueOf(parts[1]);
         instance.patch = Integer.valueOf(parts[2]);
     }
+    
+    private int major;
+    private int minor;
+    private int patch;
     
     public Version(int major, int minor, int patch)
     {
