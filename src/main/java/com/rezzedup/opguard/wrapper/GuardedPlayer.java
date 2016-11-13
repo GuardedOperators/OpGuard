@@ -4,6 +4,10 @@ import com.rezzedup.opguard.Context;
 import com.rezzedup.opguard.PluginStackChecker;
 import com.rezzedup.opguard.api.OpGuardAPI;
 import com.rezzedup.opguard.api.config.OpGuardConfig;
+import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.command.defaults.VanillaCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,6 +19,8 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.Map;
 
 public final class GuardedPlayer extends WrappedPlayer
 {
@@ -61,12 +67,42 @@ public final class GuardedPlayer extends WrappedPlayer
     
     public static class EventInjector implements Listener
     {
+        private final HashSet<String> exempt = new HashSet<>();
+        
         private final OpGuardAPI api;
         
+        @SuppressWarnings({"deprecation", "unchecked"})
         public EventInjector(OpGuardAPI api)
         {
             this.api = api;
             api.registerEvents(this);
+    
+            // Exempting all default commands...
+            // They cast the Player to a CraftPlayer
+            try
+            {
+                Server server = api.getPlugin().getServer();
+                
+                Field commandMapField = server.getClass().getDeclaredField("commandMap");
+                commandMapField.setAccessible(true);
+                SimpleCommandMap commandMap = (SimpleCommandMap) commandMapField.get(server);
+                
+                Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
+                knownCommandsField.setAccessible(true);
+                Map<String, Command> commands = (Map<String, Command>) knownCommandsField.get(commandMap);
+                
+                for (Command command : commands.values())
+                {
+                    if (command instanceof VanillaCommand)
+                    {
+                        exempt.add(command.getName());
+                    }
+                }
+            }
+            catch (NoSuchFieldException | IllegalAccessException | ClassCastException e)
+            {
+                e.printStackTrace();;
+            }
         }
         
         private void inject(PlayerEvent event)
@@ -108,13 +144,15 @@ public final class GuardedPlayer extends WrappedPlayer
         @EventHandler(priority = EventPriority.LOWEST)
         public void on(PlayerCommandPreprocessEvent event)
         {
-            OpGuardConfig config = api.getConfig();
-            
-            if (config.shouldExemptCommands())
+            String command = event.getMessage().replaceAll("^\\/| .*", "").toLowerCase();
+    
+            if (!command.matches("^((minecraft:)?(de)?op|o(g|pguard))$"))
             {
-                String command = event.getMessage().replaceAll("^\\/| .*", "").toLowerCase();
+                if (exempt.contains(command)) { return; }
                 
-                if (!command.matches("^((de)?op|o(g|pguard))$"))
+                OpGuardConfig config = api.getConfig();
+                
+                if (config.shouldExemptCommands())
                 {
                     for (String exempt : config.getExemptCommands())
                     {

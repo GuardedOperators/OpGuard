@@ -43,7 +43,7 @@ final class CommandInterceptor implements Listener
         String[] cmd = command.split(" ");
         String base = cmd[0].toLowerCase();
         
-        if (!base.matches("^[\\/]?((de)?op|o(g|pguard))$"))
+        if (!base.matches("^[\\/]?((minecraft:)?(de)?op|o(g|pguard))$"))
         {
             return false;
         }
@@ -66,7 +66,7 @@ final class CommandInterceptor implements Listener
             return true;
         }
         
-        if (base.matches("^[\\/]?op$"))
+        if (base.matches("^[\\/]?(minecraft:)?op$"))
         {
             context.setOp();
             
