@@ -35,7 +35,7 @@ check-permissions: @(check-permissions | true)
 # Default: true
 only-op-if-online: @(only-op-if-online | true)
 
-# If true, oOpGuard will only deop players if they're online.
+# If true, OpGuard will only deop players if they're online.
 # This option is false by default so that any dangerous operators can be deop'd while they're offline.
 # Default: false
 only-deop-if-online: @(only-deop-if-online | false)
