@@ -12,7 +12,7 @@ public interface OpGuardAPI
 {
     Plugin getPlugin();
     
-    public Version getVersion();
+    Version getVersion();
     
     OpGuardConfig getConfig();
     

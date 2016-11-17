@@ -102,7 +102,7 @@ public final class GuardedPlayer extends WrappedPlayer
             }
             catch (NoSuchFieldException | IllegalAccessException | ClassCastException e)
             {
-                e.printStackTrace();;
+                e.printStackTrace();
             }
         }
         
