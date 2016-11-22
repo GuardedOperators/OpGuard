@@ -12,6 +12,8 @@ It not only blocks access to /op as a command, it also prevents **other plugins*
 
 OpGuard offers the ability to restrict access to /op (`/opguard op`) with a **password**, useful for keeping untrustworthy staff from setting op. It's also helpful in the event a malicious user somehow gains op or when a staff member has their account broken into; users who don't know the password won't be able to op other users when OpGuard is installed.
 
+When compared to other "Anti-Forceop" plugins, OpGuard is the most feature-packed, configurable, and secure of all.
+
 # Features
 
 ### Require a password to op and deop players.
@@ -122,3 +124,5 @@ Collected data is nonintrusive and includes the following:
 * Online mode status of the server
 
 OpGuard utilizes mcstats' standard unmodified MetricsLite class. For more information, [visit this page](https://github.com/Hidendra/Plugin-Metrics/wiki).
+
+![](http://i.mcstats.org/OpGuard/Global+Statistics.borderless.png)
