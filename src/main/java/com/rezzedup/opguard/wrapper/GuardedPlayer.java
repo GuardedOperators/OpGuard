@@ -8,10 +8,6 @@ import com.rezzedup.opguard.api.Version;
 import com.rezzedup.opguard.api.config.OpGuardConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.command.defaults.VanillaCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,10 +19,10 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
-import java.util.Map;
 
 public final class GuardedPlayer extends WrappedPlayer
 {
@@ -85,99 +81,59 @@ public final class GuardedPlayer extends WrappedPlayer
     
             // Exempting all default commands...
             // They cast the Player to a CraftPlayer
-    
-            String serverVersion = api.getPlugin().getServer().getBukkitVersion().replaceAll("-.*$", "");
-    
-            if (serverVersion.isEmpty())
-            {
-                Messenger.send("[OpGuard] Can't detect server version.");
-                return;
-            }
-    
-            if (Version.of(serverVersion).isAtLeast(1, 11))
-            {
-                Messenger.send("[OpGuard] Loading compatibility for minecraft commands.");
-                exemptMinecraftCommands();
-            }
-            else
-            {
-                Messenger.send("[OpGuard] Loading compatibilty for vanilla commands.");
-                exemptVanillaCommands();
-            }
+            exemptVanillaCommands(30);
+            // 30 attempts each taking 2 seconds should ensure the vanilla HelpTopic is generated
         }
         
-        // For 1.8 - 1.9
-        @SuppressWarnings({"deprecation", "unchecked"})
-        private void exemptVanillaCommands()
+
+        private void exemptVanillaCommands(int attempts)
         {
-            try
+            if (attempts <= 0)
             {
-                Server server = api.getPlugin().getServer();
-        
-                Field commandMapField = server.getClass().getDeclaredField("commandMap");
-                commandMapField.setAccessible(true);
-                SimpleCommandMap commandMap = (SimpleCommandMap) commandMapField.get(server);
-        
-                Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
-                knownCommandsField.setAccessible(true);
-                Map<String, Command> commands = (Map<String, Command>) knownCommandsField.get(commandMap);
-        
-                for (Command command : commands.values())
+                Messenger.send("[OpGuard] Unable to fix compatibility with vanilla commands.");
+                return;
+            }
+            
+            new BukkitRunnable()
+            {
+                @Override
+                public void run()
                 {
-                    if (command instanceof VanillaCommand)
+                    HelpMap helpMap = api.getPlugin().getServer().getHelpMap();
+                    HelpTopic vanilla = helpMap.getHelpTopic("Minecraft");
+    
+                    if (vanilla == null)
                     {
-                        String name = command.getName();
-                        
-                        exempt.add(name);
-                        
-                        if (!name.startsWith("minecraft:"))
+                        exemptVanillaCommands(attempts - 1);
+                        return;
+                    }
+    
+                    String helpText = vanilla.getFullText(Bukkit.getConsoleSender());
+    
+                    for (String text : helpText.split("\n"))
+                    {
+                        text = ChatColor.stripColor(text);
+        
+                        if (!text.startsWith("/"))
                         {
-                            exempt.add("minecraft:" + command.getName());
+                            continue;
+                        }
+        
+                        String command = text.replaceAll("(^.*\\/)|(: .*)", "");
+        
+                        if (!command.isEmpty())
+                        {
+                            exempt.add(command);
+            
+                            if (!command.startsWith("minecraft:"))
+                            {
+                                exempt.add("minecraft:" + command);
+                            }
                         }
                     }
                 }
             }
-            catch (NoSuchFieldException | IllegalAccessException | ClassCastException e)
-            {
-                e.printStackTrace();
-            }
-        }
-
-        // For 1.11+
-        private void exemptMinecraftCommands()
-        {
-            HelpMap helpMap = api.getPlugin().getServer().getHelpMap();
-            HelpTopic vanilla = helpMap.getHelpTopic("Minecraft");
-            
-            if (vanilla == null)
-            {
-                Messenger.send("&cVanilla help topic is null?");
-                return;
-            }
-            
-            String helpText = vanilla.getFullText(Bukkit.getConsoleSender());
-    
-            for (String text : helpText.split("\n"))
-            {
-                text = ChatColor.stripColor(text);
-        
-                if (!text.startsWith("/"))
-                {
-                    continue;
-                }
-        
-                String command = text.replaceAll("(^.*\\/)|(: .*)", "");
-        
-                if (!command.isEmpty())
-                {
-                    exempt.add(command);
-            
-                    if (!command.startsWith("minecraft:"))
-                    {
-                        exempt.add("minecraft:" + command);
-                    }
-                }
-            }
+            .runTaskLater(api.getPlugin(), 20 * 2);
         }
         
         private void inject(PlayerEvent event)
