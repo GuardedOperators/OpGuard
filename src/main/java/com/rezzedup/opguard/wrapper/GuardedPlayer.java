@@ -4,10 +4,8 @@ import com.rezzedup.opguard.Context;
 import com.rezzedup.opguard.PluginStackChecker;
 import com.rezzedup.opguard.api.OpGuardAPI;
 import com.rezzedup.opguard.api.config.OpGuardConfig;
-import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.command.defaults.VanillaCommand;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,10 +15,10 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.help.HelpMap;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
-import java.util.Map;
 
 public final class GuardedPlayer extends WrappedPlayer
 {
@@ -79,32 +77,33 @@ public final class GuardedPlayer extends WrappedPlayer
     
             // Exempting all default commands...
             // They cast the Player to a CraftPlayer
-            try
+
+            HelpMap helpMap = api.getPlugin().getServer().getHelpMap();
+            String defaults = helpMap.getHelpTopic("Minecraft").getFullText(Bukkit.getConsoleSender());
+            
+            for (String text : defaults.split("\n"))
             {
-                Server server = api.getPlugin().getServer();
+                text = ChatColor.stripColor(text);
                 
-                Field commandMapField = server.getClass().getDeclaredField("commandMap");
-                commandMapField.setAccessible(true);
-                SimpleCommandMap commandMap = (SimpleCommandMap) commandMapField.get(server);
-                
-                Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
-                knownCommandsField.setAccessible(true);
-                Map<String, Command> commands = (Map<String, Command>) knownCommandsField.get(commandMap);
-                
-                for (Command command : commands.values())
+                if (!text.startsWith("/"))
                 {
-                    if (command instanceof VanillaCommand)
+                    continue;
+                }
+                
+                String command = text.replaceAll("(^.*\\/)|(: .*)", "");
+                
+                if (!command.isEmpty()) 
+                {
+                    exempt.add(command);
+    
+                    if (!command.startsWith("minecraft:"))
                     {
-                        exempt.add(command.getName());
-                        exempt.add("minecraft:" + command.getName());
+                        exempt.add("minecraft:" + command);
                     }
                 }
             }
-            catch (NoSuchFieldException | IllegalAccessException | ClassCastException e)
-            {
-                e.printStackTrace();
-            }
         }
+
         
         private void inject(PlayerEvent event)
         {
