@@ -11,6 +11,7 @@ import org.bukkit.Note;
 import org.bukkit.Particle;
 import org.bukkit.Server;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.Statistic;
 import org.bukkit.WeatherType;
 import org.bukkit.World;
@@ -31,6 +32,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
+import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
@@ -248,6 +250,18 @@ class WrappedPlayer implements Player
     }
     
     @Override
+    public void playSound(Location location, Sound sound, SoundCategory category, float volume, float pitch)
+    {
+        player.playSound(location, sound, category, volume, pitch);
+    }
+    
+    @Override
+    public void playSound(Location location, String sound, SoundCategory category, float volume, float pitch)
+    {
+        player.playSound(location, sound, category, volume, pitch);
+    }
+    
+    @Override
     public void stopSound(Sound sound)
     {
         player.stopSound(sound);
@@ -257,6 +271,18 @@ class WrappedPlayer implements Player
     public void stopSound(String s)
     {
         player.stopSound(s);
+    }
+    
+    @Override
+    public void stopSound(Sound sound, SoundCategory category)
+    {
+        player.stopSound(sound, category);
+    }
+    
+    @Override
+    public void stopSound(String sound, SoundCategory category)
+    {
+        player.stopSound(sound, category);
     }
     
     @Override
@@ -1247,6 +1273,12 @@ class WrappedPlayer implements Player
     public InventoryView openMerchant(Villager villager, boolean b)
     {
         return player.openMerchant(villager, b);
+    }
+    
+    @Override
+    public InventoryView openMerchant(Merchant merchant, boolean force)
+    {
+        return player.openMerchant(merchant, force);
     }
     
     @Override
