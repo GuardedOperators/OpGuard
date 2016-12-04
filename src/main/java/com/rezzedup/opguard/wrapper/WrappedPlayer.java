@@ -68,6 +68,12 @@ class WrappedPlayer implements Player
     {
         return player.equals(object);
     }
+
+    @Override
+    public int hashCode()
+    {
+        return player.hashCode();
+    }
     
     @Override
     public boolean isOp()
@@ -1814,5 +1820,4 @@ class WrappedPlayer implements Player
     {
         return player.launchProjectile(aClass, vector);
     }
-    
 }
