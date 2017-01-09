@@ -20,6 +20,46 @@
 # OpGuard Configuration #
 # --------------------- #
 
+# If true, OpGuard will lock its commands: preventing new operators from
+# being added, and preventing its password from being modified.
+# The only way to unlock is to change this value to false and restart the server.
+# Default: false
+lock: @(lock | false)
+
+# If true, OpGuard will only op players if they're online.
+#   - /opguard op <player>
+# Default: true
+only-op-if-online: @(only-op-if-online | true)
+
+# If true, OpGuard will only deop players if they're online.
+#   - /opguard deop <player>
+# This option is false by default to avoid circumstances where you're unable
+# to deop rogue operators. That way banned operators, for example, can be deop'd.
+# Default: false
+only-deop-if-online: @(only-deop-if-online | false)
+
+# If true, the following commands will be accessible in-game:
+#   - /opguard password <new password>
+#   - /opguard reset <current password>
+# If false, only console may manage the password (access the commands above).
+# Default: true
+manage-password-in-game: @(manage.password-in-game | manage-password-in-game | true)
+
+# If true, OpGuard will shut the server down if it is disabled.
+# Enable this option if you don't want other plugins to disable OpGuard.
+# Default: false
+shutdown-on-disable: @(shutdown-on-disable | false)
+
+# If PlugMan is installed and the config option below is true, 
+# OpGuard will automatically exempt itself from PlugMan's commands.
+# This option may be ignored if you don't have PlugMan installed.
+# Default: true
+exempt-opguard-from-plugman: @(exempt-opguard-from-plugman | true)
+
+# ------------------- #
+# OpGuard Inspections #
+# ------------------- #
+
 # Duration of time (in ticks) that OpGuard should verify the op list.
 # Remember: 20 ticks = 1 second, so 4 ticks = 1/5 of a second.
 # This value cannot be negative or zero.
@@ -31,19 +71,16 @@ inspection-interval: @(inspection-interval | 4)
 # Default: true
 check-permissions: @(check-permissions | true)
 
-# If true, OpGuard will only op players if they're online.
+# If true, OpGuard will inject player commands with a special player object
+# that will detect and prevent player.setOp(). This may interfere with some commands,
+# so instead of modifying this value, try exempting them below. (in the Exemptions section)
 # Default: true
-only-op-if-online: @(only-op-if-online | true)
+inject-player-commands: @(inject-player-commands | true)
 
-# If true, OpGuard will only deop players if they're online.
-# This option is false by default so that any dangerous operators can be deop'd while they're offline.
-# Default: false
-only-deop-if-online: @(only-deop-if-online | false)
-
-# If true, OpGuard's password can be managed with in-game commands.
-# If false, only console can modify OpGuard's password.
+# If true, OpGuard will inject certain player events with a special player object
+# that will detect and prevent player.setOp().
 # Default: true
-manage-password-in-game: @(manage.password-in-game | manage-password-in-game | true)
+inject-player-events: @(inject-player-events | true)
 
 # If true, OpGuard will disable plugins that have been caught setting op.
 # Default: true
@@ -55,16 +92,24 @@ disable-malicious-plugins-when-caught: @(disable-malicious-plugins-when-caught |
 # Default: true
 rename-malicious-plugins-when-caught: @(rename-malicious-plugins-when-caught | true)
 
-# If true, OpGuard will shut the server down if it is disabled.
-# Enable this option if you don't want other plugins to disable OpGuard.
-# Default: false
-shutdown-on-disable: @(shutdown-on-disable | false)
+# -------------- #
+#   Exemptions   #
+# -------------- #
 
-# If true, OpGuard will lock its commands, preventing new operators from
-# being added and preventing its password from being modified.
-# The only way to unlock is to change the value to false and restart the server.
+enable-exempt-plugins: @(enable-exempt-plugins | true)
+
+exempt-plugins:
+- @(exempt-plugins[] | PerWorldPlugins)
+
+# If true, OpGuard will not interfere with commands in the exempt-commands list below.
 # Default: false
-lock: @(lock | false)
+enable-exempt-commands: @(enable-exempt-commands | false)
+
+# A list of commands that OpGuard will not interfere with.
+# The option above must be true for these commands to be exempted.
+# Add a command here if OpGuard is causing errors when using it.
+exempt-commands:
+- @(exempt-commands[] | examplecommand)
 
 # ----------- #
 #   LOGGING   #
@@ -151,20 +196,6 @@ punish-console-opguard-attempts: @(punish-console-opguard-attempts | false)
 # - ban %player% Attempting to gain op
 punishment-commands:
 - @(punish.command | punishment-commands[] | ban %player% Attempting to gain op)
-
-# -------- #
-#   MISC   #
-# -------- #
-
-# If true, OpGuard will not interfere with commands in the exempt-commands list below.
-# Default: false
-enable-exempt-commands: @(enable-exempt-commands | false)
-
-# A list of commands that OpGuard will not interfere with.
-# The option above must be true for these commands to be exempted.
-# Add a command here if OpGuard is causing errors when using it.
-exempt-commands:
-- @(exempt-commands[] | examplecommand)
 
 # ----------- #
 #   METRICS   #
