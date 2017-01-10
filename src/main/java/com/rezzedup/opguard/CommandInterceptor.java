@@ -1,6 +1,7 @@
 package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.api.OpGuardAPI;
+import com.rezzedup.opguard.api.config.OpGuardConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -23,18 +24,22 @@ final class CommandInterceptor implements Listener
     @EventHandler(priority = EventPriority.LOWEST)
     public void on(PlayerCommandPreprocessEvent event)
     {
+        String command = event.getMessage();
+        
         if (cancel(event.getPlayer(), event.getMessage(), event))
         {
-            event.setMessage("/opguard:intercepted(" + event.getMessage().split("\\/| ")[0] + ")");
+            event.setMessage("/opguard:intercepted(" + command.replaceAll("\\/| .*", "") + ")");
         }
     }
     
     @EventHandler(priority = EventPriority.LOWEST)
     public void on(ServerCommandEvent event)
     {
-        if (cancel(event.getSender(), event.getCommand(), event))
+        String command = event.getCommand();
+        
+        if (cancel(event.getSender(), command, event))
         {
-            event.setCommand("opguard:intercepted(" + event.getCommand().split("\\/| ")[0] + ")");
+            event.setCommand("opguard:intercepted(" + command.replaceAll("\\/| .*", "") + ")");
         }
     }
     
@@ -49,21 +54,55 @@ final class CommandInterceptor implements Listener
         }
         
         Context context = new Context(api).attemptFrom(sender);
+        OpGuardConfig config = api.getConfig();
         PluginStackChecker stack = new PluginStackChecker(api);
         
         if (stack.foundPlugin())
         {
             String name = stack.getPlugin().getName();
+            boolean pluginIsExempt = false;
             
-            context.pluginAttempt().warning
-            (
-                "The plugin <!>" + name + "&f attempted to make &7" + sender.getName() + 
-                "&f execute <!>" + ((!command.startsWith("/")) ? "/" : "") + command
-            );
-            api.warn(context).log(context);
+            for (String exempt : config.getExemptPlugins())
+            {
+                if (name.equalsIgnoreCase(exempt)) 
+                { 
+                    Context exemption = new Context(api).pluginAttempt();
+                    
+                    if (config.shouldExemptPlugins())
+                    {
+                        pluginIsExempt = true;
+                        
+                        exemption.okay
+                        (
+                            "The plugin &7" + name + "&f was allowed to execute &7/" + base + 
+                            "&f on behalf of &7" + sender.getName()
+                        );
+                    }
+                    else 
+                    {
+                        exemption.warning
+                        (
+                            "The plugin &7" + name + "&f is defined in OpGuard's plugin-exemption list, but " +
+                            "plugin exemptions are currently disabled"
+                        );
+                    }
+                    api.warn(exemption).log(exemption);
+                    break;
+                }
+            }
             
-            stack.disablePlugin(api, context);
-            return true;
+            if (!pluginIsExempt)
+            {
+                context.pluginAttempt().warning
+                (
+                    "The plugin <!>" + name + "&f attempted to make &7" + sender.getName() +
+                    "&f execute <!>" + ((!command.startsWith("/")) ? "/" : "") + command
+                );
+                api.warn(context).log(context);
+    
+                stack.disablePlugin(api, context);
+                return true;
+            }
         }
         
         if (base.matches("^[\\/]?(minecraft:)?op$"))
