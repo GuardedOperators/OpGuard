@@ -1,10 +1,12 @@
 package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.api.OpGuardAPI;
+import com.rylinaux.plugman.PlugMan;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.event.server.PluginEnableEvent;
 
 final class PluginDisableHijack implements Listener
 {    
@@ -16,16 +18,22 @@ final class PluginDisableHijack implements Listener
         api.registerEvents(this);
     }
     
-    @EventHandler
-    public void onDisable(PluginDisableEvent event)
+    public void on(PluginEnableEvent event)
     {
-        if (event.getPlugin().equals(api.getPlugin()))
+        boolean plugMan = event.getPlugin().getName().equalsIgnoreCase("PlugMan");
+        if (plugMan && api.getConfig().canExemptSelfFromPlugMan())
         {
-            if (api.getConfig().canShutDownOnDisable())
-            {
-                Messenger.send("&c[&fOpGuard was disabled&c] Shutting server down.");
-                Bukkit.shutdown();
-            }
+            PlugMan.getInstance().getIgnoredPlugins().add(api.getPlugin().getName());
+        }
+    }
+    
+    @EventHandler
+    public void on(PluginDisableEvent event)
+    {
+        if (event.getPlugin() == api.getPlugin() && api.getConfig().canShutDownOnDisable())
+        {
+            Messenger.send("&c[&fOpGuard was disabled&c] Shutting server down.");
+            Bukkit.shutdown();
         }
     }
 }

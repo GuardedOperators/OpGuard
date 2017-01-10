@@ -14,13 +14,14 @@ import com.rezzedup.opguard.metrics.MetricsLite;
 import com.rezzedup.opguard.wrapper.GuardedPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 
-public final class OpGuard extends JavaPlugin
+public final class OpGuard extends JavaPlugin implements Listener
 {
     @Override
     public void onEnable()
