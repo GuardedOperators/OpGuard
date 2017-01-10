@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 final class PluginDisableHijack implements Listener
 {    
@@ -18,12 +19,23 @@ final class PluginDisableHijack implements Listener
         api.registerEvents(this);
     }
     
+    @EventHandler
     public void on(PluginEnableEvent event)
     {
-        boolean plugMan = event.getPlugin().getName().equalsIgnoreCase("PlugMan");
-        if (plugMan && api.getConfig().canExemptSelfFromPlugMan())
+        boolean isPlugMan = event.getPlugin().getName().equalsIgnoreCase("PlugMan");
+        
+        if (isPlugMan && api.getConfig().canExemptSelfFromPlugMan())
         {
-            PlugMan.getInstance().getIgnoredPlugins().add(api.getPlugin().getName());
+            new BukkitRunnable()
+            {
+                @Override
+                public void run()
+                {
+                    PlugMan.getInstance().getIgnoredPlugins().add(api.getPlugin().getName());
+                    Messenger.send("&f[OpGuard] &9Exempted OpGuard from PlugMan.");
+                }
+            }
+            .runTaskLater(api.getPlugin(), 20L);
         }
     }
     

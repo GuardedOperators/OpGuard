@@ -4,7 +4,6 @@ import com.rezzedup.opguard.Context;
 import com.rezzedup.opguard.Messenger;
 import com.rezzedup.opguard.PluginStackChecker;
 import com.rezzedup.opguard.api.OpGuardAPI;
-import com.rezzedup.opguard.api.Version;
 import com.rezzedup.opguard.api.config.OpGuardConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -46,11 +45,11 @@ public final class GuardedPlayer extends WrappedPlayer
             
             if (value)
             {
-                context.warning("The plugin <!>" + name + "&f attempted to op <!>" + getName());
+                context.warning("The plugin <!>" + name + "&f attempted to op &7" + getName());
             }
             else 
             {
-                context.warning("The plugin <!>" + name + "&f attempted to remove op from &7" + getName());
+                context.warning("The plugin <!>" + name + "&f attempted to deop &7" + getName());
             }
     
             api.warn(context).log(context);
@@ -84,7 +83,6 @@ public final class GuardedPlayer extends WrappedPlayer
             exemptVanillaCommands(30);
             // 30 attempts each taking 2 seconds should ensure the vanilla HelpTopic is generated
         }
-        
 
         private void exemptVanillaCommands(int attempts)
         {
@@ -135,6 +133,14 @@ public final class GuardedPlayer extends WrappedPlayer
             }
             .runTaskLater(api.getPlugin(), 20 * 2);
         }
+    
+        private void injectEvent(PlayerEvent event)
+        {
+            if (api.getConfig().canInjectPlayerEvents())
+            {
+                inject(event);
+            }
+        }
         
         private void inject(PlayerEvent event)
         {
@@ -142,7 +148,7 @@ public final class GuardedPlayer extends WrappedPlayer
             {
                 return;
             }
-            
+    
             try
             {
                 Field playerField = PlayerEvent.class.getDeclaredField("player");
@@ -150,7 +156,7 @@ public final class GuardedPlayer extends WrappedPlayer
         
                 Player player = (Player) playerField.get(event);
                 GuardedPlayer guarded = new GuardedPlayer(player, api);
-                
+        
                 playerField.set(event, guarded);
             }
             catch (Exception e)
@@ -162,26 +168,37 @@ public final class GuardedPlayer extends WrappedPlayer
         @EventHandler(priority = EventPriority.LOWEST)
         public void on(AsyncPlayerChatEvent event)
         {
-            inject(event);
+            injectEvent(event);
         }
     
         @SuppressWarnings("deprecation")
         @EventHandler(priority = EventPriority.LOWEST)
         public void on(PlayerChatEvent event)
         {
-            inject(event);
+            injectEvent(event);
+        }
+    
+        @EventHandler(priority = EventPriority.LOWEST)
+        public void on(PlayerInteractEvent event)
+        {
+            injectEvent(event);
         }
     
         @EventHandler(priority = EventPriority.LOWEST)
         public void on(PlayerCommandPreprocessEvent event)
         {
+            OpGuardConfig config = api.getConfig();
+            
+            if (!config.canInjectPlayerCommands())
+            {
+                return;
+            }
+            
             String command = event.getMessage().replaceAll("^\\/| .*", "").toLowerCase();
     
             if (!command.matches("^((minecraft:)?(de)?op|o(g|pguard))$"))
             {
                 if (exempt.contains(command)) { return; }
-                
-                OpGuardConfig config = api.getConfig();
                 
                 if (config.shouldExemptCommands())
                 {
@@ -192,12 +209,6 @@ public final class GuardedPlayer extends WrappedPlayer
                 }
             }
             
-            inject(event);
-        }
-    
-        @EventHandler(priority = EventPriority.LOWEST)
-        public void on(PlayerInteractEvent event)
-        {
             inject(event);
         }
     }
