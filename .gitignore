@@ -68,3 +68,4 @@ $RECYCLE.BIN/
 *.ipr
 out/
 target/
+!lib/*.jar
