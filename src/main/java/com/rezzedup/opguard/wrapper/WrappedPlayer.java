@@ -1126,6 +1126,12 @@ class WrappedPlayer implements Player
     }
     
     @Override
+    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut)
+    {
+        player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
+    }
+    
+    @Override
     public void resetTitle()
     {
         player.resetTitle();

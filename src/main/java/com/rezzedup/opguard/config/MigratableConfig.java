@@ -24,17 +24,17 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     @Override
     protected void load()
     {
-        // Old will be 0.0.0 if config version is null.
-        Version old = Version.of(config.getString("version"));
+        // Version will be 0.0.0 if config version is null.
+        Version loadedVersion = Version.of(config.getString("version"));
         
-        // Update isAtLeast() whenever config requires updates.
-        if (!old.isAtLeast(3,2))
+        // Todo: Update isAtLeast() whenever config requires updates.
+        if (!loadedVersion.isAtLeast(3,2))
         {
-            migrateConfig(config);
+            migrateConfig(config, loadedVersion);
         }
     }
     
-    private void migrateConfig(FileConfiguration old)
+    private void migrateConfig(FileConfiguration old, Version version)
     {
         ConfigurationTemplate template = new ConfigurationTemplate(this, "config.template.yml");
         List<String> lines = template.apply(old);
@@ -43,14 +43,14 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
         
         if (file.exists())
         {
-            String name = "config.yml.old";
+            String name = "config.yml.backup-v" + version.toString();
             File rename = new File(dir, name);
-            int version = 0;
+            int attempt = 0;
             
             while (rename.exists())
             {
-                version += 1;
-                String updatedName = name + version;
+                attempt += 1;
+                String updatedName = name + "_" + attempt;
                 rename = new File(dir, updatedName);
             }
             
