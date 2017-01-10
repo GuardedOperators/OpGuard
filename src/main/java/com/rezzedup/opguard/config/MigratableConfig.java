@@ -28,7 +28,7 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
         Version old = Version.of(config.getString("version"));
         
         // Update isAtLeast() whenever config requires updates.
-        if (!old.isAtLeast(3,1))
+        if (!old.isAtLeast(3,2))
         {
             migrateConfig(config);
         }
@@ -73,15 +73,9 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     }
     
     @Override
-    public long getOpListInspectionInterval()
+    public boolean isLocked()
     {
-        return config.getLong("inspection-interval");
-    }
-    
-    @Override
-    public boolean canCheckPermissions()
-    {
-        return config.getBoolean("check-permissions");
+        return config.getBoolean("lock");
     }
     
     @Override
@@ -103,6 +97,44 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     }
     
     @Override
+    public boolean canShutDownOnDisable()
+    {
+        return config.getBoolean("shutdown-on-disable");
+    }
+    
+    @Override
+    public boolean canExemptSelfFromPlugMan()
+    {
+        return config.getBoolean("exempt-opguard-from-plugman");
+    }
+    
+    // Inspections
+    
+    @Override
+    public long getOpListInspectionInterval()
+    {
+        return config.getLong("inspection-interval");
+    }
+    
+    @Override
+    public boolean canCheckPermissions()
+    {
+        return config.getBoolean("check-permissions");
+    }
+    
+    @Override
+    public boolean canInjectPlayerCommands()
+    {
+        return config.getBoolean("inject-player-commands");
+    }
+    
+    @Override
+    public boolean canInjectPlayerEvents()
+    {
+        return config.getBoolean("inject-player-events");
+    }
+    
+    @Override
     public boolean canDisableOtherPlugins()
     {
         return config.getBoolean("disable-malicious-plugins-when-caught");
@@ -115,16 +147,32 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     }
     
     @Override
-    public boolean canShutDownOnDisable()
+    public boolean shouldExemptPlugins()
     {
-        return config.getBoolean("shutdown-on-disable");
+        return config.getBoolean("enable-exempt-plugins");
     }
     
     @Override
-    public boolean isLocked()
+    public List<String> getExemptPlugins()
     {
-        return config.getBoolean("lock");
+        return config.getStringList("exempt-plugins");
     }
+    
+    // Exemptions
+    
+    @Override
+    public boolean shouldExemptCommands()
+    {
+        return config.getBoolean("enable-exempt-commands");
+    }
+    
+    @Override
+    public List<String> getExemptCommands()
+    {
+        return config.getStringList("exempt-commands");
+    }
+    
+    // Logging
     
     @Override
     public boolean loggingIsEnabled()
@@ -149,6 +197,8 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     {
         return config.getBoolean("log-player-attempts");
     }
+    
+    // Messages
     
     @Override
     public String getWarningPrefix()
@@ -210,6 +260,8 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
         return config.getString("okay-prefix");
     }
     
+    // Punishments
+    
     @Override
     public boolean canPunishPluginAttempts()
     {
@@ -234,17 +286,7 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
         return config.getStringList("punishment-commands");
     }
     
-    @Override
-    public boolean shouldExemptCommands()
-    {
-        return config.getBoolean("enable-exempt-commands");
-    }
-    
-    @Override
-    public List<String> getExemptCommands()
-    {
-        return config.getStringList("exempt-commands");
-    }
+    // Metrics
     
     @Override
     public boolean metricsAreEnabled()

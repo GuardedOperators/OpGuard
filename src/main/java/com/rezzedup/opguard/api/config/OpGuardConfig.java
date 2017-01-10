@@ -4,9 +4,7 @@ import java.util.List;
 
 public interface OpGuardConfig extends Config
 {
-    long getOpListInspectionInterval();
-    
-    boolean canCheckPermissions();
+    boolean isLocked();
     
     boolean canOnlyOpIfOnline();
     
@@ -14,13 +12,35 @@ public interface OpGuardConfig extends Config
     
     boolean canManagePasswordInGame();
     
+    boolean canShutDownOnDisable();
+    
+    boolean canExemptSelfFromPlugMan();
+    
+    // Inspections
+    
+    long getOpListInspectionInterval();
+    
+    boolean canCheckPermissions();
+    
+    boolean canInjectPlayerCommands();
+    
+    boolean canInjectPlayerEvents();
+    
     boolean canDisableOtherPlugins();
     
     boolean canRenameOtherPlugins();
     
-    boolean canShutDownOnDisable();
+    // Exemptions
     
-    boolean isLocked();
+    boolean shouldExemptPlugins();
+    
+    List<String> getExemptPlugins();
+    
+    boolean shouldExemptCommands();
+    
+    List<String> getExemptCommands();
+    
+    // Logging
     
     boolean loggingIsEnabled();
     
@@ -29,6 +49,8 @@ public interface OpGuardConfig extends Config
     boolean canLogConsoleAttempts();
     
     boolean canLogPlayerAttempts();
+    
+    // Messages
     
     String getWarningPrefix();
     
@@ -50,6 +72,8 @@ public interface OpGuardConfig extends Config
     
     String getOkayPrefix();
     
+    // Punishments
+    
     boolean canPunishPluginAttempts();
     
     boolean canPunishConsoleOpAttempts();
@@ -58,9 +82,7 @@ public interface OpGuardConfig extends Config
     
     List<String> getPunishmentCommands();
     
-    boolean shouldExemptCommands();
-    
-    List<String> getExemptCommands();
+    // Metrics
     
     boolean metricsAreEnabled();
     
