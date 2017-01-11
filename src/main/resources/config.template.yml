@@ -96,18 +96,30 @@ rename-malicious-plugins-when-caught: @(rename-malicious-plugins-when-caught | t
 #   Exemptions   #
 # -------------- #
 
+# ----- TOGGLE: PLUGIN EXEMPTIONS -----
+# | 
 enable-exempt-plugins: @(enable-exempt-plugins | true)
 
+# | A list of plugins exempt from OpGuard's various checks.
+# | When a plugin is present in the list, OpGuard will:
+# |   - automatically exempt all of the plugin's commands.
+# |   - allow exempt plugins to set and remove op.
 exempt-plugins:
 - @(exempt-plugins[] | PerWorldPlugins)
 
-# If true, OpGuard will not interfere with commands in the exempt-commands list below.
-# Default: false
+# ----- TOGGLE: COMMAND EXEMPTIONS -----
+# | OpGuard will not interfere with commands in the exempt-commands list if this option is true.
+# | Default: false
 enable-exempt-commands: @(enable-exempt-commands | false)
 
-# A list of commands that OpGuard will not interfere with.
-# The option above must be true for these commands to be exempted.
-# Add a command here if OpGuard is causing errors when using it.
+# | A list of commands that OpGuard will not interfere with.
+# | The toggle above must be true for these commands to be exempted.
+# | Add a command here if OpGuard is causing errors with it.
+# Note:
+#   Do not include the leading slash.
+#   - examplecommand is valid
+#   - /examplecommand is not valid
+# Don't forget to enable the toggle directly above (enable-exempt-commands: true)
 exempt-commands:
 - @(exempt-commands[] | examplecommand)
 

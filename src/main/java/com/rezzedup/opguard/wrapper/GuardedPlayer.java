@@ -5,8 +5,8 @@ import com.rezzedup.opguard.Messenger;
 import com.rezzedup.opguard.PluginStackChecker;
 import com.rezzedup.opguard.api.OpGuardAPI;
 import com.rezzedup.opguard.api.config.OpGuardConfig;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,13 +16,16 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.help.HelpMap;
+import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public final class GuardedPlayer extends WrappedPlayer
 {
@@ -43,28 +46,33 @@ public final class GuardedPlayer extends WrappedPlayer
         {
             String name = stack.getPlugin().getName();
             Context context = new Context(api).pluginAttempt().setOp();
+            String action = ((value) ? "op" : "deop") + " &7" + getName();
+            OpGuardConfig config = api.getConfig();
+            boolean isAllowed = config.shouldExemptPlugins() && config.getExemptPlugins().contains(name);
             
-            if (value)
+            if (!isAllowed)
             {
-                context.warning("The plugin <!>" + name + "&f attempted to op &7" + getName());
+                context.warning("The plugin <!>" + name + "&f attempted to " + action);
             }
             else 
             {
-                context.warning("The plugin <!>" + name + "&f attempted to deop &7" + getName());
+                context.okay("The plugin &7" + name + "&f was allowed to " + action);
             }
     
             api.warn(context).log(context);
             
-            if (value && !api.getVerifier().isVerified(getUniqueId()))
+            if (!isAllowed)
             {
-                api.punish(context, getName());
-                stack.disablePlugin(api, context);
+                if (value && !api.getVerifier().isVerified(getUniqueId()))
+                {
+                    api.punish(context, getName());
+                    stack.disablePlugin(api, context);
+                }
+                return;
             }
         }
-        else
-        {
-            player.setOp(value);
-        }
+        
+        player.setOp(value);
     }
     
     public static class EventInjector implements Listener
@@ -81,58 +89,15 @@ public final class GuardedPlayer extends WrappedPlayer
     
             // Exempting all default commands...
             // They cast the Player to a CraftPlayer
-            exemptVanillaCommands(30);
-            // 30 attempts each taking 2 seconds should ensure the vanilla HelpTopic is generated
+            new ExemptionTask(this, "Minecraft").runTask(api.getPlugin());
+            // Exempting commands from already-loaded plugins
+            new ExemptionTask(this).runTask(api.getPlugin());
         }
-
-        private void exemptVanillaCommands(int attempts)
+        
+        @EventHandler
+        public void on(PluginEnableEvent event)
         {
-            if (attempts <= 0)
-            {
-                Messenger.send("[OpGuard] Unable to fix compatibility with vanilla commands.");
-                return;
-            }
-            
-            new BukkitRunnable()
-            {
-                @Override
-                public void run()
-                {
-                    HelpMap helpMap = api.getPlugin().getServer().getHelpMap();
-                    HelpTopic vanilla = helpMap.getHelpTopic("Minecraft");
-    
-                    if (vanilla == null)
-                    {
-                        exemptVanillaCommands(attempts - 1);
-                        return;
-                    }
-    
-                    String helpText = vanilla.getFullText(Bukkit.getConsoleSender());
-    
-                    for (String text : helpText.split("\n"))
-                    {
-                        text = ChatColor.stripColor(text);
-        
-                        if (!text.startsWith("/"))
-                        {
-                            continue;
-                        }
-        
-                        String command = text.replaceAll("(^.*\\/)|(: .*)", "");
-        
-                        if (!command.isEmpty())
-                        {
-                            exempt.add(command);
-            
-                            if (!command.startsWith("minecraft:"))
-                            {
-                                exempt.add("minecraft:" + command);
-                            }
-                        }
-                    }
-                }
-            }
-            .runTaskLater(api.getPlugin(), 20 * 2);
+            new ExemptionTask(this, event.getPlugin().getName()).runTask(api.getPlugin());
         }
     
         private void injectEvent(PlayerEvent event)
@@ -296,8 +261,87 @@ public final class GuardedPlayer extends WrappedPlayer
             { 
                 return; 
             }
+    
+            String commandPrefix = name.toLowerCase() + ":";
+            Set<String> commands = getCommandsFrom(name);
+    
+            if (commands.isEmpty())
+            {
+                Messenger.send("[OpGuard] &cUnable to exempt commands from " + name);
+                return;
+            }
             
+            for (String command : commands)
+            {
+                injector.exempt.add(command);
+    
+                if (!command.startsWith(commandPrefix))
+                {
+                    injector.exempt.add(commandPrefix + command);
+                }
+            }
             
+            Messenger.send("[OpGuard] Exempted all commands defined for " + name);
+        }
+        
+        private Set<String> getCommandsFrom(String name)
+        {
+            Set<String> commands = new HashSet<>();
+            Server server = api.getPlugin().getServer();
+            
+            HelpTopic helpTopic = server.getHelpMap().getHelpTopic(name);
+    
+            if (helpTopic != null)
+            {
+                String helpText = helpTopic.getFullText(server.getConsoleSender());
+    
+                for (String text : helpText.split("\n"))
+                {
+                    text = ChatColor.stripColor(text);
+        
+                    if (!text.startsWith("/"))
+                    {
+                        continue;
+                    }
+        
+                    String command = text.replaceAll("(^.*\\/)|(: .*)", "");
+        
+                    if (!command.isEmpty())
+                    {
+                        commands.add(command);
+                    }
+                }
+            }
+    
+            Plugin plugin = server.getPluginManager().getPlugin(name);
+            
+            if (plugin != null)
+            {
+                Map<String, Map<String, Object>> definedCommands =  plugin.getDescription().getCommands();
+                
+                for (String command : definedCommands.keySet())
+                {
+                    commands.add(command);
+                    
+                    Map<String, Object> properties = definedCommands.get(command);
+    
+                    Object aliases = properties.get("aliases");
+                    
+                    if (aliases != null)
+                    {
+                        if (aliases instanceof String)
+                        {
+                            commands.add((String) aliases);
+                        }
+                        else
+                        {
+                            ((List<String>) aliases).forEach(commands::add);
+                        }
+                    }
+                }
+            }
+            
+            return commands;
         }
     }
 }
