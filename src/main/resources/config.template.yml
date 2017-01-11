@@ -50,8 +50,8 @@ manage-password-in-game: @(manage.password-in-game | manage-password-in-game | t
 # Default: false
 shutdown-on-disable: @(shutdown-on-disable | false)
 
-# If PlugMan is installed and the config option below is true, 
-# OpGuard will automatically exempt itself from PlugMan's commands.
+# If PlugMan is installed and this option is true, OpGuard
+# will automatically exempt itself from PlugMan's commands.
 # This option may be ignored if you don't have PlugMan installed.
 # Default: true
 exempt-opguard-from-plugman: @(exempt-opguard-from-plugman | true)
@@ -73,7 +73,7 @@ check-permissions: @(check-permissions | true)
 
 # If true, OpGuard will inject player commands with a special player object
 # that will detect and prevent player.setOp(). This may interfere with some commands,
-# so instead of modifying this value, try exempting them below. (in the Exemptions section)
+# so instead of modifying this value, try exempting them below (in the Exemptions section).
 # Default: true
 inject-player-commands: @(inject-player-commands | true)
 
@@ -96,30 +96,47 @@ rename-malicious-plugins-when-caught: @(rename-malicious-plugins-when-caught | t
 #   Exemptions   #
 # -------------- #
 
-# ----- TOGGLE: PLUGIN EXEMPTIONS -----
-# | 
+# ----------- TOGGLE: PLUGIN EXEMPTIONS -----------
+# | Allows use of the exempt-plugins list.
+# | Default: true
 enable-exempt-plugins: @(enable-exempt-plugins | true)
 
+# + [Exempt Plugins List]
+# |
 # | A list of plugins exempt from OpGuard's various checks.
 # | When a plugin is present in the list, OpGuard will:
 # |   - automatically exempt all of the plugin's commands.
-# |   - allow exempt plugins to set and remove op.
+# |   - allow the plugin to set and remove op.
+# +
+# Notes:
+#   A server restart is required to apply changes to the exempt-plugins list.
+#
+#   Plugin names must be exact! Names are case sensitive (capitalization matters).
+#   For example, if you have the plugin "MyAmazingPlugin" installed:
+#   - MyAmazingPlugin is valid
+#   - myamazingplugin is not valid
+#
+# Don't forget to enable the toggle directly above! (enable-exempt-plugins: true)
 exempt-plugins:
 - @(exempt-plugins[] | PerWorldPlugins)
 
-# ----- TOGGLE: COMMAND EXEMPTIONS -----
-# | OpGuard will not interfere with commands in the exempt-commands list if this option is true.
+# ----------- TOGGLE: COMMAND EXEMPTIONS -----------
+# | Allows use of the exempt-commands list.
 # | Default: false
 enable-exempt-commands: @(enable-exempt-commands | false)
 
+# + [Exempt Commands List]
 # | A list of commands that OpGuard will not interfere with.
-# | The toggle above must be true for these commands to be exempted.
 # | Add a command here if OpGuard is causing errors with it.
-# Note:
-#   Do not include the leading slash.
+# +
+# Notes:
+#   Use /opguard reload or restart the server to apply changes to the exempt-commands list.
+#
+#   Do not include the leading slash when adding commands.
 #   - examplecommand is valid
 #   - /examplecommand is not valid
-# Don't forget to enable the toggle directly above (enable-exempt-commands: true)
+#
+# Don't forget to enable the toggle directly above! (enable-exempt-commands: true)
 exempt-commands:
 - @(exempt-commands[] | examplecommand)
 
@@ -215,5 +232,10 @@ punishment-commands:
 
 metrics: @(metrics | true)
 
-# Do not modify this value, it may affect config updates in the future.
+#                                                         #
+# ---------------------- End Config --------------------- #
+
+# WARNING:
+# Do not modify the config manually, it may affect future config updates.
+# The config version only changes when OpGuard updates it.
 version: ${version}
