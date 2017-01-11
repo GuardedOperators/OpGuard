@@ -62,10 +62,20 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# IntelliJ project data
+# IntelliJ
 .idea/
 *.iml
 *.ipr
 out/
+
+# Maven
 target/
+
+# Eclipse
+.settings/
+.project
+.classpath
+
+
+# Don't ignore jars in lib/
 !lib/*.jar
