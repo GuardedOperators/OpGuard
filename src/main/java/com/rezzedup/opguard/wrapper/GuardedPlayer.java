@@ -79,6 +79,8 @@ public final class GuardedPlayer extends WrappedPlayer
     {
         private final HashSet<String> exempt = new HashSet<>();
         
+        private boolean hasExemptedLoadedPlugins = false;
+        
         private final OpGuardAPI api;
         
         @SuppressWarnings({"deprecation", "unchecked"})
@@ -87,17 +89,32 @@ public final class GuardedPlayer extends WrappedPlayer
             this.api = api;
             api.registerEvents(this);
     
-            // Exempting all default commands...
+            // Exempt all default commands...
             // They cast the Player to a CraftPlayer
             new ExemptionTask(this, "Minecraft").runTask(api.getPlugin());
-            // Exempting commands from already-loaded plugins
+            
+            // Exempt commands from already-loaded plugins
             new ExemptionTask(this).runTask(api.getPlugin());
+            
+            // Allow the PluginEnableEvent to check for exempted plugins.
+            new BukkitRunnable()
+            {
+                @Override
+                public void run()
+                {
+                    hasExemptedLoadedPlugins = true;
+                }
+            }
+            .runTask(api.getPlugin());
         }
         
         @EventHandler
         public void on(PluginEnableEvent event)
         {
-            new ExemptionTask(this, event.getPlugin().getName()).runTask(api.getPlugin());
+            if (hasExemptedLoadedPlugins)
+            {
+                new ExemptionTask(this, event.getPlugin().getName()).runTask(api.getPlugin());
+            }
         }
     
         private void injectEvent(PlayerEvent event)

@@ -35,7 +35,7 @@ final class PluginDisableHijack implements Listener
                     Messenger.send("&f[OpGuard] &9Exempted OpGuard from PlugMan.");
                 }
             }
-            .runTaskLater(api.getPlugin(), 20L);
+            .runTask(api.getPlugin());
         }
     }
     
