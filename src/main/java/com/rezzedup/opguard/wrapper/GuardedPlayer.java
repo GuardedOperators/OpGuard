@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
@@ -210,6 +211,93 @@ public final class GuardedPlayer extends WrappedPlayer
             }
             
             inject(event);
+        }
+    }
+    
+    private static class ExemptionTask extends BukkitRunnable
+    {
+        private final EventInjector injector;
+        private final OpGuardAPI api;
+        
+        private String specific = null;
+        
+        private ExemptionTask(EventInjector injector)
+        {
+            this.injector = injector;
+            this.api = injector.api;
+        }
+        
+        private ExemptionTask(EventInjector injector, String specific)
+        {
+            this(injector);
+            this.specific = specific;
+        }
+        
+        @Override
+        public void run()
+        {
+            if (specific == null)
+            {
+                exemptLoadedPlugins();
+            }
+            else 
+            {
+                exemptSpecificPlugin(specific);
+            }
+        }
+        
+        private void exemptLoadedPlugins()
+        {
+            for (Plugin plugin : api.getPlugin().getServer().getPluginManager().getPlugins())
+            {
+                exemptSpecificPlugin(plugin.getName());
+            }
+        }
+        
+        private boolean isExempted(String name)
+        {
+            if (name.equals("Minecraft")) 
+            { 
+                return true; 
+            }
+            
+            OpGuardConfig config = api.getConfig();
+            
+            for (String exempt : config.getExemptPlugins())
+            {
+                if (exempt.equalsIgnoreCase(name))
+                {
+                    if (config.shouldExemptPlugins())
+                    {
+                        return true;
+                    }
+                    else 
+                    {
+                        api.warn(new Context(api).warning
+                        (
+                            "The plugin &7" + name + "&f is defined in OpGuard's exempt-plugins list, " +
+                            "but plugin exemptions are currently disabled"
+                        ))
+                        .warn(new Context(api).warning
+                        (
+                            "Errors may occur when using commands from &7" + name + "&f until plugin " +
+                            "exemptions are enabled in OpGuard's config"
+                        ));
+                        return false;
+                    }
+                }
+            }
+            return false;
+        }
+        
+        private void exemptSpecificPlugin(String name)
+        {
+            if (!isExempted(name)) 
+            { 
+                return; 
+            }
+            
+            
         }
     }
 }
