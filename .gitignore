@@ -8,6 +8,23 @@
 *.war
 *.ear
 
+# Don't ignore jars in lib/
+!lib/*.jar
+
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+out/
+
+# Maven
+target/
+
+# Eclipse
+.settings/
+.project
+.classpath
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
@@ -62,20 +79,3 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# IntelliJ
-.idea/
-*.iml
-*.ipr
-out/
-
-# Maven
-target/
-
-# Eclipse
-.settings/
-.project
-.classpath
-
-
-# Don't ignore jars in lib/
-!lib/*.jar
