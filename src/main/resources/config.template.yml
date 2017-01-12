@@ -28,129 +28,173 @@
 # - Is this from a trusted developer?
 # - Does this plugin have positive comments and reviews?
 #
-# You are the first step in securing op on your server. 
+# You are the first step in securing your server. 
 # Use your head. Trust your gut.
+# Stay safe!
 
 # --------------------- #
 # OpGuard Configuration #
 # --------------------- #
 
-# If true, OpGuard will lock its commands: preventing new operators from
-# being added, and preventing its password from being modified.
-# The only way to unlock is to change this value to false and restart the server.
+# [Data Lock]
+# When enabled, OpGuard will prevent new operators from being adding,
+# deny password modifications, and block config reloading.
+# The only way to unlock is to disable this option and restart the server.
+
 # Default: false
 lock: @(lock | false)
 
-# If true, OpGuard will only op players if they're online.
+# [Online-Only Op]
+# OpGuard will only op players if they're online.
 #   - /opguard op <player>
+
 # Default: true
 only-op-if-online: @(only-op-if-online | true)
 
-# If true, OpGuard will only deop players if they're online.
+# [Online-Only Deop]
+# OpGuard will only deop players if they're online.
 #   - /opguard deop <player>
 # This option is false by default to avoid circumstances where you're unable
 # to deop rogue operators. That way banned operators, for example, can be deop'd.
+
 # Default: false
 only-deop-if-online: @(only-deop-if-online | false)
 
-# If true, the following commands will be accessible in-game:
+# [Password Management]
+# When enabled, the following commands will be accessible in-game (by verified operators):
 #   - /opguard password <new password>
 #   - /opguard reset <current password>
-# If false, only console may manage the password (access the commands above).
+# Otherwise, only console may manage the password (access the commands above).
+
 # Default: true
 manage-password-in-game: @(manage.password-in-game | manage-password-in-game | true)
 
-# If true, OpGuard will shut the server down if it is disabled.
+# [Server Shutdown]
+# OpGuard will shut the server down if it is disabled.
 # Enable this option if you don't want other plugins to disable OpGuard.
+
 # Default: false
 shutdown-on-disable: @(shutdown-on-disable | false)
 
-# If PlugMan is installed and this option is true, OpGuard
-# will automatically exempt itself from PlugMan's commands.
+# [PlugMan]
+# If PlugMan is installed, OpGuard will automatically exempt itself from PlugMan.
 # This option may be ignored if you don't have PlugMan installed.
+
 # Default: true
 exempt-opguard-from-plugman: @(exempt-opguard-from-plugman | true)
 
-# ------------------- #
-# OpGuard Inspections #
-# ------------------- #
+# --------------- #
+#   Inspections   #
+# --------------- #
 
+# [Op List Inspection]
 # Duration of time (in ticks) that OpGuard should verify the op list.
 # Remember: 20 ticks = 1 second, so 4 ticks = 1/5 of a second.
 # This value cannot be negative or zero.
+
 # Default: 4
 inspection-interval: @(inspection-interval | 4)
 
-# If true, OpGuard will check for players with the '*' permission node (all permissions).
+# ['*' Permission Check]
+# OpGuard will check for players with the '*' permission node (all permissions).
 # If a player has '*' and isn't a verified operator, OpGuard will punish them.
+
 # Default: true
 check-permissions: @(check-permissions | true)
 
-# If true, OpGuard will inject player commands with a special player object
-# that will detect and prevent player.setOp(). This may interfere with some commands,
-# so instead of modifying this value, try exempting them below (in the Exemptions section).
+# [Player Command Injection]
+# OpGuard will inject player commands with a special player object
+# that will detect and prevent plugins from setting op.
+#
+# This may interfere with some commands, but instead of modifying this option, 
+# try exempting commands and plugins below.
+#
+# This feature is very important to the functionality of OpGuard. 
+# Disabling it is not recommended. 
+
 # Default: true
 inject-player-commands: @(inject-player-commands | true)
 
-# If true, OpGuard will inject certain player events with a special player object
-# that will detect and prevent player.setOp().
+# [Player Event Injection]
+# OpGuard will inject certain player events with a special player object
+# that will detect and prevent plugins from setting op.
+#
+# This feature is very important to the functionality of OpGuard. 
+# Disabling it is not recommended. 
+
 # Default: true
 inject-player-events: @(inject-player-events | true)
 
-# If true, OpGuard will disable plugins that have been caught setting op.
+# [Malicious Plugin Disabling]
+# OpGuard will disable plugins that have been caught setting op.
+# Plugins in the exempt-plugins list will be ignored (they are allowed to set and remove op).
+
 # Default: true
 disable-malicious-plugins-when-caught: @(disable-malicious-plugins-when-caught | true)
 
-# If true, OpGuard will rename plugin .jar files that have been caught 
-# setting op so they cannot re-enable.
-# This will only occur if the option above is also enabled (plugin disabling).
+# [Malicious Plugin Renaming]
+# OpGuard will rename plugin .jar files that have been caught setting op if enabled.
+# This will prevent malicious plugins from re-enabling on server restart/reload.
+#
+# JAR renaming will only occur if the plugin disabling is also enabled. 
+# (disable-malicious-plugins-when-caught: true)
+# 
+# Example scenario:
+#   If, for example, the plugin "OpMePlugin" sets op for a player, OpGuard will:
+#     - Disable OpMePlugin
+#     - Rename OpMePlugin.jar to OpMePlugin.jar.opguard-disabled
+#   To reverse plugin renaming, simply delete the ".opguard-disabled" part of the JAR's name.
+
 # Default: true
 rename-malicious-plugins-when-caught: @(rename-malicious-plugins-when-caught | true)
 
-# -------------- #
-#   Exemptions   #
-# -------------- #
+# --------------------- #
+#   Plugin Exemptions   #
+# --------------------- #
 
-# ----------- TOGGLE: PLUGIN EXEMPTIONS -----------
-# | Allows use of the exempt-plugins list.
-# | Default: true
+# [Enable Exempt Plugins]
+# Allows use of the exempt-plugins list.
+
+# Default: true
 enable-exempt-plugins: @(enable-exempt-plugins | true)
 
-# + [Exempt Plugins List]
-# |
-# | A list of plugins exempt from OpGuard's various checks.
-# | When a plugin is present in the list, OpGuard will:
-# |   - automatically exempt all of the plugin's commands.
-# |   - allow the plugin to set and remove op.
-# +
-# Notes:
-#   A server restart is required to apply changes to the exempt-plugins list.
+# [Exempt Plugins List]
+# A list of plugins exempt from OpGuard's various checks.
+# When a plugin is present in the list, OpGuard will:
+#   - automatically exempt all of the plugin's commands.
+#   - allow the plugin to set and remove op.
+# 
+# A server restart is required to apply changes to the exempt-plugins list.
 #
-#   Plugin names must be exact! Names are case sensitive (capitalization matters).
-#   For example, if you have the plugin "MyAmazingPlugin" installed:
+# Plugin names must be exact! Names are case sensitive (capitalization matters).
+# For example, if you have the plugin "MyAmazingPlugin" installed:
 #   - MyAmazingPlugin is valid
 #   - myamazingplugin is not valid
-#
+
 # Don't forget to enable the toggle directly above! (enable-exempt-plugins: true)
 exempt-plugins:
 - @(exempt-plugins[] | PerWorldPlugins)
 
-# ----------- TOGGLE: COMMAND EXEMPTIONS -----------
-# | Allows use of the exempt-commands list.
-# | Default: false
+# ---------------------- #
+#   Command Exemptions   #
+# ---------------------- #
+
+# [Enable Exempt Commands]
+# Allows use of the exempt-commands list.
+
+# Default: false
 enable-exempt-commands: @(enable-exempt-commands | false)
 
-# + [Exempt Commands List]
-# | A list of commands that OpGuard will not interfere with.
-# | Add a command here if OpGuard is causing errors with it.
-# +
-# Notes:
-#   Use /opguard reload or restart the server to apply changes to the exempt-commands list.
+# [Exempt Commands List]
+# A list of commands that OpGuard will not interfere with.
+# Add a command here if OpGuard is causing errors with it.
 #
-#   Do not include the leading slash when adding commands.
+# Use /opguard reload or restart the server to apply changes to the exempt-commands list.
+#
+# Do not include the leading slash when adding commands.
 #   - examplecommand is valid
 #   - /examplecommand is not valid
-#
+
 # Don't forget to enable the toggle directly above! (enable-exempt-commands: true)
 exempt-commands:
 - @(exempt-commands[] | examplecommand)
@@ -183,27 +227,27 @@ log-player-attempts: @(log.player-attempt | log-player-attempts | true)
 # Default: '&cOpGuard (&4&lWarning&c)&7:'
 warn-prefix: @(warn-prefix | '&cOpGuard (&4&lWarning&c)&7:')
 
-# Color to use in warnings for emphasis
+# Color to use in warnings for emphasis.
 # Default: '&c'
 warn-emphasis-color: @(warn-emphasis-color | '&c')
 
-# If true, OpGuard will display warnings whenever a plugin attempts to give op.
+# Send warnings whenever a plugin attempts to give op.
 # Default: true
 warn-plugin-attempts: @(warn.plugin-attempt | warn-plugin-attempts | true)
 
-# If true, OpGuard will display warnings whenever console attempts  to use /op.
+# Send warnings whenever console attempts to use /op and /deop.
 # Default: true
 warn-console-op-attempts: @(warn.console-attempt | warn-console-op-attempts | true)
 
-# If true, OpGuard will display warnings whenever console incorrectly uses /opguard.
+# Send warnings whenever console incorrectly uses /opguard.
 # Default: true
 warn-console-opguard-attempts: @(warn.console-attempt | warn-console-opguard-attempts | true)
 
-# If true, OpGuard will display warnings whenever a player attempts to use /op.
+# Send warnings whenever a player attempts to use /op and /deop.
 # Default: true
 warn-player-op-attempts: @(warn.player-attempt | warn-player-op-attempts | true)
 
-# If true, OpGuard will display warnings whenever a player incorrectly uses /opguard.
+# Send warnings whenever a player incorrectly uses /opguard.
 # Default: true
 warn-player-opguard-attempts: @(warn.player-attempt | warn-player-opguard-attempts | true)
 
@@ -211,7 +255,7 @@ warn-player-opguard-attempts: @(warn.player-attempt | warn-player-opguard-attemp
 # Default: '&eOpGuard (&6&lSecurity&e)&7:'
 security-prefix: @(security-prefix | '&eOpGuard (&6&lSecurity&e)&7:')
 
-# If true, OpGuard will display warnings when it lacks a password.
+# Send security warnings when OpGuard lacks a password.
 # Default: true
 enable-security-warnings: @(warn.security-risk | enable-security-warnings | true)
 
@@ -223,23 +267,52 @@ okay-prefix: @(okay-prefix | '&aOpGuard (&2&lOkay&a)&7:')
 #   PUNISHMENTS   #
 # --------------- #
 
-# If true, OpGuard will punish players that other plugins attempt to op.
+# [Plugin /op Punishment]
+# Punish players that other plugins attempt to op.
+# If the player is already a verified operator or the plugin is exempt, no punishments will be given.
+
 # Default: true
 punish-plugin-attempts: @(punish.plugin-attempt | punish-plugin-attempts | true)
 
-# If true, OpGuard will punish players when the console attempts to use /op.
+# [Console /op Punishment]
+# Punish players when the console attempts to use /op.
+# If the player is already a verified operator, no punishments will be given.
+
 # Default: true
 punish-console-op-attempts: @(punish.console-attempt | punish-console-op-attempts | true)
 
-# If true, OpGuard will punish players when console incorrectly uses /opguard.
+# [Console /opguard Punishment]
+# Punish players when console incorrectly uses /opguard.
+# This option is disabled by default to prevent accidental punishments.
+
 # Default: false
 punish-console-opguard-attempts: @(punish-console-opguard-attempts | false)
-  
-# A list of commands to run when punishing a player.
+
+# [Punishment Commands]
+# A list of commands to run to punish a player.
+
 # Default:
 # - ban %player% Attempting to gain op
 punishment-commands:
 - @(punish.command | punishment-commands[] | ban %player% Attempting to gain op)
+
+# ----------------- #
+#   UPDATE CHECKS   #
+# ----------------- #
+
+# [Update Check]
+# OpGuard will check for updates if enabled.
+# A notification is sent to console only if an update is found.
+
+# Default: true
+check-for-updates: @(check-for-updates | true)
+
+# [Update Check Interval]
+# A time interval in hours to perform update checks.
+# This value may not be negative or zero.
+
+# Default: 12  
+update-interval: @(update-interval | 12)
 
 # ----------- #
 #   METRICS   #
@@ -247,7 +320,6 @@ punishment-commands:
 
 metrics: @(metrics | true)
 
-#                                                         #
 # ---------------------- End Config --------------------- #
 
 # WARNING:
