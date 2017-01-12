@@ -67,7 +67,7 @@ final class CommandInterceptor implements Listener
                 
                 exemption.warning
                 (
-                    "The plugin &7" + name + "&f is defined in the plugin-exemption list, " +
+                    "The plugin &7" + name + "&f is defined in the exempt-plugins list, " +
                     "but plugin exemptions are currently disabled"
                 );
                 api.warn(exemption).log(exemption);

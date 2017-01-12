@@ -58,9 +58,8 @@ public final class GuardedPlayer extends WrappedPlayer
             if (value && !api.getVerifier().isVerified(getUniqueId()))
             {
                 api.punish(context, getName());
-                stack.disablePlugin(api, context);
             }
-            
+            stack.disablePlugin(api, context);
             return;
         }
         if (stack.hasAllowedPlugins())
@@ -261,12 +260,9 @@ public final class GuardedPlayer extends WrappedPlayer
                         api.warn(new Context(api).warning
                         (
                             "The plugin &7" + name + "&f is defined in OpGuard's exempt-plugins list, " +
-                            "but plugin exemptions are currently disabled"
-                        ))
-                        .warn(new Context(api).warning
-                        (
-                            "Errors may occur when using commands from &7" + name + "&f until plugin " +
-                            "exemptions are enabled in OpGuard's config"
+                            "but plugin exemptions are currently disabled. Errors may occur when using" +
+                            "commands from &7" + name + "&f until plugin exemptions are enabled in" +
+                            "OpGuard's config"
                         ));
                         return false;
                     }
