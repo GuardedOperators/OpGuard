@@ -1,14 +1,14 @@
 package com.rezzedup.opguard;
 
+import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import org.bukkit.ChatColor;
-import org.bukkit.plugin.Plugin;
 
 public class Log
 {

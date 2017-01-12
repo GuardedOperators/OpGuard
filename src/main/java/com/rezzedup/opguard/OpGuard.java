@@ -2,9 +2,9 @@ package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
+import com.rezzedup.opguard.api.Verifier;
 import com.rezzedup.opguard.api.Version;
 import com.rezzedup.opguard.api.config.OpGuardConfig;
-import com.rezzedup.opguard.api.Verifier;
 import com.rezzedup.opguard.api.message.Loggable;
 import com.rezzedup.opguard.api.message.Punishable;
 import com.rezzedup.opguard.api.message.Warnable;
@@ -14,7 +14,6 @@ import com.rezzedup.opguard.metrics.MetricsLite;
 import com.rezzedup.opguard.wrapper.GuardedPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;

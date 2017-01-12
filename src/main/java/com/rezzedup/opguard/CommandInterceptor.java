@@ -110,7 +110,7 @@ final class CommandInterceptor implements Listener
         }
         else if (cmd[0].toLowerCase().matches("^[\\/]?o(g|pguard)$"))
         {
-            if (sender.hasPermission("opguard.manage"))
+            if (sender.isOp() && api.getVerifier().isVerified(sender))
             {
                 api.run(sender, cmd);
     

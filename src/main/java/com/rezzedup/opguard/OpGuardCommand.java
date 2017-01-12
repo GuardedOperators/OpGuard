@@ -1,19 +1,19 @@
 package com.rezzedup.opguard;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.rezzedup.opguard.api.ExecutableCommand;
 import com.rezzedup.opguard.api.OpGuardAPI;
 import com.rezzedup.opguard.api.Password;
-import com.rezzedup.opguard.api.config.OpGuardConfig;
 import com.rezzedup.opguard.api.Verifier;
+import com.rezzedup.opguard.api.config.OpGuardConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 final class OpGuardCommand implements ExecutableCommand
 {

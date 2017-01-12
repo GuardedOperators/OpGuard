@@ -5,7 +5,10 @@ import com.rezzedup.opguard.api.Verifier;
 import com.rezzedup.opguard.config.DataStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -144,6 +147,21 @@ final class OpVerifier implements Verifier
     public boolean isVerified(OfflinePlayer player)
     {
         return isVerified(player.getUniqueId());
+    }
+    
+    @Override
+    public boolean isVerified(CommandSender sender)
+    {
+        if (sender instanceof ConsoleCommandSender)
+        {
+            return true;
+        }
+        else if (sender instanceof Player)
+        {
+            Player player = (Player) sender;
+            return isVerified(player.getUniqueId());
+        }
+        return false;
     }
     
     @Override
