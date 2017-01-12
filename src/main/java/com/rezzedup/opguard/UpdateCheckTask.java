@@ -1,7 +1,6 @@
 package com.rezzedup.opguard;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.rezzedup.opguard.api.OpGuardAPI;
 import com.rezzedup.opguard.api.Version;
@@ -13,8 +12,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class UpdateCheckTask extends BukkitRunnable
 {
@@ -52,7 +49,6 @@ public class UpdateCheckTask extends BukkitRunnable
     
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) 
             {
-                //String result = reader.lines().collect(Collectors.joining("\n"));
                 JsonArray results = new JsonParser().parse(reader).getAsJsonArray();
                 name = results.get(0).getAsJsonObject().get("name").getAsString();
             }
@@ -72,9 +68,9 @@ public class UpdateCheckTask extends BukkitRunnable
                 );
             }
         }
-        catch (Exception e)
+        catch (Exception e) 
         {
-            e.printStackTrace();
+            // Don't pester users about failed update checks...
         }
     }
 }
