@@ -41,35 +41,38 @@ public final class GuardedPlayer extends WrappedPlayer
     public void setOp(boolean value)
     {
         PluginStackChecker stack = new PluginStackChecker(api);
+        Context context = new Context(api).pluginAttempt().setOp();
+        String action = (value) ? "op" : "deop";
     
-        if (stack.foundPlugin())
+        if (stack.hasFoundPlugin())
         {
             String name = stack.getPlugin().getName();
-            Context context = new Context(api).pluginAttempt().setOp();
-            String action = ((value) ? "op" : "deop") + " &7" + getName();
-            OpGuardConfig config = api.getConfig();
-            boolean isAllowed = config.shouldExemptPlugins() && config.getExemptPlugins().contains(name);
             
-            if (!isAllowed)
-            {
-                context.warning("The plugin <!>" + name + "&f attempted to " + action);
-            }
-            else 
-            {
-                context.okay("The plugin &7" + name + "&f was allowed to " + action);
-            }
+            context.warning
+            (
+                String.format("The plugin <!>%s&f attempted to %s &7%s", name, action, getName())
+            );
     
             api.warn(context).log(context);
-            
-            if (!isAllowed)
+    
+            if (value && !api.getVerifier().isVerified(getUniqueId()))
             {
-                if (value && !api.getVerifier().isVerified(getUniqueId()))
-                {
-                    api.punish(context, getName());
-                    stack.disablePlugin(api, context);
-                }
-                return;
+                api.punish(context, getName());
+                stack.disablePlugin(api, context);
             }
+            
+            return;
+        }
+        if (stack.hasAllowedPlugins())
+        {
+            String name = stack.getTopAllowedPlugin().getName();
+    
+            context.okay
+            (
+                String.format("The plugin &7%s&f was allowed to %s &7%s", name, action, getName())
+            );
+            
+            api.warn(context).log(context);
         }
         
         player.setOp(value);

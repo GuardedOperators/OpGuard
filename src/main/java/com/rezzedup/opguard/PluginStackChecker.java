@@ -6,19 +6,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+import java.util.Stack;
 
 public final class PluginStackChecker
 {
-    private final StackTraceElement[] stack;
+    private final StackTraceElement[] stackTrace;
+    
+    private final Stack<Plugin> allowed = new Stack<>();
     
     private Plugin plugin = null;
     private StackTraceElement element = null;
     
     public PluginStackChecker(OpGuardAPI api)
     {
-        this.stack = Thread.currentThread().getStackTrace();
+        this.stackTrace = Thread.currentThread().getStackTrace();
         
-        for (StackTraceElement element : stack)
+        for (StackTraceElement element : stackTrace)
         {
             try
             {
@@ -26,9 +29,18 @@ public final class PluginStackChecker
             
                 if (plugin != null && plugin != api.getPlugin())
                 {
-                    this.plugin = plugin;
-                    this.element = element;
-                    break;
+                    OpGuardConfig config = api.getConfig();
+                    
+                    if (config.shouldExemptPlugins() && config.getExemptPlugins().contains(plugin.getName()))
+                    {
+                        allowed.push(plugin);
+                    }
+                    else
+                    {
+                        this.plugin = plugin;
+                        this.element = element;
+                        break;
+                    }
                 }
             }
             catch (ClassNotFoundException e) {} // Don't do anything: just keep going.
@@ -52,7 +64,7 @@ public final class PluginStackChecker
         return null;
     }
     
-    public boolean foundPlugin()
+    public boolean hasFoundPlugin()
     {
         return plugin != null;
     }
@@ -64,12 +76,27 @@ public final class PluginStackChecker
     
     public StackTraceElement[] getStackTrace()
     {
-        return stack;
+        return stackTrace;
     }
     
     public StackTraceElement getPluginStackElement()
     {
         return element;
+    }
+    
+    public boolean hasAllowedPlugins()
+    {
+        return !allowed.empty();
+    }
+    
+    public Stack<Plugin> getAllowedPlugins()
+    {
+        return allowed;
+    }
+    
+    public Plugin getTopAllowedPlugin()
+    {
+        return allowed.peek();
     }
     
     public File getPluginJar()
@@ -94,7 +121,7 @@ public final class PluginStackChecker
     
     public void disablePlugin(OpGuardAPI api, Context context)
     {
-        if (!foundPlugin())
+        if (!hasFoundPlugin())
         {
             throw new IllegalStateException("No plugin to disable.");
         }

@@ -57,7 +57,7 @@ final class CommandInterceptor implements Listener
         OpGuardConfig config = api.getConfig();
         PluginStackChecker stack = new PluginStackChecker(api);
         
-        if (stack.foundPlugin())
+        if (stack.hasFoundPlugin())
         {
             String name = stack.getPlugin().getName();
             boolean pluginIsExempt = false;
@@ -74,7 +74,8 @@ final class CommandInterceptor implements Listener
                         
                         exemption.okay
                         (
-                            "The plugin &7" + name + "&f was allowed to execute &7/" + base + 
+                            "The plugin &7" + name + "&f was allowed to execute &7" + 
+                            ((!base.startsWith("/")) ? "/" : "") + base + 
                             "&f on behalf of &7" + sender.getName()
                         );
                     }
