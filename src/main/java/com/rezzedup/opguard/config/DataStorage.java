@@ -22,18 +22,14 @@ public final class DataStorage extends BaseConfig implements SavableConfig
     {
         super(api.getPlugin(), ".opdata");
         this.api = api;
-        load(); // Second load() call so that API instance is not null.
+        init();
     }
     
     @Override
-    protected void load()
+    protected void load() {}
+    
+    private void init()
     {
-        // Prevent running without API instance.
-        if (api == null)
-        {
-            return;
-        }
-        
         boolean firstLoad = false;
         
         try
