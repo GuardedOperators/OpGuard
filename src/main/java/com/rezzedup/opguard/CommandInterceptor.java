@@ -60,50 +60,41 @@ final class CommandInterceptor implements Listener
         if (stack.hasFoundPlugin())
         {
             String name = stack.getPlugin().getName();
-            boolean pluginIsExempt = false;
             
-            for (String exempt : config.getExemptPlugins())
+            if (config.getExemptPlugins().contains(name))
             {
-                if (name.equalsIgnoreCase(exempt)) 
-                { 
-                    Context exemption = new Context(api).pluginAttempt();
-                    
-                    if (config.shouldExemptPlugins())
-                    {
-                        pluginIsExempt = true;
-                        
-                        exemption.okay
-                        (
-                            "The plugin &7" + name + "&f was allowed to execute &7" + 
-                            ((!base.startsWith("/")) ? "/" : "") + base + 
-                            "&f on behalf of &7" + sender.getName()
-                        );
-                    }
-                    else 
-                    {
-                        exemption.warning
-                        (
-                            "The plugin &7" + name + "&f is defined in OpGuard's plugin-exemption list, but " +
-                            "plugin exemptions are currently disabled"
-                        );
-                    }
-                    api.warn(exemption).log(exemption);
-                    break;
-                }
-            }
-            
-            if (!pluginIsExempt)
-            {
-                context.pluginAttempt().warning
+                Context exemption = context.copy();
+                
+                exemption.warning
                 (
-                    "The plugin <!>" + name + "&f attempted to make &7" + sender.getName() +
-                    "&f execute <!>" + ((!command.startsWith("/")) ? "/" : "") + command
+                    "The plugin &7" + name + "&f is defined in the plugin-exemption list, " +
+                    "but plugin exemptions are currently disabled"
                 );
-                api.warn(context).log(context);
-    
-                stack.disablePlugin(api, context);
-                return true;
+                api.warn(exemption).log(exemption);
             }
+    
+            context.pluginAttempt().warning
+            (
+                "The plugin <!>" + name + "&f attempted to make &7" + sender.getName() +
+                "&f execute <!>" + ((!command.startsWith("/")) ? "/" : "") + command
+            );
+            api.warn(context).log(context);
+    
+            stack.disablePlugin(api, context);
+            return true;
+        }
+        else if (stack.hasAllowedPlugins())
+        {
+            Context allowed = context.copy();
+            String name = stack.getTopAllowedPlugin().getName();
+    
+            allowed.okay
+            (
+                "The plugin &7" + name + "&f was allowed to execute &7" +
+                ((!base.startsWith("/")) ? "/" : "") + base +
+                "&f on behalf of &7" + sender.getName()
+            );
+            api.warn(allowed).log(allowed);
         }
         
         if (base.matches("^[\\/]?(minecraft:)?op$"))
