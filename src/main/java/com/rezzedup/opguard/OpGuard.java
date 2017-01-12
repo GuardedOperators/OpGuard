@@ -17,26 +17,36 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.IOException;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public final class OpGuard extends JavaPlugin implements Listener
 {
     @Override
     public void onEnable()
     {
+        Version java = Version.of(System.getProperty("java.specification.version"));
+        
+        if (!java.isAtLeast(1, 8))
+        {
+            Messenger.send("[OpGuard] &cOpGuard requires Java 8, but this server currently runs Java " + java.getMinor());
+            
+            new BukkitRunnable()
+            {
+                @Override
+                public void run()
+                {
+                    OpGuard instance = OpGuard.this;
+                    instance.getServer().getPluginManager().disablePlugin(instance);
+                }
+            }
+            .runTask(this);
+            
+            return;
+        }
+        
         getDataFolder().mkdir();
         
         OpGuardAPI api = new GuardedDependencies(this);
-        long interval = api.getConfig().getOpListInspectionInterval();
-        
-        if (interval <= 0)
-        {
-            Messenger.send("[OpGuard] Invalid inspection interval " + interval + ". Defaulting to 4 ticks.");
-            interval = 4;
-        }
-        
-        new VerifyOpListTask(api).runTaskTimer(this, 1L, interval);
         
         if (api.getConfig().metricsAreEnabled())
         {
@@ -45,9 +55,10 @@ public final class OpGuard extends JavaPlugin implements Listener
                 MetricsLite metrics = new MetricsLite(this);
                 metrics.start();
             } 
-            catch (IOException e) {}
+            catch (Exception e) {}
         }
         
+        new VerifyOpListTask(api);
         new UpdateCheckTask(api);
     }
     

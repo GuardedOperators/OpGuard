@@ -15,6 +15,16 @@ final class VerifyOpListTask extends BukkitRunnable
     public VerifyOpListTask(OpGuardAPI api)
     {
         this.api = api;
+    
+        long interval = api.getConfig().getOpListInspectionInterval();
+    
+        if (interval <= 0)
+        {
+            Messenger.send("[OpGuard] Invalid inspection interval " + interval + ". Defaulting to 4 ticks.");
+            interval = 4;
+        }
+    
+        runTaskTimer(api.getPlugin(), 1L, interval);
     }
     
     @Override
