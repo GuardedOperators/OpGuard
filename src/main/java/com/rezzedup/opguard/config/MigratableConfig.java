@@ -146,6 +146,8 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
         return canDisableOtherPlugins() && config.getBoolean("rename-malicious-plugins-when-caught");
     }
     
+    // Plugin Exemptions
+    
     @Override
     public boolean shouldExemptPlugins()
     {
@@ -158,7 +160,7 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
         return config.getStringList("exempt-plugins");
     }
     
-    // Exemptions
+    // Command Exemptions
     
     @Override
     public boolean shouldExemptCommands()
@@ -284,6 +286,20 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     public List<String> getPunishmentCommands()
     {
         return config.getStringList("punishment-commands");
+    }
+    
+    // Update Checks
+    
+    @Override
+    public boolean canCheckForUpdates()
+    {
+        return config.getBoolean("check-for-updates");
+    }
+    
+    @Override
+    public long getUpdateCheckInterval()
+    {
+        return config.getLong("update-interval");
     }
     
     // Metrics

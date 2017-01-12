@@ -30,11 +30,13 @@ public interface OpGuardConfig extends Config
     
     boolean canRenameOtherPlugins();
     
-    // Exemptions
+    // Plugin Exemptions
     
     boolean shouldExemptPlugins();
     
     List<String> getExemptPlugins();
+    
+    // Command Exemptions
     
     boolean shouldExemptCommands();
     
@@ -81,6 +83,12 @@ public interface OpGuardConfig extends Config
     boolean canPunishConsoleOpGuardAttempts();
     
     List<String> getPunishmentCommands();
+    
+    // Update Checks
+    
+    boolean canCheckForUpdates();
+    
+    long getUpdateCheckInterval();
     
     // Metrics
     

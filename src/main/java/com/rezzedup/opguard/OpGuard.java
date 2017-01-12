@@ -47,6 +47,8 @@ public final class OpGuard extends JavaPlugin implements Listener
             } 
             catch (IOException e) {}
         }
+        
+        new UpdateCheckTask(api);
     }
     
     @Override
