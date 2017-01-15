@@ -64,7 +64,7 @@ public class UpdateCheckTask extends BukkitRunnable
         
                 Messenger.send
                 (
-                    "[OpGuard] &eAn update is available!&r Download &fv" + version.toString() + "&r here: &6" + DOWNLOAD_URL
+                    "[OpGuard] &eAn update is available!&r Download &fv" + version + "&r here: &6" + DOWNLOAD_URL
                 );
             }
         }
