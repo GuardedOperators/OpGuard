@@ -28,7 +28,7 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
         Version loadedVersion = Version.of(config.getString("version"));
         
         // Todo: Update isAtLeast() whenever config requires updates.
-        if (!loadedVersion.isAtLeast(3,2))
+        if (!loadedVersion.isAtLeast(3,2, 1))
         {
             migrateConfig(config, loadedVersion);
         }

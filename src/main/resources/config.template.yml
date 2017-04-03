@@ -102,103 +102,6 @@ inspection-interval: @(inspection-interval | 4)
 # Default: true
 check-permissions: @(check-permissions | true)
 
-# [Player Command Injection]
-# OpGuard will inject player commands with a special player object
-# that will detect and prevent plugins from setting op.
-#
-# This may interfere with some commands, but instead of modifying this option, 
-# try exempting commands and plugins below.
-#
-# This feature is very important to the functionality of OpGuard. 
-# Disabling it is not recommended. 
-
-# Default: true
-inject-player-commands: @(inject-player-commands | true)
-
-# [Player Event Injection]
-# OpGuard will inject certain player events with a special player object
-# that will detect and prevent plugins from setting op.
-#
-# This feature is very important to the functionality of OpGuard. 
-# Disabling it is not recommended. 
-
-# Default: true
-inject-player-events: @(inject-player-events | true)
-
-# [Malicious Plugin Disabling]
-# OpGuard will disable plugins that have been caught setting op.
-# Plugins in the exempt-plugins list will be ignored (they are allowed to set and remove op).
-
-# Default: true
-disable-malicious-plugins-when-caught: @(disable-malicious-plugins-when-caught | true)
-
-# [Malicious Plugin Renaming]
-# OpGuard will rename plugin .jar files that have been caught setting op if enabled.
-# This will prevent malicious plugins from re-enabling on server restart/reload.
-#
-# JAR renaming will only occur if the plugin disabling is also enabled. 
-# (disable-malicious-plugins-when-caught: true)
-# 
-# Example scenario:
-#   If, for example, the plugin "OpMePlugin" sets op for a player, OpGuard will:
-#     - Disable OpMePlugin
-#     - Rename OpMePlugin.jar to OpMePlugin.jar.opguard-disabled
-#   To reverse plugin renaming, simply delete the ".opguard-disabled" part of the JAR's name.
-
-# Default: true
-rename-malicious-plugins-when-caught: @(rename-malicious-plugins-when-caught | true)
-
-# --------------------- #
-#   Plugin Exemptions   #
-# --------------------- #
-
-# [Enable Exempt Plugins]
-# Allows use of the exempt-plugins list.
-
-# Default: true
-enable-exempt-plugins: @(enable-exempt-plugins | true)
-
-# [Exempt Plugins List]
-# A list of plugins exempt from OpGuard's various checks.
-# When a plugin is present in the list, OpGuard will:
-#   - automatically exempt all of the plugin's commands.
-#   - allow the plugin to set and remove op.
-# 
-# A server restart is required to apply changes to the exempt-plugins list.
-#
-# Plugin names must be exact! Names are case sensitive (capitalization matters).
-# For example, if you have the plugin "MyAmazingPlugin" installed:
-#   - MyAmazingPlugin is valid
-#   - myamazingplugin is not valid
-
-# Don't forget to enable the toggle directly above! (enable-exempt-plugins: true)
-exempt-plugins:
-- @(exempt-plugins[] | PerWorldPlugins)
-
-# ---------------------- #
-#   Command Exemptions   #
-# ---------------------- #
-
-# [Enable Exempt Commands]
-# Allows use of the exempt-commands list.
-
-# Default: false
-enable-exempt-commands: @(enable-exempt-commands | false)
-
-# [Exempt Commands List]
-# A list of commands that OpGuard will not interfere with.
-# Add a command here if OpGuard is causing errors with it.
-#
-# Use /opguard reload or restart the server to apply changes to the exempt-commands list.
-#
-# Do not include the leading slash when adding commands.
-#   - examplecommand is valid
-#   - /examplecommand is not valid
-
-# Don't forget to enable the toggle directly above! (enable-exempt-commands: true)
-exempt-commands:
-- @(exempt-commands[] | examplecommand)
-
 # ----------- #
 #   LOGGING   #
 # ----------- #
@@ -313,6 +216,117 @@ check-for-updates: @(check-for-updates | true)
 
 # Default: 12  
 update-interval: @(update-interval | 12)
+
+# ------------------------- #
+#   Experimental Features   #
+# ------------------------- #
+
+# WARNING!
+
+# WARNING!
+
+# WARNING!
+
+# - WARNING --------------------------------------------------------------- #
+#   The following configuration options are known to cause conflicts        #
+#   with other plugins. They will be fixed in future releases, but for now  #
+#   they are all disabled by default. Enable them if you choose.            #
+# - WARNING --------------------------------------------------------------- #
+
+# [EXPERIMENTAL: Player Command Injection]
+# OpGuard will inject player commands with a special player object
+# that will detect and prevent plugins from setting op.
+#
+# This may interfere with some commands, but instead of modifying this option, 
+# try exempting commands and plugins below.
+#
+# This feature is very important to the functionality of OpGuard. 
+# Disabling it is not recommended. 
+
+# Default: false
+inject-player-commands: false #@(inject-player-commands | true)
+
+# [EXPERIMENTAL: Player Event Injection]
+# OpGuard will inject certain player events with a special player object
+# that will detect and prevent plugins from setting op.
+#
+# This feature is very important to the functionality of OpGuard. 
+# Disabling it is not recommended. 
+
+# Default: false
+inject-player-events: false #@(inject-player-events | true)
+
+# [EXPERIMENTAL: Malicious Plugin Disabling]
+# This option will only apply if either 'inject-player-commands' or 'inject-player-events' are true.
+# OpGuard will disable plugins that have been caught setting op.
+# Plugins in the exempt-plugins list will be ignored (they are allowed to set and remove op).
+
+# Default: true
+disable-malicious-plugins-when-caught: @(disable-malicious-plugins-when-caught | true)
+
+# [EXPERIMENTAL: Malicious Plugin Renaming]
+# This option will only apply if either 'inject-player-commands' or 'inject-player-events' are true.
+# OpGuard will rename plugin .jar files that have been caught setting op if enabled.
+# This will prevent malicious plugins from re-enabling on server restart/reload.
+#
+# JAR renaming will only occur if the plugin disabling is also enabled. 
+# (disable-malicious-plugins-when-caught: true)
+# 
+# Example scenario:
+#   If, for example, the plugin "OpMePlugin" sets op for a player, OpGuard will:
+#     - Disable OpMePlugin
+#     - Rename OpMePlugin.jar to OpMePlugin.jar.opguard-disabled
+#   To reverse plugin renaming, simply delete the ".opguard-disabled" part of the JAR's name.
+
+# Default: true
+rename-malicious-plugins-when-caught: @(rename-malicious-plugins-when-caught | true)
+
+# [EXPERIMENTAL: Enable Exempt Plugins]
+# This option will only apply if either 'inject-player-commands' or 'inject-player-events' are true.
+# Allows use of the exempt-plugins list.
+
+# Default: true
+enable-exempt-plugins: @(enable-exempt-plugins | true)
+
+# [EXPERIMENTAL: Exempt Plugins List]
+# This option will only apply if either 'inject-player-commands' or 'inject-player-events' are true.
+# A list of plugins exempt from OpGuard's various checks.
+# When a plugin is present in the list, OpGuard will:
+#   - automatically exempt all of the plugin's commands.
+#   - allow the plugin to set and remove op.
+# 
+# A server restart is required to apply changes to the exempt-plugins list.
+#
+# Plugin names must be exact! Names are case sensitive (capitalization matters).
+# For example, if you have the plugin "MyAmazingPlugin" installed:
+#   - MyAmazingPlugin is valid
+#   - myamazingplugin is not valid
+
+# Don't forget to enable the toggle directly above! (enable-exempt-plugins: true)
+exempt-plugins:
+- @(exempt-plugins[] | PerWorldPlugins)
+
+# [EXPERIMENTAL: Enable Exempt Commands]
+# This option will only apply if either 'inject-player-commands' or 'inject-player-events' are true.
+# Allows use of the exempt-commands list.
+
+# Default: false
+enable-exempt-commands: @(enable-exempt-commands | false)
+
+# [EXPERIMENTAL: Exempt Commands List]
+# This option will only apply if either 'inject-player-commands' or 'inject-player-events' are true.
+# A list of commands that OpGuard will not interfere with.
+# Add a command here if OpGuard is causing errors with it.
+#
+# Use /opguard reload or restart the server to apply changes to the exempt-commands list.
+#
+# Do not include the leading slash when adding commands.
+#   - examplecommand is valid
+#   - /examplecommand is not valid
+
+# Don't forget to enable the toggle directly above! (enable-exempt-commands: true)
+exempt-commands:
+- @(exempt-commands[] | examplecommand)
 
 # ----------- #
 #   METRICS   #
