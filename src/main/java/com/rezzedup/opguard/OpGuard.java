@@ -10,7 +10,8 @@ import com.rezzedup.opguard.api.message.Punishable;
 import com.rezzedup.opguard.api.message.Warnable;
 import com.rezzedup.opguard.config.DataStorage;
 import com.rezzedup.opguard.config.MigratableConfig;
-import com.rezzedup.opguard.metrics.MetricsLite;
+import com.rezzedup.opguard.metrics.BStatsMetricsLite;
+import com.rezzedup.opguard.metrics.MCStatsMetricsLite;
 import com.rezzedup.opguard.wrapper.GuardedPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -52,10 +53,11 @@ public final class OpGuard extends JavaPlugin implements Listener
         {
             try 
             {
-                MetricsLite metrics = new MetricsLite(this);
-                metrics.start();
+                new MCStatsMetricsLite(this).start();
             } 
-            catch (Exception e) {}
+            catch (Exception ignored) {}
+            
+            new BStatsMetricsLite(this);
         }
         
         new VerifyOpListTask(api);

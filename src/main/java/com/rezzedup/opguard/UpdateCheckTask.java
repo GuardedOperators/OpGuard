@@ -71,9 +71,6 @@ public class UpdateCheckTask extends BukkitRunnable
                 );
             }
         }
-        catch (Exception e) 
-        {
-            // Don't pester users about failed update checks...
-        }
+        catch (Exception ignored) {}
     }
 }
