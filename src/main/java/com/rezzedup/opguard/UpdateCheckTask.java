@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 public class UpdateCheckTask extends BukkitRunnable
 {
     public static final String DOWNLOAD_URL = "https://www.spigotmc.org/resources/opguard.23200/";
-    public static final String USER_AGENT = "OpGuard (Spigot Plugin) Minecraft";
+    public static final String USER_AGENT = "OpGuard";
     public static final String SPIGET_URL = "https://api.spiget.org/v2/resources/23200/versions?size=1&sort=-name";
     
     private final OpGuardAPI api;
@@ -47,8 +47,6 @@ public class UpdateCheckTask extends BukkitRunnable
         {
             URLConnection connection = new URL(SPIGET_URL).openConnection();
             String name = null;
-            
-            String userAgent = "OpGuard " + this.api.getVersion() + "";
             
             connection.addRequestProperty("User-Agent", USER_AGENT);
     
