@@ -12,7 +12,6 @@ import com.rezzedup.opguard.config.DataStorage;
 import com.rezzedup.opguard.config.MigratableConfig;
 import com.rezzedup.opguard.metrics.BStatsMetricsLite;
 import com.rezzedup.opguard.metrics.MCStatsMetricsLite;
-import com.rezzedup.opguard.wrapper.GuardedPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
@@ -88,7 +87,6 @@ public final class OpGuard extends JavaPlugin implements Listener
             this.verifier = new OpVerifier(new DataStorage(this));
             this.command = new OpGuardCommand(this);
             
-            new GuardedPlayer.EventInjector(this);
             new CommandInterceptor(this);
             new PluginDisableHijack(this);
             new PermissionChecker(this);

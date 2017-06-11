@@ -28,7 +28,7 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
         Version loadedVersion = Version.of(config.getString("version"));
         
         // Todo: Update isAtLeast() whenever config requires updates.
-        if (!loadedVersion.isAtLeast(3,2, 1))
+        if (!loadedVersion.isAtLeast(3,2, 2))
         {
             migrateConfig(config, loadedVersion);
         }
@@ -123,18 +123,6 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     }
     
     @Override
-    public boolean canInjectPlayerCommands()
-    {
-        return config.getBoolean("inject-player-commands");
-    }
-    
-    @Override
-    public boolean canInjectPlayerEvents()
-    {
-        return config.getBoolean("inject-player-events");
-    }
-    
-    @Override
     public boolean canDisableOtherPlugins()
     {
         return config.getBoolean("disable-malicious-plugins-when-caught");
@@ -158,20 +146,6 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     public List<String> getExemptPlugins()
     {
         return config.getStringList("exempt-plugins");
-    }
-    
-    // Command Exemptions
-    
-    @Override
-    public boolean shouldExemptCommands()
-    {
-        return config.getBoolean("enable-exempt-commands");
-    }
-    
-    @Override
-    public List<String> getExemptCommands()
-    {
-        return config.getStringList("exempt-commands");
     }
     
     // Logging

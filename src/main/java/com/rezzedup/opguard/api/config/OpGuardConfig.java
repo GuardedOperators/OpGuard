@@ -22,10 +22,6 @@ public interface OpGuardConfig extends Config
     
     boolean canCheckPermissions();
     
-    boolean canInjectPlayerCommands();
-    
-    boolean canInjectPlayerEvents();
-    
     boolean canDisableOtherPlugins();
     
     boolean canRenameOtherPlugins();
@@ -35,12 +31,6 @@ public interface OpGuardConfig extends Config
     boolean shouldExemptPlugins();
     
     List<String> getExemptPlugins();
-    
-    // Command Exemptions
-    
-    boolean shouldExemptCommands();
-    
-    List<String> getExemptCommands();
     
     // Logging
     
