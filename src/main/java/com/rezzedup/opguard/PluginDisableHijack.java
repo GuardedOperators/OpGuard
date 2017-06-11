@@ -16,7 +16,7 @@ final class PluginDisableHijack implements Listener
 {    
     private final OpGuardAPI api;
     
-    public PluginDisableHijack(OpGuardAPI api)
+    PluginDisableHijack(OpGuardAPI api)
     {
         this.api = api;
         api.registerEvents(this);
@@ -43,7 +43,7 @@ final class PluginDisableHijack implements Listener
     @SuppressWarnings("unchecked")
     private void exemptFromPlugMan(Plugin plugin)
     {
-        boolean isPlugMan = plugin != null && !plugin.getName().equalsIgnoreCase("PlugMan");
+        boolean isPlugMan = plugin != null && plugin.getName().equalsIgnoreCase("PlugMan");
         
         if (!isPlugMan || !api.getConfig().canExemptSelfFromPlugMan())
         {
@@ -56,11 +56,11 @@ final class PluginDisableHijack implements Listener
         {
             try
             {
-                Field ignoredPluginsField = plugin.getClass().getField("ignoredPlugins");
+                Field ignoredPluginsField = plugin.getClass().getDeclaredField("ignoredPlugins");
+                ignoredPluginsField.setAccessible(true);
                 List<String> ignored = (List<String>) ignoredPluginsField.get(plugin);
                 
                 ignored.add(instance.getName());
-                
                 Messenger.send("&f[OpGuard] &9Exempted OpGuard from PlugMan.");
             }
             catch (Exception ignored) {}
