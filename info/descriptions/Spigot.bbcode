@@ -5,15 +5,13 @@
 [IMG]http://i.imgur.com/x5ZpjxY.png[/IMG]
 OpGuard is a plugin that protects servers against op exploits & malicious plugins by maintaining a list of [B][COLOR=#000000]verified operators[/COLOR][/B] and overriding the default implementation of /op and /deop with its own command: [B][COLOR=#000000]/opguard[/COLOR][/B].
 
-It not only blocks access to /op as a command, it also prevents [B]other plugins[/B] from setting op with Bukkit API -- directly denying access in some cases.
-
 OpGuard offers the ability to restrict access to /op [SIZE=3](/opguard op)[/SIZE] with a [B]password[/B], useful for keeping untrustworthy staff from setting op. It's also helpful in the event a malicious user [I]somehow[/I] gains op or when a staff member has their account broken into; users who don't know the password [U]won't[/U] be able to op other users when OpGuard is installed.
 
 When compared to other "Anti-Forceop" plugins, OpGuard is the most feature-packed, configurable, and secure of all.
 
 [LEFT][IMG]http://i.imgur.com/FSlhVQ6.png[/IMG]
 Releases are compiled with [B]Java 8[/B].
-If your server isn't running Java 8, OpGuard won't work.[/LEFT]
+If your server isn't running Java 8, OpGuard will automatically disable itself.[/LEFT]
 
 [IMG]http://i.imgur.com/stJQbBQ.png[/IMG]
 
@@ -37,19 +35,6 @@ If your server isn't running Java 8, OpGuard won't work.[/LEFT]
 All op-related commands must be done through [B]/opguard[/B].
 
 Players who don't have permission to use /op and /deop will see an "unknown command" error when they attempt to use either command.[/INDENT]
-
-
-[B][SIZE=5]Prevent other plugins from setting op.[/SIZE]
-[/B]
-[INDENT]If a malicious plugin is caught setting op, OpGuard will disable the plugin and punish the player.
-
-[IMG]http://i.imgur.com/3mQUXCN.png[/IMG]
-
-If a plugin isn't caught, the player is still punished.
-
-[IMG]http://i.imgur.com/xhh6eWT.png[/IMG]
-[B]
-Remember[/B]: only install plugins from trusted sources![/INDENT]
 
 
 [B][SIZE=5]Punish players that attempt to gain op.[/SIZE][/B]
@@ -114,17 +99,13 @@ If OpGuard's password is set, it [B]must[/B] be included.[/INDENT][/INDENT]
 
 [SIZE=5][B]Permissions[/B][/SIZE]
 [LIST]
-[*][B]opguard.manage[/B]
-[LIST]
-[*]Grants access to [B]/opguard[/B]
-[/LIST]
 [*][B]opguard.warn[/B]
 [LIST]
-[*]Recieves notifications from OpGuard
+[*]Receives notifications and warnings from OpGuard
+[*]Players with op have both permissions by default.
 [/LIST]
+[*]The [B]/opguard[/B] command is only accessible by verified operators and console.
 [/LIST]
-Players with op have both permissions by default.
 
-[IMG]http://i.mcstats.org/OpGuard/Global+Statistics.borderless.png[/IMG]
 
 [SIZE=1][COLOR=#ffffff]Best anti-forceop plugin. Prevent force op hacks. Prevent force op exploits. Block forceop hacks. Set a password to use op.[/COLOR][/SIZE]

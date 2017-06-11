@@ -5,8 +5,6 @@
 [img]http://i.imgur.com/x5ZpjxY.png[/img]
 OpGuard is a plugin that protects servers against op exploits & malicious plugins by maintaining a list of [b][color=#000000]verified operators[/color][/b] and overriding the default implementation of /op and /deop with its own command: [b][color=#000000]/opguard[/color][/b].
 
-It not only blocks access to /op as a command, it also prevents [b]other plugins[/b] from setting op with Bukkit API -- directly denying access in some cases.
-
 OpGuard offers the ability to restrict access to /op [size=8pt](/opguard op)[/size] with a [b]password[/b], useful for keeping untrustworthy staff from setting op. It's also helpful in the event a malicious user [i]somehow[/i] gains op or when a staff member has their account broken into; users who don't know the password [u]won't[/u] be able to op other users when OpGuard is installed.
 
 [left][img]http://i.imgur.com/FSlhVQ6.png[/img]
@@ -35,18 +33,6 @@ All op-related commands must be done through [b]/opguard[/b].
 
 Players who don't have permission to use /op and /deop will see an "unknown command" error when they attempt to use either command.
 
-
-[b][size=18pt]Prevent other plugins from setting op.[/size]
-[/b]
-If a malicious plugin is caught setting op, OpGuard will disable the plugin and punish the player.
-
-[img]http://i.imgur.com/3mQUXCN.png[/img]
-
-If a plugin isn't caught, the player is still punished.
-
-[img]http://i.imgur.com/xhh6eWT.png[/img]
-[b]
-Remember[/b]: only install plugins from trusted sources!
 
 
 [size=18pt][b]Punish players that attempt to gain op.[/b][/size]
@@ -116,10 +102,7 @@ If OpGuard's password is set, it [b]must[/b] be included.
 [img]http://i.imgur.com/bM6gdtj.png[/img]
 
 
-[size=18pt][b]Permissions[/b][/size]
-[list][*][b]opguard.manage[/b][list][*]Grants access to [b]/opguard[/b]
+[size=18pt][b]Permissions[/b][/size][list][*][b]opguard.warn[/b][list][*]Recieves notifications from OpGuard
 [/list]
-[*][b]opguard.warn[/b][list][*]Recieves notifications from OpGuard
+[/list][list][*]The [b]/opguard[/b] command is only accessible by verified operators and console.
 [/list]
-[/list]
-Players with op have both permissions by default.
