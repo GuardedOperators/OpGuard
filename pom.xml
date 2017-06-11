@@ -32,23 +32,15 @@
             <version>1.12-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <!--
-         PlugMan 
-         -->
-        <dependency>
-            <groupId>com.rylinaux</groupId>
-            <artifactId>PlugMan</artifactId>
-            <version>LATEST</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/PlugMan.jar</systemPath>
-        </dependency>
     </dependencies>
 
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>${name}-${version}</finalName>
         <plugins>
-            <!-- Compile project -->
+            <!-- 
+            Compile project 
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -60,7 +52,9 @@
             </plugin>
         </plugins>
         <resources>
-            <!-- Filter resource files -->
+            <!-- 
+            Filter resource files 
+            -->
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>

@@ -1,13 +1,16 @@
 package com.rezzedup.opguard;
 
 import com.rezzedup.opguard.api.OpGuardAPI;
-import com.rylinaux.plugman.PlugMan;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.plugin.Plugin;
+
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.stream.Stream;
 
 final class PluginDisableHijack implements Listener
 {    
@@ -17,26 +20,8 @@ final class PluginDisableHijack implements Listener
     {
         this.api = api;
         api.registerEvents(this);
-    }
-    
-    @EventHandler
-    public void on(PluginEnableEvent event)
-    {
-        boolean isPlugMan = event.getPlugin().getName().equalsIgnoreCase("PlugMan");
         
-        if (isPlugMan && api.getConfig().canExemptSelfFromPlugMan())
-        {
-            new BukkitRunnable()
-            {
-                @Override
-                public void run()
-                {
-                    PlugMan.getInstance().getIgnoredPlugins().add(api.getPlugin().getName());
-                    Messenger.send("&f[OpGuard] &9Exempted OpGuard from PlugMan.");
-                }
-            }
-            .runTask(api.getPlugin());
-        }
+        Stream.of(Bukkit.getPluginManager().getPlugins()).forEach(this::exemptFromPlugMan);
     }
     
     @EventHandler
@@ -47,5 +32,40 @@ final class PluginDisableHijack implements Listener
             Messenger.send("&c[&fOpGuard was disabled&c] Shutting server down.");
             Bukkit.shutdown();
         }
+    }
+    
+    @EventHandler
+    public void on(PluginEnableEvent event)
+    {
+        exemptFromPlugMan(event.getPlugin());
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void exemptFromPlugMan(Plugin plugin)
+    {
+        boolean isPlugMan = plugin != null && !plugin.getName().equalsIgnoreCase("PlugMan");
+        
+        if (!isPlugMan || !api.getConfig().canExemptSelfFromPlugMan())
+        {
+            return;
+        }
+        
+        Plugin instance = api.getPlugin();
+        
+        Runnable task = () ->
+        {
+            try
+            {
+                Field ignoredPluginsField = plugin.getClass().getField("ignoredPlugins");
+                List<String> ignored = (List<String>) ignoredPluginsField.get(plugin);
+                
+                ignored.add(instance.getName());
+                
+                Messenger.send("&f[OpGuard] &9Exempted OpGuard from PlugMan.");
+            }
+            catch (Exception ignored) {}
+        };
+        
+        Bukkit.getScheduler().scheduleSyncDelayedTask(instance, task, 1L);
     }
 }
