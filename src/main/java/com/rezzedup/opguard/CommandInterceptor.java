@@ -11,6 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
+import java.security.SecureRandom;
+
 final class CommandInterceptor implements Listener
 {
     private final OpGuardAPI api;
@@ -26,9 +28,9 @@ final class CommandInterceptor implements Listener
     {
         String command = event.getMessage();
         
-        if (cancel(event.getPlayer(), event.getMessage(), event))
+        if (intercept(event.getPlayer(), event.getMessage(), event))
         {
-            event.setMessage("/opguard:intercepted(" + command.replaceAll("\\/| .*", "") + ")");
+            event.setMessage(collapse(command));
         }
     }
     
@@ -37,18 +39,23 @@ final class CommandInterceptor implements Listener
     {
         String command = event.getCommand();
         
-        if (cancel(event.getSender(), command, event))
+        if (intercept(event.getSender(), command, event))
         {
-            event.setCommand("opguard:intercepted(" + command.replaceAll("\\/| .*", "") + ")");
+            event.setCommand(collapse(command));
         }
     }
     
-    private boolean cancel(CommandSender sender, String command, Event event)
+    private String collapse(String command)
+    {
+        return "opguard:intercepted(" + command.replaceAll("\\/| .*", "") + ")";
+    }
+    
+    private boolean intercept(CommandSender sender, String command, Event event)
     {
         String[] cmd = command.split(" ");
         String base = cmd[0].toLowerCase();
         
-        if (!base.matches("^[\\/]?((minecraft:)?(de)?op|o(g|pguard))$"))
+        if (!base.matches("(?i)^[\\/]?((minecraft:)?(de)?op|o(g|pguard))$"))
         {
             return false;
         }
@@ -61,18 +68,6 @@ final class CommandInterceptor implements Listener
         {
             String name = stack.getPlugin().getName();
             
-            if (config.getExemptPlugins().contains(name))
-            {
-                Context exemption = context.copy();
-                
-                exemption.warning
-                (
-                    "The plugin &7" + name + "&f is defined in the exempt-plugins list, " +
-                    "but plugin exemptions are currently disabled"
-                );
-                api.warn(exemption).log(exemption);
-            }
-    
             context.pluginAttempt().warning
             (
                 "The plugin <!>" + name + "&f attempted to make &7" + sender.getName() +
@@ -97,7 +92,7 @@ final class CommandInterceptor implements Listener
             api.warn(allowed).log(allowed);
         }
         
-        if (base.matches("^[\\/]?(minecraft:)?op$"))
+        if (base.matches("(?i)^[\\/]?(minecraft:)?op$"))
         {
             context.setOp();
             
@@ -108,7 +103,7 @@ final class CommandInterceptor implements Listener
                 api.warn(context).log(context).punish(context, name);
             }
         }
-        else if (cmd[0].toLowerCase().matches("^[\\/]?o(g|pguard)$"))
+        else if (cmd[0].toLowerCase().matches("(?i)^[\\/]?o(g|pguard)$"))
         {
             if (sender.isOp() && api.getVerifier().isVerified(sender))
             {

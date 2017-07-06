@@ -128,6 +128,19 @@ public final class PluginStackChecker
     
         OpGuardConfig config = api.getConfig();
         String name = plugin.getName();
+    
+        if (config.getExemptPlugins().contains(name))
+        {
+            Context exemption = context.copy();
+        
+            exemption.warning
+            (
+                "The plugin &7" + name + "&f is defined in the exempt-plugins list, " +
+                "but plugin exemptions are currently disabled"
+            );
+            api.warn(exemption).log(exemption);
+        }
+        
         String jar = getPluginJar().getName();
     
         if (config.canDisableOtherPlugins())

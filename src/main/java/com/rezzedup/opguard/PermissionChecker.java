@@ -40,25 +40,53 @@ public class PermissionChecker implements Listener
         
         Player player = event.getPlayer();
         
-        if (player.hasPermission(permission) && !api.getVerifier().isVerified(player.getUniqueId()))
+        if (!player.hasPermission(permission) || api.getVerifier().isVerified(player.getUniqueId()))
         {
-            if (event instanceof Cancellable) 
-            { 
-                ((Cancellable) event).setCancelled(true); 
-            }
-            
-            String name = player.getName();
-            
-            Context context = new Context(api)
-                .playerAttempt()
-                .hasInvalidPermissions()
-                .warning
-                (
-                    "Player <!>" + name + "&f has access to all permissions but isn't a verified operator"
-                );
-            
-            api.warn(context).log(context).punish(context, name);
+            return;
         }
+        
+        Context context = new Context(api).playerAttempt().hasInvalidPermissions();
+        
+        PluginStackChecker stack = new PluginStackChecker(api);
+    
+        // Only exempted plugins found -> exit method.
+        if (!stack.hasFoundPlugin() && stack.hasAllowedPlugins())
+        {
+            Context allowed = context.copy();
+            String name = stack.getTopAllowedPlugin().getName();
+        
+            allowed.okay
+            (
+                "The plugin &7" + name + "&f was allowed to grant all permissions to &7" + player.getName()
+            );
+            api.warn(allowed).log(allowed);
+            
+            return;
+        }
+        
+        // Non-exempt plugin found -> warn and continue to punishment below.
+        if (stack.hasFoundPlugin())
+        {
+            Context foundPlugin = context.copy();
+            String name = stack.getPlugin().getName();
+            
+            foundPlugin.pluginAttempt().warning
+            (
+                "The plugin <!>" + name + "&f attempted to grant all permissions to &7" + player.getName()
+            );
+            api.warn(foundPlugin).log(foundPlugin);
+            
+            stack.disablePlugin(api, foundPlugin);
+        }
+        
+        if (event instanceof Cancellable) 
+        { 
+            ((Cancellable) event).setCancelled(true); 
+        }
+        
+        context.warning("Player <!>" + player.getName() + "&f has access to all permissions but isn't a verified operator");
+        api.warn(context).log(context).punish(context, player.getName());
+        
     }
     
     @EventHandler(priority = EventPriority.HIGH)
