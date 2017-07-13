@@ -7,7 +7,7 @@
     <groupId>com.rezzedup</groupId>
     <artifactId>opguard</artifactId>
     <name>OpGuard</name>
-    <version>3.2.3</version>
+    <version>4.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -16,6 +16,9 @@
     </properties>
 
     <repositories>
+        <!-- 
+        Spigot Repo
+        -->
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
@@ -36,7 +39,7 @@
 
     <build>
         <defaultGoal>clean install</defaultGoal>
-        <finalName>${name}-${version}</finalName>
+        <finalName>${project.name}-${project.version}</finalName>
         <plugins>
             <!-- 
             Compile project 
