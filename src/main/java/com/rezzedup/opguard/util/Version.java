@@ -90,9 +90,19 @@ public class Version implements Comparable<Version>
         return compareTo(other) >= 0;
     }
     
+    public boolean isAtLeast(long ... components)
+    {
+        return isAtLeast(Version.of(components));
+    }
+    
     public boolean isAtMost(Version other)
     {
         return compareTo(other) <= 0;
+    }
+    
+    public boolean isAtMost(long ... components)
+    {
+        return isAtMost(Version.of(components));
     }
     
     @Override

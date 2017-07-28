@@ -10,7 +10,7 @@ public class OpGuard extends JavaPlugin
     {
         Version java = Version.from(System.getProperty("java.specification.version"));
     
-        if (!java.isAtLeast(Version.of(1,8)))
+        if (!java.isAtLeast(1,8))
         {
             // The server isn't running Java 8 (obviously), so we can't use a fancy lambda-ified runnable.
             getServer().getScheduler().runTask(this, new Runnable() {
