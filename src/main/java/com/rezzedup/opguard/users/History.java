@@ -1,6 +1,13 @@
 package com.rezzedup.opguard.users;
 
-public class History
+import com.rezzedup.opguard.files.Updatable;
+
+public class History implements Updatable
 {
     
+    @Override
+    public boolean isUpdated()
+    {
+        return false;
+    }
 }

@@ -3,10 +3,13 @@ package com.rezzedup.opguard.users;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializer;
+import com.rezzedup.opguard.files.Updatable;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import java.util.UUID;
 
-public class User
+public class User implements Updatable
 {
     public static final JsonSerializer<User> SERIALIZER = (user, type, context) ->
     {
@@ -36,8 +39,11 @@ public class User
     };
     
     private final UUID uuid;
-    private final String name;
     private final History history;
+    
+    private String name;
+    
+    private boolean isUpdated = false;
     
     public User(UUID uuid, String name, History history)
     {
@@ -48,13 +54,28 @@ public class User
     
     public UUID getUuid()
     {
-        return uuid;
+        return this.uuid;
     }
     
     public String getName()
     {
-        return name;
+        return this.name;
     }
     
+    public OfflinePlayer getAsPlayer()
+    {
+        return Bukkit.getOfflinePlayer(this.uuid);
+    }
     
+    public void updateName(String name)
+    {
+        this.isUpdated = true;
+        this.name = name;
+    }
+    
+    @Override
+    public boolean isUpdated()
+    {
+        return this.isUpdated || history.isUpdated();
+    }
 }
