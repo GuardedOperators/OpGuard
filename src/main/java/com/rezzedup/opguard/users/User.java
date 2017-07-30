@@ -17,7 +17,7 @@ public class User implements Updatable
         
         json.addProperty("uuid", user.uuid.toString());
         json.addProperty("name", user.name);
-        // json.add("history", History.);
+        json.add("history", context.serialize(user.history));
         
         return json;
     };
@@ -33,12 +33,13 @@ public class User implements Updatable
     
         UUID uuid = UUID.fromString(json.get("uuid").getAsString());
         String name = json.get("name").getAsString();
-        History history = null; // TODO deserialize history
+        History history = context.deserialize(json.get("history"), History.class);
         
         return new User(uuid, name, history);
     };
     
     private final UUID uuid;
+    
     private final History history;
     
     private String name;

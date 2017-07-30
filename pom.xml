@@ -45,6 +45,16 @@
             <scope>provided</scope>
         </dependency>
         <!--
+        jBCrypt
+        https://github.com/jeremyh/jBCrypt
+        -->
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <!--
         JUnit
         -->
         <dependency>
@@ -70,6 +80,31 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+            <!-- 
+            Shade dependencies.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.mindrot</pattern>
+                            <shadedPattern>com.rezzedup.opguard.dependencies.org.mindrot</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <!-- 
             Run tests 
