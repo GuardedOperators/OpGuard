@@ -22,7 +22,7 @@ public class PermissionChecker implements Listener
         api.registerEvents(this);
         this.api = api;
         
-        String chars = "Aa.BbCcDdEe-FfGgHhIiJj_KkLlMmNn0123456789OoPpQqRrSs*TtUuVvWwXxYyZz";
+        String chars = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";
         SecureRandom random = new SecureRandom();
         StringBuilder str = new StringBuilder();
         
