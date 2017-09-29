@@ -4,14 +4,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ServerStack
@@ -25,7 +23,7 @@ public class ServerStack
             .forEach(plugin -> pluginClassLoaders.put(plugin.getClass().getClassLoader(), plugin));
         
         List<Plugin> plugins = 
-            Arrays.stream(Thread.currentThread().getStackTrace())
+            Arrays.stream((new Throwable()).getStackTrace())
                 // Get the class of this StackTraceElement.
                 .map(element -> 
                 {
@@ -39,10 +37,5 @@ public class ServerStack
                 .collect(Collectors.toList());
         
         return new LinkedList<>(plugins);
-    }
-    
-    public static Predicate<Plugin> eliminate(Collection<Plugin> whitelist)
-    {
-        return whitelist::contains;
     }
 }
