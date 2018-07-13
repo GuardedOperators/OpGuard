@@ -28,7 +28,7 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
         Version loadedVersion = Version.of(config.getString("version"));
         
         // Todo: Update isAtLeast() whenever config requires updates.
-        if (!loadedVersion.isAtLeast(3,2, 2))
+        if (!loadedVersion.isAtLeast(3, 2, 5))
         {
             migrateConfig(config, loadedVersion);
         }
@@ -94,6 +94,12 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     public boolean canManagePasswordInGame()
     {
         return config.getBoolean("manage-password-in-game");
+    }
+    
+    @Override
+    public boolean isManagementPermissionEnabled()
+    {
+        return config.getBoolean("use-opguard-management-permission-node");
     }
     
     @Override

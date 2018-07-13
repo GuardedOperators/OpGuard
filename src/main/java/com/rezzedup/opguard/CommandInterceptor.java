@@ -103,9 +103,12 @@ final class CommandInterceptor implements Listener
                 api.warn(context).log(context).punish(context, name);
             }
         }
-        else if (cmd[0].toLowerCase().matches("(?i)^[\\/]?o(g|pguard)$"))
+        else if (base.matches("(?i)^[\\/]?o(g|pguard)$"))
         {
-            if (sender.isOp() && api.getVerifier().isVerified(sender))
+            boolean isVerifiedOperator = sender.isOp() && api.getVerifier().isVerified(sender);
+            boolean isPermitted = sender.hasPermission("opguard.manage") && api.getConfig().isManagementPermissionEnabled();
+            
+            if (isVerifiedOperator || isPermitted)
             {
                 api.run(sender, cmd);
     

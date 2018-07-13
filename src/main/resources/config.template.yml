@@ -70,6 +70,16 @@ only-deop-if-online: @(only-deop-if-online | false)
 # Default: true
 manage-password-in-game: @(manage.password-in-game | manage-password-in-game | true)
 
+# [Toggle 'opguard.manage' Permission]
+# When enabled, players with the 'opguard.manage' permission will be able to 
+# execute OpGuard commands without actually being verified operators.
+# --- NOTE: ---
+# This is disabled by default so that *only* verified operators and console 
+# may execute OpGuard commands.
+# ---
+# Default: false
+use-opguard-management-permission-node: @(use-opguard-management-permission-node | false)
+
 # [Server Shutdown]
 # OpGuard will shut the server down if it is disabled.
 # Enable this option if you don't want other plugins to disable OpGuard.

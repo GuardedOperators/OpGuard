@@ -7,7 +7,7 @@
     <groupId>com.rezzedup</groupId>
     <artifactId>opguard</artifactId>
     <name>OpGuard</name>
-    <version>3.2.4</version>
+    <version>3.2.5</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -35,7 +35,7 @@
     </dependencies>
 
     <build>
-        <defaultGoal>clean install</defaultGoal>
+        <defaultGoal>install</defaultGoal>
         <finalName>${name}-${version}</finalName>
         <plugins>
             <!-- 

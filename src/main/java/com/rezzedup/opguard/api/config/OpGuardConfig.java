@@ -12,6 +12,8 @@ public interface OpGuardConfig extends Config
     
     boolean canManagePasswordInGame();
     
+    boolean isManagementPermissionEnabled();
+    
     boolean canShutDownOnDisable();
     
     boolean canExemptSelfFromPlugMan();
