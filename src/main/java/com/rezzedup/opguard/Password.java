@@ -11,7 +11,7 @@ public final class Password
     @Deprecated
     static final String DEPRECATED_GLOBAL_SALT = " :^) Enjoy!";
     
-    public interface Algorithm
+    private interface Algorithm
     {
         String generateSalt();
         
@@ -81,12 +81,12 @@ public final class Password
         }
     };
     
-    public static Password fromDeprecated(String hashedSource)
+    public static Password fromExistingDeprecatedHash(String hashedSource)
     {
         return new Password(DEPRECATED, hashedSource);
     }
     
-    public static Password from(String hashedSource)
+    public static Password fromExistingHash(String hashedSource)
     {
         return new Password(BCRYPT, hashedSource);
     }

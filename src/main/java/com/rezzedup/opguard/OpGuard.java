@@ -7,8 +7,13 @@ import com.rezzedup.opguard.users.User;
 import com.rezzedup.opguard.util.Version;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public final class OpGuard extends JavaPlugin
 {
+    public static final Path PLUGIN_DIRECTORY = Paths.get("plugins", "OpGuard");
+    
     @Override
     public void onEnable()
     {
