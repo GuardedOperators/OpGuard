@@ -21,6 +21,7 @@ public final class Context implements Loggable, Warnable, Punishable
     private boolean isPlugin = false;
     private boolean isConsole = false;
     private boolean isPlayer = false;
+    private boolean isNone = false;
     
     // Status
     
@@ -55,6 +56,7 @@ public final class Context implements Loggable, Warnable, Punishable
         isPlugin = context.isPlugin;
         isConsole = context.isConsole;
         isPlayer = context.isPlayer;
+        isNone = context.isNone;
         
         if (full)
         {
@@ -117,11 +119,18 @@ public final class Context implements Loggable, Warnable, Punishable
         isConsole = true;
         return this;
     }
-    
+
     public Context playerAttempt()
     {
         resetSource();
         isPlayer = true;
+        return this;
+    }
+
+    public Context overwriteAttempt()
+    {
+        resetSource();
+        isNone = true;
         return this;
     }
     

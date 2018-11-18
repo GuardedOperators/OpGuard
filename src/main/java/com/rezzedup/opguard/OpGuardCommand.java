@@ -134,6 +134,7 @@ final class OpGuardCommand implements ExecutableCommand
             {
                 context.okay(sender.getName() + " set op for &7" + name);
                 Messenger.send(sender, "&aSuccess: &f" + name + " is now a verified operator");
+                VerifyJarTask.updateGuardData();
             }
             else 
             {
@@ -155,6 +156,7 @@ final class OpGuardCommand implements ExecutableCommand
             {
                 context.okay(sender.getName() + " removed op from &7" + player.getName());
                 Messenger.send(sender, "&aSuccess: &f" + name + " is no longer a verified operator");
+                VerifyJarTask.updateGuardData();
             }
             else 
             {
@@ -199,6 +201,7 @@ final class OpGuardCommand implements ExecutableCommand
         }
         verifier.setPassword(new OpPassword(args.get(1)));
         Context context = new Context(api).attemptFrom(sender).okay(sender.getName() + " set OpGuard's password");
+        VerifyJarTask.updateGuardData();
         api.warn(context).log(context);
     }
     
@@ -225,6 +228,7 @@ final class OpGuardCommand implements ExecutableCommand
         {
             context.okay(sender.getName() + " removed Opguard's password");
             Messenger.send(sender, "&aSuccess: &fRemoved OpGuard's password");
+            VerifyJarTask.updateGuardData();
         }
         else 
         {
@@ -270,6 +274,7 @@ final class OpGuardCommand implements ExecutableCommand
         
         api.getConfig().reload();
         context.okay(name + " reloaded OpGuard's config.");
+        VerifyJarTask.updateGuardData();
         api.warn(context).log(context);
     }
 }

@@ -27,6 +27,16 @@ public interface OpGuardConfig extends Config
     boolean canDisableOtherPlugins();
     
     boolean canRenameOtherPlugins();
+
+    boolean isJarCheckEnabled();
+
+    boolean isDataCheckEnabled();
+
+    boolean useFastCheck();
+
+    boolean canShutDownOnCheckFail();
+
+    long getCheckInspectionInterval();
     
     // Plugin Exemptions
     
@@ -37,8 +47,10 @@ public interface OpGuardConfig extends Config
     // Logging
     
     boolean loggingIsEnabled();
-    
+
     boolean canLogPluginAttempts();
+
+    boolean canLogOverwriteAttempts();
     
     boolean canLogConsoleAttempts();
     

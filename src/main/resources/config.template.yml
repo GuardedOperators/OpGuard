@@ -151,6 +151,43 @@ enable-exempt-plugins: @(enable-exempt-plugins | true)
 exempt-plugins:
 - @(exempt-plugins[] | PerWorldPlugins)
 
+# [Enable jar integrity check]
+# Allows use of the jar/data checking task.
+# Opguard will check it's jar for modifications while running
+# ---
+# Default: false
+check-jar-integrity: @(check-jar-integrity | false)
+
+# [Enable data integrity check]
+# Allows use of the jar/data checking task.
+# Opguard will check it's config/opdata for modifications while running
+# If enabled you shouldn't modify your config while the server is running
+# ---
+# Default: false
+check-data-integrity: @(check-data-integrity | false)
+
+# [Enable faster integrity check]
+# Instead of using a checksum to verify the jar/data
+# the task just compares the file sizes to the start-up state
+# ---
+# Default: false
+fast-check: @(fast-check | false)
+
+# [Server Shutdown]
+# OpGuard will shut the server down if either it's data or jar compromised.
+# Enable this option if you don't want other plugins to disable OpGuard.
+# ---
+# Default: false
+shutdown-on-check-fail: @(shutdown-on-check-fail | false)
+
+# [Data and jar integrity inspection]
+# Duration of time (in ticks) that OpGuard should verify the jar/data.
+# Remember: 20 ticks = 1 second, so 4 ticks = 1/5 of a second.
+# This value cannot be negative or zero.
+# ---
+# Default: 100
+integrity-check-interval: @(integrity-check-interval | 100)
+
 # ----------- #
 #   LOGGING   #
 # ----------- #
@@ -170,6 +207,10 @@ log-console-attempts: @(log.console-attempt | log-console-attempts | true)
 # Log when a player attempts to use /op.
 # Default: true
 log-player-attempts: @(log.player-attempt | log-player-attempts | true)
+
+# Log when a player attempts to use /op.
+# Default: true
+log-overwrite-attempts: @(log.overwrite-attempts | log-overwrite-attempts | true)
 
 # ------------------------- #
 #   MESSAGES AND WARNINGS   #

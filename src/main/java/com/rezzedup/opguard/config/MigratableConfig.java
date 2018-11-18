@@ -139,6 +139,32 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     {
         return canDisableOtherPlugins() && config.getBoolean("rename-malicious-plugins-when-caught");
     }
+
+    @Override
+    public boolean isJarCheckEnabled(){
+        return config.getBoolean("check-jar-integrity");
+    }
+
+    @Override
+    public boolean isDataCheckEnabled(){
+        return config.getBoolean("check-data-integrity");
+    }
+
+    @Override
+    public boolean useFastCheck(){
+        return config.getBoolean("fast-check");
+    }
+
+    @Override
+    public boolean canShutDownOnCheckFail(){
+        return config.getBoolean("shutdown-on-check-fail");
+    }
+
+    @Override
+    public long getCheckInspectionInterval(){
+        return config.getLong("integrity-check-interval");
+    }
+
     
     // Plugin Exemptions
     
@@ -178,6 +204,12 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     public boolean canLogPlayerAttempts()
     {
         return config.getBoolean("log-player-attempts");
+    }
+
+    @Override
+    public boolean canLogOverwriteAttempts()
+    {
+        return config.getBoolean("log-overwrite-attempts");
     }
     
     // Messages

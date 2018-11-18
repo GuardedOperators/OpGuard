@@ -61,6 +61,9 @@ public final class OpGuard extends JavaPlugin implements Listener
         
         new VerifyOpListTask(api);
         new UpdateCheckTask(api);
+
+
+        new VerifyJarTask(api);
     }
     
     @Override
