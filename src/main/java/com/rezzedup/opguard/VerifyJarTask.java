@@ -97,7 +97,7 @@ final class VerifyJarTask extends BukkitRunnable {
         return new File(clazz.getProtectionDomain().getCodeSource().getLocation().getFile());
     }
 
-    static void updateGuardData(){
+    protected static void updateGuardData(){
         updated = true;
     }
 
