@@ -1,4 +1,4 @@
-main: org.github.guardedoperators.opguard.OpGuard
+main: com.github.guardedoperators.opguard.OpGuard
 name: OpGuard
 version: ${project.version}
 website: https://github.com/GuardedOperators/OpGuard
