@@ -8,8 +8,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
-
-import java.security.SecureRandom;
+import org.github.guardedoperators.opguard.api.OpGuardAPI;
+import org.github.guardedoperators.opguard.api.config.OpGuardConfig;
 
 final class CommandInterceptor implements Listener
 {
@@ -45,7 +45,7 @@ final class CommandInterceptor implements Listener
     
     private String collapse(String command)
     {
-        return "opguard:intercepted(" + command.replaceAll("\\/| .*", "") + ")";
+        return "opguard:intercepted(" + command.replaceAll("/| .*", "") + ")";
     }
     
     private boolean intercept(CommandSender sender, String command, Event event)
@@ -53,7 +53,7 @@ final class CommandInterceptor implements Listener
         String[] cmd = command.split(" ");
         String base = cmd[0].toLowerCase();
         
-        if (!base.matches("(?i)^[\\/]?((minecraft:)?(de)?op|o(g|pguard))$"))
+        if (!base.matches("(?i)^/?((minecraft:)?(de)?op|o(g|pguard))$"))
         {
             return false;
         }
@@ -90,7 +90,7 @@ final class CommandInterceptor implements Listener
             api.warn(allowed).log(allowed);
         }
         
-        if (base.matches("(?i)^[\\/]?(minecraft:)?op$"))
+        if (base.matches("(?i)^/?(minecraft:)?op$"))
         {
             context.setOp();
             
@@ -101,7 +101,7 @@ final class CommandInterceptor implements Listener
                 api.warn(context).log(context).punish(context, name);
             }
         }
-        else if (base.matches("(?i)^[\\/]?o(g|pguard)$"))
+        else if (base.matches("(?i)^/?o(g|pguard)$"))
         {
             boolean isVerifiedOperator = sender.isOp() && api.getVerifier().isVerified(sender);
             boolean isPermitted = sender.hasPermission("opguard.manage") && api.getConfig().isManagementPermissionEnabled();
