@@ -1,5 +1,6 @@
-name: ${project.name}
-main: ${project.groupId}.${project.artifactId}.${project.name}
+main: org.github.guardedoperators.opguard.OpGuard
+name: OpGuard
 version: ${project.version}
-author: ${author}
-loadbefore: ${loadbefore}
+website: https://github.com/GuardedOperators/OpGuard
+loadbefore: [ProtocolLib, Vault, Essentials, EssentialsX, PlugMan, PermissionsEx, GroupManager]
+api-version: 1.13

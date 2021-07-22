@@ -7,13 +7,8 @@
     <groupId>com.rezzedup</groupId>
     <artifactId>opguard</artifactId>
     <name>OpGuard</name>
-    <version>3.2.5</version>
+    <version>3.3.0</version>
     <packaging>jar</packaging>
-
-    <properties>
-        <author>RezzedUp</author>
-        <loadbefore>[ProtocolLib, Vault, Essentials, EssentialsX, PlugMan, PermissionsEx, GroupManager]</loadbefore>
-    </properties>
 
     <repositories>
         <repository>
@@ -35,12 +30,10 @@
     </dependencies>
 
     <build>
-        <defaultGoal>install</defaultGoal>
+        <defaultGoal>package</defaultGoal>
         <finalName>${name}-${version}</finalName>
         <plugins>
-            <!-- 
-            Compile project 
-            -->
+            <!-- Compile project -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -52,9 +45,7 @@
             </plugin>
         </plugins>
         <resources>
-            <!-- 
-            Filter resource files 
-            -->
+            <!-- Filter resource files -->
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
