@@ -10,63 +10,35 @@ import com.github.guardedoperators.opguard.api.message.Punishable;
 import com.github.guardedoperators.opguard.api.message.Warnable;
 import com.github.guardedoperators.opguard.config.DataStorage;
 import com.github.guardedoperators.opguard.config.MigratableConfig;
-import com.github.guardedoperators.opguard.metrics.BStatsMetricsLite;
-import com.github.guardedoperators.opguard.metrics.MCStatsMetricsLite;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public final class OpGuard extends JavaPlugin implements Listener
 {
+    // https://bstats.org/plugin/bukkit/OpGuard/540
+    public static final int BSTATS = 540;
+    
     @Override
     public void onEnable()
     {
-        Version java = Version.of(System.getProperty("java.specification.version"));
-        
-        if (!java.isAtLeast(1, 8))
+        if (getDataFolder().mkdir())
         {
-            Messenger.send("[OpGuard] &cOpGuard requires Java 8, but this server currently runs Java " + java.getMinor());
-            
-            new BukkitRunnable()
-            {
-                @Override
-                public void run()
-                {
-                    OpGuard instance = OpGuard.this;
-                    instance.getServer().getPluginManager().disablePlugin(instance);
-                }
-            }
-            .runTask(this);
-            
-            return;
+            getLogger().info("Created directory: " + getDataFolder().getPath());
         }
-        
-        getDataFolder().mkdir();
         
         OpGuardAPI api = new GuardedDependencies(this);
         
-        if (api.getConfig().metricsAreEnabled())
-        {
-            try 
-            {
-                new MCStatsMetricsLite(this).start();
-            } 
-            catch (Exception ignored) {}
-            
-            new BStatsMetricsLite(this);
-        }
-        
         new VerifyOpListTask(api);
         new UpdateCheckTask(api);
-    }
-    
-    @Override
-    public void onDisable()
-    {
-        Bukkit.getScheduler().cancelTasks(this);
+        
+        if (api.getConfig().metricsAreEnabled())
+        {
+            new Metrics(this, BSTATS);
+        }
     }
     
     private static final class GuardedDependencies implements OpGuardAPI
