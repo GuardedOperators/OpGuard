@@ -23,6 +23,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import pl.tlinkowski.annotation.basic.NullOr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -129,8 +130,8 @@ final class OpGuardCommand
 		}
 		
 		String name = args.get(1);
-		OfflinePlayer player = getPlayer(name, onlineOnly);
-		OpPassword password = (passwordEnabled) ? new OpPassword(args.get(2)) : null;
+		@NullOr OfflinePlayer player = getPlayer(name, onlineOnly);
+		@NullOr OpPassword password = (passwordEnabled) ? new OpPassword(args.get(2)) : null;
 		
 		if (player == null)
 		{
@@ -150,9 +151,8 @@ final class OpGuardCommand
 			}
 			else
 			{
-				context.incorrectlyUsedOpGuard().warning
-				(
-				sender.getName() + " attempted to set op for <!>" + name + "&f using an incorrect password"
+				context.incorrectlyUsedOpGuard().warning(
+					sender.getName() + " attempted to set op for <!>" + name + "&f using an incorrect password"
 				);
 				Messenger.send(sender, "&cError:&f Incorrect password");
 				
@@ -188,7 +188,7 @@ final class OpGuardCommand
 	}
 	
 	@SuppressWarnings("deprecation")
-	private OfflinePlayer getPlayer(String name, boolean online)
+	private @NullOr OfflinePlayer getPlayer(String name, boolean online)
 	{
 		return (online) ? Bukkit.getPlayer(name) : Bukkit.getOfflinePlayer(name);
 	}

@@ -24,6 +24,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import pl.tlinkowski.annotation.basic.NullOr;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -51,7 +52,7 @@ public final class OpVerifier
 	
 	private static final class PasswordWrapper
 	{
-		private static OpPassword password;
+		private static @NullOr OpPassword password;
 	}
 	
 	private final DataStorage storage;
@@ -81,7 +82,7 @@ public final class OpVerifier
 		return PasswordWrapper.password != null;
 	}
 	
-	public boolean setPassword(OpPassword password)
+	public boolean setPassword(@NullOr OpPassword password)
 	{
 		if (!hasPassword() && password != null)
 		{
@@ -121,7 +122,7 @@ public final class OpVerifier
 		return OpListWrapper.getKeys();
 	}
 	
-	public boolean op(OfflinePlayer player, OpPassword password)
+	public boolean op(OfflinePlayer player, @NullOr OpPassword password)
 	{
 		if (check(password))
 		{
@@ -132,7 +133,7 @@ public final class OpVerifier
 		return false;
 	}
 	
-	public boolean deop(OfflinePlayer player, OpPassword password)
+	public boolean deop(OfflinePlayer player, @NullOr OpPassword password)
 	{
 		if (check(password))
 		{

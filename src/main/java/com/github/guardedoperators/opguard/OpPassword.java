@@ -27,7 +27,7 @@ public final class OpPassword
 	
 	public OpPassword(OpPassword clone)
 	{
-		this.hash = clone.getHash();
+		this.hash = clone.hash;
 	}
 	
 	public OpPassword(String plaintext)
@@ -57,7 +57,7 @@ public final class OpPassword
 			}
 			this.hash = hashed.toString().toLowerCase();
 		}
-		catch (NoSuchAlgorithmException e) { e.printStackTrace(); }
+		catch (NoSuchAlgorithmException e) { throw new RuntimeException(e); }
 	}
 	
 	public String getHash()

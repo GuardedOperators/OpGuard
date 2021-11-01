@@ -18,6 +18,7 @@
 package com.github.guardedoperators.opguard.config;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import pl.tlinkowski.annotation.basic.NullOr;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
 class ConfigurationTemplate
 {
 	private final BufferedReader reader;
-	private List<String> content;
+	private @NullOr List<String> content;
 	
 	public ConfigurationTemplate(Object instance, String resource)
 	{
@@ -65,7 +66,8 @@ class ConfigurationTemplate
 	
 	public List<String> getLines()
 	{
-		return content;
+		if (content != null) { return content; }
+		throw new IllegalStateException("Template hasn't been applied yet.");
 	}
 	
 	private List<String> applyTemplate(FileConfiguration config) throws IOException

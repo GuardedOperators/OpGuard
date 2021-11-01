@@ -29,22 +29,14 @@ import java.time.format.DateTimeFormatter;
 
 public class Log
 {
-	private final Plugin plugin;
 	private final File file;
 	
 	public Log(Plugin plugin, String name)
 	{
-		this.plugin = plugin;
 		this.file = new File(plugin.getDataFolder(), name + ".log");
 		
-		try
-		{
-			this.file.createNewFile();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		try { this.file.createNewFile(); }
+		catch (IOException e) { e.printStackTrace(); }
 	}
 	
 	private String now()

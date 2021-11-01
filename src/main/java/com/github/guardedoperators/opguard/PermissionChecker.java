@@ -27,18 +27,19 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.security.SecureRandom;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class PermissionChecker implements Listener
 {
-	private final OpGuard api;
+	private final OpGuard opguard;
 	private final String permission;
 	
-	public PermissionChecker(OpGuard api)
+	public PermissionChecker(OpGuard opguard)
 	{
-		this.api = api;
+		this.opguard = Objects.requireNonNull(opguard, "opguard");
 		
 		Random random = new SecureRandom();
 		
@@ -52,18 +53,18 @@ public class PermissionChecker implements Listener
 	
 	public void check(PlayerEvent event)
 	{
-		if (!api.config().canCheckPermissions()) { return; }
+		if (!opguard.config().canCheckPermissions()) { return; }
 		
 		Player player = event.getPlayer();
 		
-		if (!player.hasPermission(permission) || api.verifier().isVerified(player.getUniqueId()))
+		if (!player.hasPermission(permission) || opguard.verifier().isVerified(player.getUniqueId()))
 		{
 			return;
 		}
 		
-		Context context = new Context(api).playerAttempt().hasInvalidPermissions();
+		Context context = new Context(opguard).playerAttempt().hasInvalidPermissions();
 		
-		PluginStackChecker stack = new PluginStackChecker(api);
+		PluginStackChecker stack = new PluginStackChecker(opguard);
 		
 		// Only exempted plugins found -> exit method.
 		if (!stack.hasFoundPlugin() && stack.hasAllowedPlugins())
@@ -71,11 +72,10 @@ public class PermissionChecker implements Listener
 			Context allowed = context.copy();
 			String name = stack.getTopAllowedPlugin().getName();
 			
-			allowed.okay
-			(
-			"The plugin &7" + name + "&f was allowed to grant all permissions to &7" + player.getName()
+			allowed.okay(
+				"The plugin &7" + name + "&f was allowed to grant all permissions to &7" + player.getName()
 			);
-			api.warn(allowed).log(allowed);
+			opguard.warn(allowed).log(allowed);
 			
 			return;
 		}
@@ -86,13 +86,12 @@ public class PermissionChecker implements Listener
 			Context foundPlugin = context.copy();
 			String name = stack.getPlugin().getName();
 			
-			foundPlugin.pluginAttempt().warning
-			(
-			"The plugin <!>" + name + "&f attempted to grant all permissions to &7" + player.getName()
+			foundPlugin.pluginAttempt().warning(
+				"The plugin <!>" + name + "&f attempted to grant all permissions to &7" + player.getName()
 			);
-			api.warn(foundPlugin).log(foundPlugin);
+			opguard.warn(foundPlugin).log(foundPlugin);
 			
-			stack.disablePlugin(api, foundPlugin);
+			stack.disablePlugin(opguard, foundPlugin);
 		}
 		
 		if (event instanceof Cancellable)
@@ -101,18 +100,18 @@ public class PermissionChecker implements Listener
 		}
 		
 		context.warning("Player <!>" + player.getName() + "&f has access to all permissions but isn't a verified operator");
-		api.warn(context).log(context).punish(context, player.getName());
+		opguard.warn(context).log(context).punish(context, player.getName());
 		
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH)
-	public void on(PlayerCommandPreprocessEvent event)
+	public void onPlayerCommand(PlayerCommandPreprocessEvent event)
 	{
 		check(event);
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH)
-	public void on(PlayerInteractEvent event)
+	public void onPlayerInteract(PlayerInteractEvent event)
 	{
 		check(event);
 	}

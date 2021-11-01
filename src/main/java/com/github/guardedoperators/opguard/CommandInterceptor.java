@@ -17,7 +17,6 @@
  */
 package com.github.guardedoperators.opguard;
 
-import com.github.guardedoperators.opguard.config.OpGuardConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -74,7 +73,6 @@ final class CommandInterceptor implements Listener
 		}
 		
 		Context context = new Context(api).attemptFrom(sender);
-		OpGuardConfig config = api.config();
 		PluginStackChecker stack = new PluginStackChecker(api);
 		
 		if (stack.hasFoundPlugin())

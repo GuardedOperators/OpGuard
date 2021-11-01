@@ -24,7 +24,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,6 +40,7 @@ public final class OpGuardConfig extends BaseConfig
 		super(plugin);
 	}
 	
+	@SuppressWarnings("ConstantConditions")
 	@Override
 	protected void load()
 	{
@@ -79,7 +80,7 @@ public final class OpGuardConfig extends BaseConfig
 			file.createNewFile();
 			
 			Path path = Paths.get(file.toURI());
-			Files.write(path, lines, Charset.forName("UTF-8"));
+			Files.write(path, lines, StandardCharsets.UTF_8);
 			
 			config = YamlConfiguration.loadConfiguration(file);
 		}
@@ -184,12 +185,12 @@ public final class OpGuardConfig extends BaseConfig
 	
 	public String getWarningPrefix()
 	{
-		return config.getString("warn-prefix");
+		return config.getString("warn-prefix", "");
 	}
 	
 	public String getWarningEmphasisColor()
 	{
-		return config.getString("warn-emphasis-color");
+		return config.getString("warn-emphasis-color", "");
 	}
 	
 	public boolean canSendPluginAttemptWarnings()
@@ -219,7 +220,7 @@ public final class OpGuardConfig extends BaseConfig
 	
 	public String getSecurityPrefix()
 	{
-		return config.getString("security-prefix");
+		return config.getString("security-prefix", "");
 	}
 	
 	public boolean canSendSecurityWarnings()
@@ -229,7 +230,7 @@ public final class OpGuardConfig extends BaseConfig
 	
 	public String getOkayPrefix()
 	{
-		return config.getString("okay-prefix");
+		return config.getString("okay-prefix", "");
 	}
 	
 	// Punishments

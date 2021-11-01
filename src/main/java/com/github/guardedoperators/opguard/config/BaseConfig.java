@@ -21,6 +21,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import pl.tlinkowski.annotation.basic.NullOr;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +32,7 @@ abstract class BaseConfig
 	protected final File file;
 	protected FileConfiguration config;
 	
-	BaseConfig(Plugin plugin, String filename)
+	BaseConfig(Plugin plugin, @NullOr String filename)
 	{
 		this.plugin = plugin;
 		

@@ -20,6 +20,7 @@ package com.github.guardedoperators.opguard;
 import com.github.guardedoperators.opguard.config.OpGuardConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import pl.tlinkowski.annotation.basic.NullOr;
 
 public final class Context
 {
@@ -44,16 +45,16 @@ public final class Context
 		SECURITY
 	}
 	
-	private Cause cause = null;
-	private Source source = null;
+	private @NullOr Cause cause = null;
+	private @NullOr Source source = null;
 	private Status status = Status.OKAY;
 	private String message = "";
 	private boolean punishmentActionTaken = false;
 	private final OpGuardConfig config;
 	
-	public Context(OpGuard api)
+	public Context(OpGuard opguard)
 	{
-		this.config = api.config();
+		this.config = opguard.config();
 	}
 	
 	public Context(Context existing, boolean full)
@@ -140,14 +141,14 @@ public final class Context
 	{
 		if (punishmentActionTaken) { return true; }
 		
-		switch (source)
+		if (source != null)
 		{
-			case PLAYER:
-				return config.canLogPlayerAttempts();
-			case CONSOLE:
-				return config.canLogConsoleAttempts();
-			case PLUGIN:
-				return config.canLogPluginAttempts();
+			switch (source)
+			{
+				case PLAYER: return config.canLogPlayerAttempts();
+				case CONSOLE: return config.canLogConsoleAttempts();
+				case PLUGIN: return config.canLogPluginAttempts();
+			}
 		}
 		
 		return true;
@@ -157,33 +158,38 @@ public final class Context
 	{
 		if (status == Status.SECURITY) { return config.canSendSecurityWarnings(); }
 		
-		switch (source)
+		if (source != null)
 		{
-			case PLAYER:
+			switch (source)
 			{
-				switch (cause)
+				case PLAYER:
 				{
-					case OP_COMMAND:
-						return config.canSendPlayerOpAttemptWarnings();
-					case OPGUARD_COMMAND:
-						return config.canSendPlayerOpGuardAttemptWarnings();
+					if (cause != null)
+					{
+						switch (cause)
+						{
+							case OP_COMMAND: return config.canSendPlayerOpAttemptWarnings();
+							case OPGUARD_COMMAND: return config.canSendPlayerOpGuardAttemptWarnings();
+						}
+					}
+					break;
 				}
-				break;
-			}
-			case CONSOLE:
-			{
-				switch (cause)
+				case CONSOLE:
 				{
-					case OP_COMMAND:
-						return config.canSendConsoleOpAttemptWarnings();
-					case OPGUARD_COMMAND:
-						return config.canSendConsoleOpGuardAttemptWarnings();
+					if (cause != null)
+					{
+						switch (cause)
+						{
+							case OP_COMMAND: return config.canSendConsoleOpAttemptWarnings();
+							case OPGUARD_COMMAND: return config.canSendConsoleOpGuardAttemptWarnings();
+						}
+					}
+					break;
 				}
-				break;
-			}
-			case PLUGIN:
-			{
-				return config.canSendPluginAttemptWarnings();
+				case PLUGIN:
+				{
+					return config.canSendPluginAttemptWarnings();
+				}
 			}
 		}
 		
@@ -192,22 +198,26 @@ public final class Context
 	
 	public boolean isPunishable()
 	{
-		switch (source)
+		if (source != null)
 		{
-			case CONSOLE:
+			switch (source)
 			{
-				switch (cause)
+				case CONSOLE:
 				{
-					case OP_COMMAND:
-						return config.canPunishConsoleOpAttempts();
-					case OPGUARD_COMMAND:
-						return config.canPunishConsoleOpGuardAttempts();
+					if (cause != null)
+					{
+						switch (cause)
+						{
+							case OP_COMMAND: return config.canPunishConsoleOpAttempts();
+							case OPGUARD_COMMAND: return config.canPunishConsoleOpGuardAttempts();
+						}
+					}
+					break;
 				}
-				break;
-			}
-			case PLUGIN:
-			{
-				return config.canPunishPluginAttempts();
+				case PLUGIN:
+				{
+					return config.canPunishPluginAttempts();
+				}
 			}
 		}
 		
@@ -223,12 +233,9 @@ public final class Context
 	{
 		switch (status)
 		{
-			case OKAY:
-				return config.getOkayPrefix() + " &f" + text;
-			case WARN:
-				return config.getWarningPrefix() + " &f" + text.replaceAll("<!>", config.getWarningEmphasisColor());
-			case SECURITY:
-				return config.getSecurityPrefix() + " &f" + text;
+			case OKAY: return config.getOkayPrefix() + " &f" + text;
+			case WARN: return config.getWarningPrefix() + " &f" + text.replaceAll("<!>", config.getWarningEmphasisColor());
+			case SECURITY: return config.getSecurityPrefix() + " &f" + text;
 		}
 		
 		return text;
@@ -247,17 +254,11 @@ public final class Context
 	
 	public boolean hasMessage()
 	{
-		return message != null && !message.isEmpty();
+		return !message.isEmpty();
 	}
 	
 	public Context copy()
 	{
 		return new Context(this, false);
 	}
-	
-	public Context fullCopy()
-	{
-		return new Context(this, true);
-	}
-	
 }

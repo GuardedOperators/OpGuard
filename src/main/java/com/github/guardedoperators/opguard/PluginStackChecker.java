@@ -22,6 +22,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.Stack;
 
 public final class PluginStackChecker
@@ -33,8 +34,9 @@ public final class PluginStackChecker
 	private Plugin plugin = null;
 	private StackTraceElement element = null;
 	
-	public PluginStackChecker(OpGuard api)
+	public PluginStackChecker(OpGuard opguard)
 	{
+		Objects.requireNonNull(opguard, "opguard");
 		this.stackTrace = Thread.currentThread().getStackTrace();
 		
 		for (StackTraceElement element : stackTrace)
@@ -43,9 +45,9 @@ public final class PluginStackChecker
 			{
 				Plugin plugin = getPluginByClass(Class.forName(element.getClassName()));
 				
-				if (plugin != null && plugin != api.plugin())
+				if (plugin != null && plugin != opguard.plugin())
 				{
-					OpGuardConfig config = api.config();
+					OpGuardConfig config = opguard.config();
 					
 					if (config.shouldExemptPlugins() && config.getExemptPlugins().contains(plugin.getName()))
 					{

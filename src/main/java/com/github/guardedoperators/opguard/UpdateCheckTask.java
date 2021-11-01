@@ -27,23 +27,24 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class UpdateCheckTask extends BukkitRunnable
 {
 	public static final String DOWNLOAD_URL = "https://www.spigotmc.org/resources/opguard.23200/";
 	public static final String SPIGET_URL = "https://api.spiget.org/v2/resources/23200/versions/latest";
 	
-	private final OpGuard api;
+	private final OpGuard opguard;
 	private final String userAgent;
 	
-	UpdateCheckTask(OpGuard api)
+	UpdateCheckTask(OpGuard opguard)
 	{
-		this.api = api;
+		this.opguard = Objects.requireNonNull(opguard, "opguard");
 		
-		this.userAgent = "OpGuard" + "/" + api.version() + " (Minecraft) " +
-						 api.plugin().getServer().getName() + "/" + api.plugin().getServer().getVersion();
+		this.userAgent = "OpGuard" + "/" + opguard.version() + " (Minecraft) " +
+	 		opguard.plugin().getServer().getName() + "/" + opguard.plugin().getServer().getVersion();
 		
-		OpGuardConfig config = api.config();
+		OpGuardConfig config = opguard.config();
 		long hours = config.getUpdateCheckInterval();
 		
 		if (hours < 1)
@@ -54,7 +55,7 @@ public class UpdateCheckTask extends BukkitRunnable
 		
 		if (config.canCheckForUpdates())
 		{
-			runTaskTimerAsynchronously(api.plugin(), 100L, hours * 60L * 60L * 20L);
+			runTaskTimerAsynchronously(opguard.plugin(), 100L, hours * 60L * 60L * 20L);
 		}
 	}
 	
@@ -75,10 +76,10 @@ public class UpdateCheckTask extends BukkitRunnable
 			
 			Version version = Version.valueOf(name);
 			
-			if (api.version().lessThan(version))
+			if (opguard.version().lessThan(version))
 			{
 				Messenger.console(
-				"[OpGuard] &eAn update is available!&r Download &fv" + version + "&r here: &6" + DOWNLOAD_URL
+					"[OpGuard] &eAn update is available!&r Download &fv" + version + "&r here: &6" + DOWNLOAD_URL
 				);
 			}
 		}

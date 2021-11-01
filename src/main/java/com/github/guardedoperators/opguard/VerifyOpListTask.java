@@ -21,17 +21,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Objects;
 import java.util.Set;
 
 final class VerifyOpListTask extends BukkitRunnable
 {
-	private final OpGuard api;
+	private final OpGuard opguard;
 	
-	public VerifyOpListTask(OpGuard api)
+	public VerifyOpListTask(OpGuard opguard)
 	{
-		this.api = api;
+		this.opguard = Objects.requireNonNull(opguard, "opguard");
 		
-		long interval = api.config().getOpListInspectionInterval();
+		long interval = opguard.config().getOpListInspectionInterval();
 		
 		if (interval <= 0)
 		{
@@ -39,13 +40,13 @@ final class VerifyOpListTask extends BukkitRunnable
 			interval = 4;
 		}
 		
-		runTaskTimer(api.plugin(), 1L, interval);
+		runTaskTimer(opguard.plugin(), 1L, interval);
 	}
 	
 	@Override
 	public void run()
 	{
-		OpVerifier verifier = api.verifier();
+		OpVerifier verifier = opguard.verifier();
 		Set<OfflinePlayer> operators = Bukkit.getOperators();
 		
 		for (OfflinePlayer operator : operators)
@@ -54,11 +55,11 @@ final class VerifyOpListTask extends BukkitRunnable
 			{
 				String name = operator.getName();
 				operator.setOp(false);
-				Context context = new Context(api).pluginAttempt().setOp().warning
+				Context context = new Context(opguard).pluginAttempt().setOp().warning
 				(
 				"An unknown plugin attempted to op <!>" + name + "&f. A recently-installed plugin may be to blame"
 				);
-				api.warn(context).log(context).punish(context, name);
+				opguard.warn(context).log(context).punish(context, name);
 			}
 		}
 	}

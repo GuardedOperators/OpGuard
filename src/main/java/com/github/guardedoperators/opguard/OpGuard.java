@@ -110,14 +110,11 @@ public final class OpGuard
 		command.execute(sender, args);
 	}
 	
-	public void punish(Context punishable, String username)
+	public void punish(Context context, String username)
 	{
-		if (!punishable.isPunishable() || !(punishable instanceof Context))
-		{
-			return;
-		}
+		if (!context.isPunishable()) { return; }
 		
-		Context context = ((Context) punishable).copy().punishment();
+		Context copy = context.copy().punishment();
 		
 		for (String command : config.getPunishmentCommands())
 		{
@@ -125,7 +122,7 @@ public final class OpGuard
 			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
 		}
 		
-		context.okay("Punished &7" + username + "&f for attempting to gain op");
-		warn(context).log(context);
+		copy.okay("Punished &7" + username + "&f for attempting to gain op");
+		warn(copy).log(copy);
 	}
 }

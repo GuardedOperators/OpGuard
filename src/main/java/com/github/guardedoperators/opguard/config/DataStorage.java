@@ -84,7 +84,7 @@ public final class DataStorage extends BaseConfig
 	@Override
 	public void reload() { }
 	
-	public boolean save(boolean async)
+	public void save(boolean async)
 	{
 		BukkitRunnable task = new BukkitRunnable()
 		{
@@ -98,7 +98,6 @@ public final class DataStorage extends BaseConfig
 		
 		if (async) { task.runTaskAsynchronously(plugin); }
 		else { task.run(); }
-		return true;
 	}
 	
 	public void reset(OpVerifier verifier)

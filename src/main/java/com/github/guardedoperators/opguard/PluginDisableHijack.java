@@ -26,15 +26,16 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 final class PluginDisableHijack implements Listener
 {
-	private final OpGuard api;
+	private final OpGuard opguard;
 	
-	PluginDisableHijack(OpGuard api)
+	PluginDisableHijack(OpGuard opguard)
 	{
-		this.api = api;
+		this.opguard = Objects.requireNonNull(opguard, "opguard");
 		
 		Stream.of(Bukkit.getPluginManager().getPlugins()).forEach(this::exemptFromPlugMan);
 	}
@@ -42,7 +43,7 @@ final class PluginDisableHijack implements Listener
 	@EventHandler
 	public void on(PluginDisableEvent event)
 	{
-		if (event.getPlugin() == api.plugin() && api.config().canShutDownOnDisable())
+		if (event.getPlugin() == opguard.plugin() && opguard.config().canShutDownOnDisable())
 		{
 			Messenger.console("&c[&fOpGuard was disabled&c] Shutting server down.");
 			Bukkit.shutdown();
@@ -58,14 +59,9 @@ final class PluginDisableHijack implements Listener
 	@SuppressWarnings("unchecked")
 	private void exemptFromPlugMan(Plugin plugin)
 	{
-		boolean isPlugMan = plugin != null && plugin.getName().equalsIgnoreCase("PlugMan");
+		boolean isPlugMan = plugin.getName().equalsIgnoreCase("PlugMan");
 		
-		if (!isPlugMan || !api.config().canExemptSelfFromPlugMan())
-		{
-			return;
-		}
-		
-		Plugin instance = api.plugin();
+		if (!isPlugMan || !opguard.config().canExemptSelfFromPlugMan()) { return; }
 		
 		Runnable task = () ->
 		{
@@ -75,12 +71,12 @@ final class PluginDisableHijack implements Listener
 				ignoredPluginsField.setAccessible(true);
 				List<String> ignored = (List<String>) ignoredPluginsField.get(plugin);
 				
-				ignored.add(instance.getName());
+				ignored.add(opguard.plugin().getName());
 				Messenger.console("&f[OpGuard] &9Exempted OpGuard from PlugMan.");
 			}
 			catch (Exception ignored) { }
 		};
 		
-		Bukkit.getScheduler().scheduleSyncDelayedTask(instance, task, 1L);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(opguard.plugin(), task, 1L);
 	}
 }
