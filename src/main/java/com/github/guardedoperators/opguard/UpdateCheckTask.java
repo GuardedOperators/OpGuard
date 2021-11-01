@@ -1,9 +1,8 @@
 package com.github.guardedoperators.opguard;
 
 import com.github.guardedoperators.opguard.api.OpGuardAPI;
-import com.github.guardedoperators.opguard.api.Version;
 import com.github.guardedoperators.opguard.api.config.OpGuardConfig;
-import com.google.gson.JsonArray;
+import com.github.zafarkhaja.semver.Version;
 import com.google.gson.JsonParser;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -16,15 +15,18 @@ import java.nio.charset.StandardCharsets;
 public class UpdateCheckTask extends BukkitRunnable
 {
     public static final String DOWNLOAD_URL = "https://www.spigotmc.org/resources/opguard.23200/";
-    public static final String USER_AGENT = "OpGuard";
-    public static final String SPIGET_URL = "https://api.spiget.org/v2/resources/23200/versions?size=1&sort=-name";
+    public static final String SPIGET_URL = "https://api.spiget.org/v2/resources/23200/versions/latest";
     
     private final OpGuardAPI api;
+    private final String userAgent;
     
     UpdateCheckTask(OpGuardAPI api)
     {
         this.api = api;
-    
+        
+        this.userAgent = "OpGuard" + "/" + api.getVersion() + " (Minecraft) " +
+            api.getPlugin().getServer().getName() + "/" + api.getPlugin().getServer().getVersion();
+        
         OpGuardConfig config = api.getConfig();
         long hours = config.getUpdateCheckInterval();
         
@@ -46,27 +48,20 @@ public class UpdateCheckTask extends BukkitRunnable
         try 
         {
             URLConnection connection = new URL(SPIGET_URL).openConnection();
-            String name = null;
+            connection.addRequestProperty("User-Agent", userAgent);
             
-            connection.addRequestProperty("User-Agent", USER_AGENT);
-    
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) 
+            String name = "0.0.0";
+            
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)))
             {
-                JsonArray results = new JsonParser().parse(reader).getAsJsonArray();
-                name = results.get(0).getAsJsonObject().get("name").getAsString();
+                name = new JsonParser().parse(reader).getAsJsonObject().get("name").getAsString();
             }
             
-            Version version = Version.of(name);
-    
-            synchronized (api)
+            Version version = Version.valueOf(name);
+            
+            if (api.getVersion().lessThan(version))
             {
-                if (api.getVersion().isAtLeast(version))
-                {
-                    return;
-                }
-        
-                Messenger.send
-                (
+                Messenger.send(
                     "[OpGuard] &eAn update is available!&r Download &fv" + version + "&r here: &6" + DOWNLOAD_URL
                 );
             }

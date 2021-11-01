@@ -3,13 +3,13 @@ package com.github.guardedoperators.opguard;
 import com.github.guardedoperators.opguard.api.ExecutableCommand;
 import com.github.guardedoperators.opguard.api.OpGuardAPI;
 import com.github.guardedoperators.opguard.api.Verifier;
-import com.github.guardedoperators.opguard.api.Version;
 import com.github.guardedoperators.opguard.api.config.OpGuardConfig;
 import com.github.guardedoperators.opguard.api.message.Loggable;
 import com.github.guardedoperators.opguard.api.message.Punishable;
 import com.github.guardedoperators.opguard.api.message.Warnable;
 import com.github.guardedoperators.opguard.config.DataStorage;
 import com.github.guardedoperators.opguard.config.MigratableConfig;
+import com.github.zafarkhaja.semver.Version;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -53,7 +53,7 @@ public final class OpGuard extends JavaPlugin implements Listener
         private GuardedDependencies(OpGuard instance) 
         {
             this.instance = instance;
-            this.version = Version.of(instance.getDescription().getVersion());
+            this.version = Version.valueOf(instance.getDescription().getVersion());
             this.log = new Log(instance, "guard");
             this.config = new MigratableConfig(instance);
             this.verifier = new OpVerifier(new DataStorage(this));

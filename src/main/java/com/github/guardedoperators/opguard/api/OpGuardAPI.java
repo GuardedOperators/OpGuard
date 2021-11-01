@@ -4,6 +4,7 @@ import com.github.guardedoperators.opguard.api.config.OpGuardConfig;
 import com.github.guardedoperators.opguard.api.message.Loggable;
 import com.github.guardedoperators.opguard.api.message.Punishable;
 import com.github.guardedoperators.opguard.api.message.Warnable;
+import com.github.zafarkhaja.semver.Version;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;

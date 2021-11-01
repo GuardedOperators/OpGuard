@@ -1,7 +1,7 @@
 package com.github.guardedoperators.opguard.config;
 
-import com.github.guardedoperators.opguard.api.Version;
 import com.github.guardedoperators.opguard.api.config.OpGuardConfig;
+import com.github.zafarkhaja.semver.Version;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -16,6 +16,9 @@ import java.util.List;
 
 public final class MigratableConfig extends BaseConfig implements OpGuardConfig
 {
+    // Update version whenever config requires updates.
+    public static final Version UPDATED = Version.forIntegers(3, 2, 5);
+    
     public MigratableConfig(Plugin plugin)
     {
         super(plugin);
@@ -24,14 +27,12 @@ public final class MigratableConfig extends BaseConfig implements OpGuardConfig
     @Override
     protected void load()
     {
-        // Version will be 0.0.0 if config version is null.
-        Version loadedVersion = Version.of(config.getString("version"));
+        Version loadedVersion;
         
-        // Todo: Update isAtLeast() whenever config requires updates.
-        if (!loadedVersion.isAtLeast(3, 2, 5))
-        {
-            migrateConfig(config, loadedVersion);
-        }
+        try { loadedVersion = Version.valueOf(config.getString("version")); }
+        catch (RuntimeException ignored) { loadedVersion = Version.forIntegers(0); }
+        
+        if (loadedVersion.lessThan(UPDATED)) { migrateConfig(config, loadedVersion); }
     }
     
     private void migrateConfig(FileConfiguration old, Version version)
