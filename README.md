@@ -1,4 +1,6 @@
-<center><img src="https://i.imgur.com/xy6HzzA.png"></center>
+<div style="text-align: center;">
+    <img src="https://i.imgur.com/xy6HzzA.png">
+</div>
 
 ---
 
@@ -7,4 +9,7 @@
 OpGuard is a Spigot plugin that protects against op exploits &amp; malicious plugins. It achieves this by maintaining a
 list of verified operators and overriding the Bukkit implementation of /op and /deop with its own command: `/opguard`.
 
-Releases are compiled with **Java 8** to maintain maximum compatibility.
+- `v4.x.x` releases target **Java 11**
+- `v3.x.x` and prior targeted Java 8
+
+[![](https://bstats.org/signatures/bukkit/OpGuard.svg)](https://bstats.org/plugin/bukkit/OpGuard/540)
