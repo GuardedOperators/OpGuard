@@ -6,12 +6,24 @@
 
     <groupId>com.rezzedup</groupId>
     <artifactId>opguard</artifactId>
+    <version>4.0.0</version>
+
     <name>OpGuard</name>
-    <version>3.3.0</version>
-    <packaging>jar</packaging>
+    <inceptionYear>2016</inceptionYear>
+    <description>Password protected op.</description>
 
     <properties>
+        <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <shade.relocation>com.github.guardedoperators.opguard.shaded</shade.relocation>
+
+        <!-- License headers -->
+        <license.header.year>${project.inceptionYear}-${maven.build.timestamp}</license.header.year>
+        <license.header.owner>OpGuard Contributors</license.header.owner>
+        <license.header.url>https://github.com/GuardedOperators/OpGuard</license.header.url>
     </properties>
 
     <repositories>
@@ -42,6 +54,12 @@
 			<artifactId>java-semver</artifactId>
 			<version>0.9.0</version>
 		</dependency>
+        <!-- Nullness Annotations: @NullOr (via maven-central) -->
+        <dependency>
+            <groupId>pl.tlinkowski.annotation</groupId>
+            <artifactId>pl.tlinkowski.annotation.basic</artifactId>
+            <version>0.2.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -54,8 +72,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
             <!-- Shade dependencies -->
@@ -78,6 +96,14 @@
                             <shadedPattern>${shade.relocation}.org.bstats</shadedPattern>
                         </relocation>
                     </relocations>
+                    <artifactSet>
+                        <!-- Exclude annotations from built jar -->
+                        <excludes>
+                            <exclude>com.google.code.findbugs:jsr305</exclude>
+                            <exclude>org.jetbrains.kotlin:kotlin-annotations-jvm</exclude>
+                            <exclude>pl.tlinkowski.annotation:pl.tlinkowski.annotation.basic</exclude>
+                        </excludes>
+                    </artifactSet>
                     <filters>
                         <filter>
                             <!-- Exclude redundant metadata files -->
@@ -93,6 +119,44 @@
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Add license headers -->
+            <!-- `mvn license:format` or run the `update-license-headers` configuration -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>4.1</version>
+                <configuration>
+                    <properties>
+                        <year>${license.header.year}</year>
+                        <owner>${license.header.owner}</owner>
+                        <email>${license.header.url}</email>
+                    </properties>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>com/mycila/maven/plugin/license/templates/GPL-3.txt</header>
+                            <excludes>
+                                <exclude>*.md</exclude>
+                                <exclude>*.txt</exclude>
+                                <exclude>*.xml</exclude>
+                                <exclude>*.yml</exclude>
+                                <exclude>.run/**</exclude>
+                                <exclude>examples/**</exclude>
+                                <exclude>src/test/resources/**</exclude>
+                                <exclude>src/main/resources/**</exclude>
+                            </excludes>
+                        </licenseSet>
+                    </licenseSets>
+                </configuration>
+                <!-- Check for missing license headers -->
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
