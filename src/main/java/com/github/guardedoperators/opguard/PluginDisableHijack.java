@@ -29,58 +29,58 @@ import java.util.List;
 import java.util.stream.Stream;
 
 final class PluginDisableHijack implements Listener
-{    
-    private final OpGuard api;
-    
-    PluginDisableHijack(OpGuard api)
-    {
-        this.api = api;
-        
-        Stream.of(Bukkit.getPluginManager().getPlugins()).forEach(this::exemptFromPlugMan);
-    }
-    
-    @EventHandler
-    public void on(PluginDisableEvent event)
-    {
-        if (event.getPlugin() == api.plugin() && api.config().canShutDownOnDisable())
-        {
-            Messenger.console("&c[&fOpGuard was disabled&c] Shutting server down.");
-            Bukkit.shutdown();
-        }
-    }
-    
-    @EventHandler
-    public void on(PluginEnableEvent event)
-    {
-        exemptFromPlugMan(event.getPlugin());
-    }
-    
-    @SuppressWarnings("unchecked")
-    private void exemptFromPlugMan(Plugin plugin)
-    {
-        boolean isPlugMan = plugin != null && plugin.getName().equalsIgnoreCase("PlugMan");
-        
-        if (!isPlugMan || !api.config().canExemptSelfFromPlugMan())
-        {
-            return;
-        }
-        
-        Plugin instance = api.plugin();
-        
-        Runnable task = () ->
-        {
-            try
-            {
-                Field ignoredPluginsField = plugin.getClass().getDeclaredField("ignoredPlugins");
-                ignoredPluginsField.setAccessible(true);
-                List<String> ignored = (List<String>) ignoredPluginsField.get(plugin);
-                
-                ignored.add(instance.getName());
-                Messenger.console("&f[OpGuard] &9Exempted OpGuard from PlugMan.");
-            }
-            catch (Exception ignored) {}
-        };
-        
-        Bukkit.getScheduler().scheduleSyncDelayedTask(instance, task, 1L);
-    }
+{
+	private final OpGuard api;
+	
+	PluginDisableHijack(OpGuard api)
+	{
+		this.api = api;
+		
+		Stream.of(Bukkit.getPluginManager().getPlugins()).forEach(this::exemptFromPlugMan);
+	}
+	
+	@EventHandler
+	public void on(PluginDisableEvent event)
+	{
+		if (event.getPlugin() == api.plugin() && api.config().canShutDownOnDisable())
+		{
+			Messenger.console("&c[&fOpGuard was disabled&c] Shutting server down.");
+			Bukkit.shutdown();
+		}
+	}
+	
+	@EventHandler
+	public void on(PluginEnableEvent event)
+	{
+		exemptFromPlugMan(event.getPlugin());
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void exemptFromPlugMan(Plugin plugin)
+	{
+		boolean isPlugMan = plugin != null && plugin.getName().equalsIgnoreCase("PlugMan");
+		
+		if (!isPlugMan || !api.config().canExemptSelfFromPlugMan())
+		{
+			return;
+		}
+		
+		Plugin instance = api.plugin();
+		
+		Runnable task = () ->
+		{
+			try
+			{
+				Field ignoredPluginsField = plugin.getClass().getDeclaredField("ignoredPlugins");
+				ignoredPluginsField.setAccessible(true);
+				List<String> ignored = (List<String>) ignoredPluginsField.get(plugin);
+				
+				ignored.add(instance.getName());
+				Messenger.console("&f[OpGuard] &9Exempted OpGuard from PlugMan.");
+			}
+			catch (Exception ignored) { }
+		};
+		
+		Bukkit.getScheduler().scheduleSyncDelayedTask(instance, task, 1L);
+	}
 }

@@ -149,7 +149,7 @@ enable-exempt-plugins: @(enable-exempt-plugins | true)
 # ---
 # Don't forget to enable the toggle directly above! (enable-exempt-plugins: true)
 exempt-plugins:
-- @(exempt-plugins[] | PerWorldPlugins)
+  - @(exempt-plugins[] | PerWorldPlugins)
 
 # ----------- #
 #   LOGGING   #
@@ -246,7 +246,7 @@ punish-console-opguard-attempts: @(punish-console-opguard-attempts | false)
 # Default:
 # - ban %player% Attempting to gain op
 punishment-commands:
-- @(punish.command | punishment-commands[] | ban %player% Attempting to gain op)
+  - @(punish.command | punishment-commands[] | ban %player% Attempting to gain op)
 
 # ----------------- #
 #   UPDATE CHECKS   #

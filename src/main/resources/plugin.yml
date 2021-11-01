@@ -7,4 +7,4 @@ description: Password-protected op.
 website: https://github.com/GuardedOperators/OpGuard
 
 load: STARTUP
-loadbefore: [ProtocolLib, Vault, Essentials, EssentialsX, PlugMan, PermissionsEx, GroupManager, LuckPerms]
+loadbefore: [ ProtocolLib, Vault, Essentials, EssentialsX, PlugMan, PermissionsEx, GroupManager, LuckPerms ]
