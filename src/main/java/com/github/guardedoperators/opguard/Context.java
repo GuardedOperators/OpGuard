@@ -10,34 +10,32 @@ import org.bukkit.command.ConsoleCommandSender;
 
 public final class Context implements Loggable, Warnable, Punishable
 {
-    // Command / Cause
+    public enum Cause
+    {
+        OP_COMMAND,
+        OPGUARD_COMMAND,
+        INVALID_PERMISSION
+    }
     
-    private boolean op = false;
-    private boolean opguard = false;
-    private boolean invalidPermission = false;
+    public enum Source
+    {
+        PLUGIN,
+        CONSOLE,
+        PLAYER;
+    }
     
-    // Source
+    public enum Status
+    {
+        OKAY,
+        WARN,
+        SECURITY
+    }
     
-    private boolean isPlugin = false;
-    private boolean isConsole = false;
-    private boolean isPlayer = false;
-    
-    // Status
-    
-    private boolean okay = false;
-    private boolean warn = false;
-    private boolean security = false;
-    
-    // Special Action
-    
+    private Cause cause = null;
+    private Source source = null;
+    private Status status = Status.OKAY;
     private boolean punish = false;
-    
-    // Message that needs context
-    
     private String message = "";
-    
-    // Config
-    
     private final OpGuardConfig config;
     
     public Context(OpGuardAPI api)
@@ -45,116 +43,77 @@ public final class Context implements Loggable, Warnable, Punishable
         this.config = api.getConfig();
     }
     
-    public Context(Context context, boolean full)
+    public Context(Context existing, boolean full)
     {
-        config = context.config;
-        
-        op = context.op;
-        opguard = context.opguard;
-        
-        isPlugin = context.isPlugin;
-        isConsole = context.isConsole;
-        isPlayer = context.isPlayer;
+        this.config = existing.config;
+        this.cause = existing.cause;
+        this.source = existing.source;
         
         if (full)
         {
-            okay = context.okay;
-            warn = context.warn;
-            security = context.security;
-            
-            punish = context.punish;
-            
-            message = context.message;
+            this.status = existing.status;
+            this.punish = existing.punish;
+            this.message = existing.message;
         }
-    }
-    
-    private void resetCause()
-    {
-        op = opguard = invalidPermission = false;
-    }
-    
-    private void resetSource()
-    {
-        isPlugin = isConsole = isPlayer = false;
-    }
-    
-    private void resetStatus()
-    {
-        okay = warn = security = false;
     }
     
     public Context setOp()
     {
-        resetCause();
-        op = true;
+        this.cause = Cause.OP_COMMAND;
         return this;
     }
     
     public Context incorrectlyUsedOpGuard()
     {
-        resetCause();
-        opguard = true;
+        this.cause = Cause.OPGUARD_COMMAND;
         return this;
     }
     
     public Context hasInvalidPermissions()
     {
-        resetCause();
-        invalidPermission = true;
+        this.cause = Cause.INVALID_PERMISSION;
         return this;
     }
     
     public Context pluginAttempt()
     {
-        resetSource();
-        isPlugin = true;
+        this.source = Source.PLUGIN;
         return this;
     }
     
     public Context consoleAttempt()
     {
-        resetSource();
-        isConsole = true;
+        this.source = Source.CONSOLE;
         return this;
     }
     
     public Context playerAttempt()
     {
-        resetSource();
-        isPlayer = true;
+        this.source = Source.PLAYER;
         return this;
     }
     
     public Context attemptFrom(CommandSender sender)
     {
-        if (sender instanceof ConsoleCommandSender)
-        {
-            return consoleAttempt();
-        }
-        else 
-        {
-            return playerAttempt();
-        }
+        if (sender instanceof ConsoleCommandSender) { return consoleAttempt(); }
+        else { return playerAttempt(); }
     }
     
     public Context warning(String message)
     {
-        resetStatus();
-        warn = true;
+        this.status = Status.WARN;
         return setMessage(message);
     }
     
     public Context okay(String message)
     {
-        resetStatus();
-        okay = true;
+        this.status = Status.OKAY;
         return setMessage(message);
     }
     
     public Context securityRisk(String message)
     {
-        resetStatus();
-        security = true;
+        this.status = Status.SECURITY;
         return setMessage(message);
     }
     
@@ -167,58 +126,47 @@ public final class Context implements Loggable, Warnable, Punishable
     @Override
     public boolean isLoggable()
     {
-        if (punish)
+        if (punish) { return true; }
+        
+        switch (source)
         {
-            return true;
+            case PLAYER: return config.canLogPlayerAttempts();
+            case CONSOLE: return config.canLogConsoleAttempts();
+            case PLUGIN: return config.canLogPluginAttempts();
         }
-        if (isPlayer)
-        {
-            return config.canLogPlayerAttempts();
-        }
-        if (isConsole)
-        {
-            return config.canLogConsoleAttempts();
-        }
-        if (isPlugin)
-        {
-            return config.canLogPluginAttempts();
-        }
+        
         return true;
     }
     
     @Override
     public boolean isWarnable()
     {
-        if (security)
-        {
-            return config.canSendSecurityWarnings();
-        }
+        if (status == Status.SECURITY) { return config.canSendSecurityWarnings(); }
         
-        if (isPlayer)
+        switch (source)
         {
-            if (op)
+            case PLAYER:
             {
-                return config.canSendPlayerOpAttemptWarnings();
+                switch (cause)
+                {
+                    case OP_COMMAND: return config.canSendPlayerOpAttemptWarnings();
+                    case OPGUARD_COMMAND: return config.canSendPlayerOpGuardAttemptWarnings();
+                }
+                break;
             }
-            if (opguard)
+            case CONSOLE:
             {
-                return config.canSendPlayerOpGuardAttemptWarnings();
+                switch (cause)
+                {
+                    case OP_COMMAND: return config.canSendConsoleOpAttemptWarnings();
+                    case OPGUARD_COMMAND: return config.canSendConsoleOpGuardAttemptWarnings();
+                }
+                break;
             }
-        }
-        else if (isConsole)
-        {
-            if (op)
+            case PLUGIN:
             {
-                return config.canSendConsoleOpAttemptWarnings();
+                return config.canSendPluginAttemptWarnings();
             }
-            if (opguard)
-            {
-                return config.canSendConsoleOpGuardAttemptWarnings();
-            }
-        }
-        else if (isPlugin)
-        {
-            return config.canSendPluginAttemptWarnings();
         }
         
         return true;
@@ -227,50 +175,47 @@ public final class Context implements Loggable, Warnable, Punishable
     @Override
     public boolean isPunishable()
     {
-        if (isPlugin)
+        switch (source)
         {
-            return config.canPunishPluginAttempts();
-        }
-        if (isConsole)
-        {
-            if (op)
+            case CONSOLE:
             {
-                return config.canPunishConsoleOpAttempts();
+                switch (cause)
+                {
+                    case OP_COMMAND: return config.canPunishConsoleOpAttempts();
+                    case OPGUARD_COMMAND: return config.canPunishConsoleOpGuardAttempts();
+                }
+                break;
             }
-            if (opguard)
+            case PLUGIN:
             {
-                return config.canPunishConsoleOpGuardAttempts();
+                return config.canPunishPluginAttempts();
             }
         }
-        if (invalidPermission)
+        
+        if (cause == Cause.INVALID_PERMISSION)
         {
             return config.canCheckPermissions();
         }
+        
         return false;
     }
     
-    public String prepareMessage(String message)
+    private String prepare(String text)
     {
-        if (warn)
+        switch (status)
         {
-            message = config.getWarningPrefix() + " &f" + message.replaceAll("<!>", config.getWarningEmphasisColor());
-        }
-        else if (okay)
-        {
-            message = config.getOkayPrefix() + " &f" + message;
-        }
-        else if (security)
-        {
-            message = config.getSecurityPrefix() + " &f" + message;
+            case OKAY: return config.getOkayPrefix() + " &f" + text;
+            case WARN: return config.getWarningPrefix() + " &f" + text.replaceAll("<!>", config.getWarningEmphasisColor());
+            case SECURITY: return config.getSecurityPrefix() + " &f" + text;
         }
         
-        return message;
+        return text;
     }
     
     @Override
     public Context setMessage(String message)
     {
-        this.message = prepareMessage(message);
+        this.message = prepare(message);
         return this;
     }
     
