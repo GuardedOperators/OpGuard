@@ -44,7 +44,7 @@ final class OpVerifier implements Verifier
     public OpVerifier(DataStorage storage)
     {
         this.storage = storage;
-        FileConfiguration data = storage.get();
+        FileConfiguration data = storage.yaml();
         
         if (data.contains("hash"))
         {

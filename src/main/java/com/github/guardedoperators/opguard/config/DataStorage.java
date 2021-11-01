@@ -2,19 +2,19 @@ package com.github.guardedoperators.opguard.config;
 
 import com.github.guardedoperators.opguard.Context;
 import com.github.guardedoperators.opguard.api.OpGuardAPI;
+import com.github.guardedoperators.opguard.api.Savable;
 import com.github.guardedoperators.opguard.api.Verifier;
-import com.github.guardedoperators.opguard.api.config.SavableConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public final class DataStorage extends BaseConfig implements SavableConfig
+public final class DataStorage extends BaseConfig implements Savable
 {
     private final OpGuardAPI api;
     
@@ -56,7 +56,7 @@ public final class DataStorage extends BaseConfig implements SavableConfig
             else 
             {
                 // Fresh install: no old data to transfer
-                config.set("verified", getUUIDs(Bukkit.getOperators()));
+                config.set("verified", uuidStringList(Bukkit.getOperators()));
                 context.okay("Loading for the first time... Adding all existing operators to the verified list");
             }
             api.warn(context).log(context);
@@ -82,41 +82,27 @@ public final class DataStorage extends BaseConfig implements SavableConfig
             @Override
             public void run()
             {
-                try
-                {
-                    config.save(file);
-                }
-                catch (IOException io)
-                {
-                    io.printStackTrace();
-                }
+                try { config.save(file); }
+                catch (IOException io) { io.printStackTrace(); }
             }
         };
         
-        if (async)
-        {
-            task.runTaskAsynchronously(plugin);
-        }
-        else 
-        {
-            task.run();
-        }
+        if (async) { task.runTaskAsynchronously(plugin); }
+        else { task.run(); }
         return true;
     }
     
     public void reset(Verifier verifier)
     {
         config.set("hash", (verifier.hasPassword()) ? verifier.getPassword().getHash() : null);
-        config.set("verified", getUUIDs(verifier.getVerifiedOperators()));
+        config.set("verified", uuidStringList(verifier.getVerifiedOperators()));
     }
     
-    private List<String> getUUIDs(Collection<OfflinePlayer> from)
+    private static List<String> uuidStringList(Collection<OfflinePlayer> offline)
     {
-        List<String> uuids = new ArrayList<>();
-        for (OfflinePlayer operator : from)
-        {
-            uuids.add(operator.getUniqueId().toString());
-        }
-        return uuids;
+        return offline.stream()
+            .map(OfflinePlayer::getUniqueId)
+            .map(String::valueOf)
+            .collect(Collectors.toList());
     }
 }

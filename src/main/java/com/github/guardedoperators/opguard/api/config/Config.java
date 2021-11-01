@@ -6,5 +6,5 @@ public interface Config
 {
     void reload();
     
-    FileConfiguration get();
+    FileConfiguration yaml();
 }

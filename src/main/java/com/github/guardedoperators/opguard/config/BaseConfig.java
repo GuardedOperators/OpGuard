@@ -41,7 +41,7 @@ abstract class BaseConfig implements Config
     protected abstract void load();
     
     @Override
-    public FileConfiguration get()
+    public FileConfiguration yaml()
     {
         return config;
     }

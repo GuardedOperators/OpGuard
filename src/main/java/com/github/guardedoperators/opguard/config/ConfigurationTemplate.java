@@ -20,7 +20,7 @@ class ConfigurationTemplate
         this(instance.getClass(), resource);
     }
     
-    public ConfigurationTemplate(Class clazz, String resource)
+    public ConfigurationTemplate(Class<?> clazz, String resource)
     {
         reader = new BufferedReader(new InputStreamReader(clazz.getClassLoader().getResourceAsStream(resource)));
     }

@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import java.util.Collection;
 import java.util.UUID;
 
-public interface Verifier extends PasswordHandler, Savable
+public interface Verifier extends Savable
 {
     Collection<OfflinePlayer> getVerifiedOperators();
     
@@ -21,4 +21,14 @@ public interface Verifier extends PasswordHandler, Savable
     boolean isVerified(OfflinePlayer player);
     
     boolean isVerified(CommandSender sender);
+    
+    boolean hasPassword();
+    
+    boolean setPassword(Password password);
+    
+    Password getPassword();
+    
+    boolean removePassword(Password password);
+    
+    boolean check(Password password);
 }
