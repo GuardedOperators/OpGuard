@@ -2,7 +2,7 @@ package com.github.guardedoperators.opguard;
 
 import com.github.guardedoperators.opguard.api.Password;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -33,7 +33,7 @@ public final class OpPassword implements Password
         try
         {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(pass.getBytes("UTF-8"));
+            byte[] hash = digest.digest(pass.getBytes(StandardCharsets.UTF_8));
             StringBuilder hashed = new StringBuilder();
             
             for (byte b : hash)
@@ -42,21 +42,12 @@ public final class OpPassword implements Password
             }
             this.hash = hashed.toString().toLowerCase();
         }
-        catch (NoSuchAlgorithmException | UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
-        }
+        catch (NoSuchAlgorithmException e) { e.printStackTrace(); }
     }
     
     @Override
     public String getHash()
     {
         return this.hash;
-    }
-    
-    @Override
-    public boolean compare(Password password)
-    {
-        return hash.equalsIgnoreCase(password.getHash());
     }
 }

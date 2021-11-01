@@ -98,7 +98,7 @@ final class OpVerifier implements Verifier
     @Override
     public boolean check(Password password)
     {
-        return !hasPassword() || PasswordWrapper.password.compare(password);
+        return !hasPassword() || PasswordWrapper.password.getHash().equals(password.getHash());
     }
     
     @Override
