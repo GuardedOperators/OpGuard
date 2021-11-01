@@ -1,6 +1,5 @@
 package com.github.guardedoperators.opguard.config;
 
-import com.github.guardedoperators.opguard.api.config.Config;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,7 +8,7 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 
-abstract class BaseConfig implements Config
+abstract class BaseConfig
 {
     protected final Plugin plugin;
     protected final File file;
@@ -40,22 +39,14 @@ abstract class BaseConfig implements Config
     
     protected abstract void load();
     
-    @Override
     public FileConfiguration yaml()
     {
         return config;
     }
     
-    @Override
     public void reload()
     {
-        try
-        {
-            config.load(file);
-        }
-        catch (IOException | InvalidConfigurationException e)
-        {
-            e.printStackTrace();
-        }
+        try { config.load(file); }
+        catch (IOException | InvalidConfigurationException e) { e.printStackTrace(); }
     }
 }

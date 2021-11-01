@@ -1,9 +1,8 @@
 package com.github.guardedoperators.opguard.config;
 
 import com.github.guardedoperators.opguard.Context;
-import com.github.guardedoperators.opguard.api.OpGuardAPI;
-import com.github.guardedoperators.opguard.api.Savable;
-import com.github.guardedoperators.opguard.api.Verifier;
+import com.github.guardedoperators.opguard.OpGuard;
+import com.github.guardedoperators.opguard.OpVerifier;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,13 +13,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class DataStorage extends BaseConfig implements Savable
+public final class DataStorage extends BaseConfig
 {
-    private final OpGuardAPI api;
+    private final OpGuard api;
     
-    public DataStorage(OpGuardAPI api)
+    public DataStorage(OpGuard api)
     {
-        super(api.getPlugin(), ".opdata");
+        super(api.plugin(), ".opdata");
         this.api = api;
         init();
     }
@@ -68,13 +67,6 @@ public final class DataStorage extends BaseConfig implements Savable
     @Override
     public void reload() {}
     
-    @Override
-    public boolean save()
-    {
-        return true;
-    }
-    
-    @Override
     public boolean save(boolean async)
     {
         BukkitRunnable task = new BukkitRunnable() 
@@ -92,7 +84,7 @@ public final class DataStorage extends BaseConfig implements Savable
         return true;
     }
     
-    public void reset(Verifier verifier)
+    public void reset(OpVerifier verifier)
     {
         config.set("hash", (verifier.hasPassword()) ? verifier.getPassword().getHash() : null);
         config.set("verified", uuidStringList(verifier.getVerifiedOperators()));

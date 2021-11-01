@@ -1,7 +1,5 @@
 package com.github.guardedoperators.opguard;
 
-import com.github.guardedoperators.opguard.api.Password;
-import com.github.guardedoperators.opguard.api.Verifier;
 import com.github.guardedoperators.opguard.config.DataStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -17,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-final class OpVerifier implements Verifier
+public final class OpVerifier
 {
     private static final class OpListWrapper
     {
@@ -36,12 +34,12 @@ final class OpVerifier implements Verifier
     
     private static final class PasswordWrapper
     {
-        private static Password password;
+        private static OpPassword password;
     }
     
     private final DataStorage storage;
     
-    public OpVerifier(DataStorage storage)
+    OpVerifier(DataStorage storage)
     {
         this.storage = storage;
         FileConfiguration data = storage.yaml();
@@ -61,14 +59,12 @@ final class OpVerifier implements Verifier
         }
     }
     
-    @Override
     public boolean hasPassword()
     {
         return PasswordWrapper.password != null;
     }
     
-    @Override
-    public boolean setPassword(Password password)
+    public boolean setPassword(OpPassword password)
     {
         if (!hasPassword() && password != null)
         {
@@ -78,14 +74,12 @@ final class OpVerifier implements Verifier
         return false;
     }
     
-    @Override
-    public Password getPassword()
+    public OpPassword getPassword()
     {
         return new OpPassword(PasswordWrapper.password);
     }
     
-    @Override
-    public boolean removePassword(Password password)
+    public boolean removePassword(OpPassword password)
     {
         if (check(password))
         {
@@ -95,26 +89,22 @@ final class OpVerifier implements Verifier
         return false;
     }
     
-    @Override
-    public boolean check(Password password)
+    public boolean check(OpPassword password)
     {
         return !hasPassword() || PasswordWrapper.password.getHash().equals(password.getHash());
     }
     
-    @Override
     public Collection<OfflinePlayer> getVerifiedOperators()
     {
         return OpListWrapper.getValues();
     }
     
-    @Override
     public Collection<UUID> getVerifiedUUIDs()
     {
         return OpListWrapper.getKeys();
     }
     
-    @Override
-    public boolean op(OfflinePlayer player, Password password)
+    public boolean op(OfflinePlayer player, OpPassword password)
     {
         if (check(password))
         {
@@ -125,8 +115,7 @@ final class OpVerifier implements Verifier
         return false;
     }
     
-    @Override
-    public boolean deop(OfflinePlayer player, Password password)
+    public boolean deop(OfflinePlayer player, OpPassword password)
     {
         if (check(password))
         {
@@ -137,19 +126,16 @@ final class OpVerifier implements Verifier
         return false;
     }
     
-    @Override
     public boolean isVerified(UUID uuid)
     {
         return OpListWrapper.verified.containsKey(uuid);
     }
     
-    @Override
     public boolean isVerified(OfflinePlayer player)
     {
         return isVerified(player.getUniqueId());
     }
     
-    @Override
     public boolean isVerified(CommandSender sender)
     {
         if (sender instanceof ConsoleCommandSender)
@@ -164,13 +150,11 @@ final class OpVerifier implements Verifier
         return false;
     }
     
-    @Override
     public boolean save()
     {
         return save(true);
     }
     
-    @Override
     public boolean save(boolean async)
     {
         storage.reset(this);

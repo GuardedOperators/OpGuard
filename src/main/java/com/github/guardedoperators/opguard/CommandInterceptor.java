@@ -1,7 +1,6 @@
 package com.github.guardedoperators.opguard;
 
-import com.github.guardedoperators.opguard.api.OpGuardAPI;
-import com.github.guardedoperators.opguard.api.config.OpGuardConfig;
+import com.github.guardedoperators.opguard.config.OpGuardConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -13,9 +12,9 @@ import org.bukkit.event.server.ServerCommandEvent;
 
 final class CommandInterceptor implements Listener
 {
-    private final OpGuardAPI api;
+    private final OpGuard api;
     
-    public CommandInterceptor(OpGuardAPI api) 
+    public CommandInterceptor(OpGuard api)
     {
         this.api = api;
     }
@@ -58,7 +57,7 @@ final class CommandInterceptor implements Listener
         }
         
         Context context = new Context(api).attemptFrom(sender);
-        OpGuardConfig config = api.getConfig();
+        OpGuardConfig config = api.config();
         PluginStackChecker stack = new PluginStackChecker(api);
         
         if (stack.hasFoundPlugin())
@@ -102,8 +101,8 @@ final class CommandInterceptor implements Listener
         }
         else if (base.matches("(?i)^/?o(g|pguard)$"))
         {
-            boolean isVerifiedOperator = sender.isOp() && api.getVerifier().isVerified(sender);
-            boolean isPermitted = sender.hasPermission("opguard.manage") && api.getConfig().isManagementPermissionEnabled();
+            boolean isVerifiedOperator = sender.isOp() && api.verifier().isVerified(sender);
+            boolean isPermitted = sender.hasPermission("opguard.manage") && api.config().isManagementPermissionEnabled();
             
             if (isVerifiedOperator || isPermitted)
             {

@@ -1,7 +1,5 @@
 package com.github.guardedoperators.opguard;
 
-import com.github.guardedoperators.opguard.api.OpGuardAPI;
-import com.github.guardedoperators.opguard.api.Verifier;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -10,13 +8,13 @@ import java.util.Set;
 
 final class VerifyOpListTask extends BukkitRunnable
 {
-    private final OpGuardAPI api;
+    private final OpGuard api;
     
-    public VerifyOpListTask(OpGuardAPI api)
+    public VerifyOpListTask(OpGuard api)
     {
         this.api = api;
     
-        long interval = api.getConfig().getOpListInspectionInterval();
+        long interval = api.config().getOpListInspectionInterval();
     
         if (interval <= 0)
         {
@@ -24,13 +22,13 @@ final class VerifyOpListTask extends BukkitRunnable
             interval = 4;
         }
     
-        runTaskTimer(api.getPlugin(), 1L, interval);
+        runTaskTimer(api.plugin(), 1L, interval);
     }
     
     @Override
     public void run()
     {
-        Verifier verifier = api.getVerifier();
+        OpVerifier verifier = api.verifier();
         Set<OfflinePlayer> operators = Bukkit.getOperators();
         
         for (OfflinePlayer operator : operators)

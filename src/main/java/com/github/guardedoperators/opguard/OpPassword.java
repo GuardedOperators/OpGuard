@@ -1,16 +1,14 @@
 package com.github.guardedoperators.opguard;
 
-import com.github.guardedoperators.opguard.api.Password;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public final class OpPassword implements Password
+public final class OpPassword
 {
     private String hash;
     
-    public OpPassword(Password clone)
+    public OpPassword(OpPassword clone)
     {
         this.hash = clone.getHash();
     }
@@ -45,7 +43,6 @@ public final class OpPassword implements Password
         catch (NoSuchAlgorithmException e) { e.printStackTrace(); }
     }
     
-    @Override
     public String getHash()
     {
         return this.hash;

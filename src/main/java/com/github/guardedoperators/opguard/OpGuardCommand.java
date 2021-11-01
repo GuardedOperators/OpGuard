@@ -1,10 +1,6 @@
 package com.github.guardedoperators.opguard;
 
-import com.github.guardedoperators.opguard.api.ExecutableCommand;
-import com.github.guardedoperators.opguard.api.OpGuardAPI;
-import com.github.guardedoperators.opguard.api.Password;
-import com.github.guardedoperators.opguard.api.Verifier;
-import com.github.guardedoperators.opguard.api.config.OpGuardConfig;
+import com.github.guardedoperators.opguard.config.OpGuardConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -15,17 +11,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-final class OpGuardCommand implements ExecutableCommand
+final class OpGuardCommand
 {
-    private final OpGuardAPI api;
+    private final OpGuard api;
     private final OpGuardConfig config;
-    private final Verifier verifier;
+    private final OpVerifier verifier;
     
-    public OpGuardCommand(OpGuardAPI api)
+    public OpGuardCommand(OpGuard api)
     {
         this.api = api;
-        this.config = api.getConfig();
-        this.verifier = api.getVerifier();
+        this.config = api.config();
+        this.verifier = api.verifier();
     }
     
     public void execute(CommandSender sender, String[] cmd)
@@ -86,7 +82,7 @@ final class OpGuardCommand implements ExecutableCommand
     
     private void usage(CommandSender sender)
     {
-        String usage = "&f(&6&lOpGuard &6v" + api.getPlugin().getDescription().getVersion() + " Usage&f)\n";
+        String usage = "&f(&6&lOpGuard &6v" + api.plugin().getDescription().getVersion() + " Usage&f)\n";
         usage += "&6/&eopguard &oop &7<&fplayer&7> <&fpassword&7 (if set)>\n";
         usage += "&6/&eopguard &odeop &7<&fplayer&7> <&fpassword&7 (if set)>\n";
         usage += "&6/&eopguard &olist\n";
@@ -117,7 +113,7 @@ final class OpGuardCommand implements ExecutableCommand
 
         String name = args.get(1);
         OfflinePlayer player = getPlayer(name, onlineOnly);
-        Password password = (passwordEnabled) ? new OpPassword(args.get(2)) : null;
+        OpPassword password = (passwordEnabled) ? new OpPassword(args.get(2)) : null;
     
         if (player == null)
         {
@@ -258,7 +254,7 @@ final class OpGuardCommand implements ExecutableCommand
                 return;
             }
             
-            Password password = new OpPassword(args.get(1));
+            OpPassword password = new OpPassword(args.get(1));
             
             if (!verifier.check(password))
             {
@@ -268,7 +264,7 @@ final class OpGuardCommand implements ExecutableCommand
             }
         }
         
-        api.getConfig().reload();
+        api.config().reload();
         context.okay(name + " reloaded OpGuard's config.");
         api.warn(context).log(context);
     }

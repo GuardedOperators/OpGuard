@@ -1,7 +1,6 @@
 package com.github.guardedoperators.opguard;
 
-import com.github.guardedoperators.opguard.api.OpGuardAPI;
-import com.github.guardedoperators.opguard.api.config.OpGuardConfig;
+import com.github.guardedoperators.opguard.config.OpGuardConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
@@ -17,7 +16,7 @@ public final class PluginStackChecker
     private Plugin plugin = null;
     private StackTraceElement element = null;
     
-    public PluginStackChecker(OpGuardAPI api)
+    public PluginStackChecker(OpGuard api)
     {
         this.stackTrace = Thread.currentThread().getStackTrace();
         
@@ -27,9 +26,9 @@ public final class PluginStackChecker
             {
                 Plugin plugin = getPluginByClass(Class.forName(element.getClassName()));
             
-                if (plugin != null && plugin != api.getPlugin())
+                if (plugin != null && plugin != api.plugin())
                 {
-                    OpGuardConfig config = api.getConfig();
+                    OpGuardConfig config = api.config();
                     
                     if (config.shouldExemptPlugins() && config.getExemptPlugins().contains(plugin.getName()))
                     {
@@ -119,14 +118,14 @@ public final class PluginStackChecker
         return current.renameTo(replace);
     }
     
-    public void disablePlugin(OpGuardAPI api, Context context)
+    public void disablePlugin(OpGuard api, Context context)
     {
         if (!hasFoundPlugin())
         {
             throw new IllegalStateException("No plugin to disable.");
         }
     
-        OpGuardConfig config = api.getConfig();
+        OpGuardConfig config = api.config();
         String name = plugin.getName();
     
         if (config.getExemptPlugins().contains(name))

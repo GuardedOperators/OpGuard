@@ -1,6 +1,5 @@
 package com.github.guardedoperators.opguard;
 
-import com.github.guardedoperators.opguard.api.OpGuardAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -17,10 +16,10 @@ import java.util.stream.IntStream;
 
 public class PermissionChecker implements Listener
 {
-    private final OpGuardAPI api;
+    private final OpGuard api;
     private final String permission;
     
-    public PermissionChecker(OpGuardAPI api)
+    public PermissionChecker(OpGuard api)
     {
         this.api = api;
         
@@ -36,11 +35,11 @@ public class PermissionChecker implements Listener
     
     public void check(PlayerEvent event)
     {
-        if (!api.getConfig().canCheckPermissions()) { return; }
+        if (!api.config().canCheckPermissions()) { return; }
         
         Player player = event.getPlayer();
         
-        if (!player.hasPermission(permission) || api.getVerifier().isVerified(player.getUniqueId()))
+        if (!player.hasPermission(permission) || api.verifier().isVerified(player.getUniqueId()))
         {
             return;
         }

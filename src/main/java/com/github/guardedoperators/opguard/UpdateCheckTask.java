@@ -1,7 +1,6 @@
 package com.github.guardedoperators.opguard;
 
-import com.github.guardedoperators.opguard.api.OpGuardAPI;
-import com.github.guardedoperators.opguard.api.config.OpGuardConfig;
+import com.github.guardedoperators.opguard.config.OpGuardConfig;
 import com.github.zafarkhaja.semver.Version;
 import com.google.gson.JsonParser;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -17,17 +16,17 @@ public class UpdateCheckTask extends BukkitRunnable
     public static final String DOWNLOAD_URL = "https://www.spigotmc.org/resources/opguard.23200/";
     public static final String SPIGET_URL = "https://api.spiget.org/v2/resources/23200/versions/latest";
     
-    private final OpGuardAPI api;
+    private final OpGuard api;
     private final String userAgent;
     
-    UpdateCheckTask(OpGuardAPI api)
+    UpdateCheckTask(OpGuard api)
     {
         this.api = api;
         
-        this.userAgent = "OpGuard" + "/" + api.getVersion() + " (Minecraft) " +
-            api.getPlugin().getServer().getName() + "/" + api.getPlugin().getServer().getVersion();
+        this.userAgent = "OpGuard" + "/" + api.version() + " (Minecraft) " +
+                         api.plugin().getServer().getName() + "/" + api.plugin().getServer().getVersion();
         
-        OpGuardConfig config = api.getConfig();
+        OpGuardConfig config = api.config();
         long hours = config.getUpdateCheckInterval();
         
         if (hours < 1)
@@ -38,7 +37,7 @@ public class UpdateCheckTask extends BukkitRunnable
         
         if (config.canCheckForUpdates())
         {
-            runTaskTimerAsynchronously(api.getPlugin(), 100L, hours * 60L * 60L * 20L);
+            runTaskTimerAsynchronously(api.plugin(), 100L, hours * 60L * 60L * 20L);
         }
     }
     
@@ -59,7 +58,7 @@ public class UpdateCheckTask extends BukkitRunnable
             
             Version version = Version.valueOf(name);
             
-            if (api.getVersion().lessThan(version))
+            if (api.version().lessThan(version))
             {
                 Messenger.console(
                     "[OpGuard] &eAn update is available!&r Download &fv" + version + "&r here: &6" + DOWNLOAD_URL

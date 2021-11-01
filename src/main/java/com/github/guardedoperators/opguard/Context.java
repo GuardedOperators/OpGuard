@@ -1,14 +1,10 @@
 package com.github.guardedoperators.opguard;
 
-import com.github.guardedoperators.opguard.api.OpGuardAPI;
-import com.github.guardedoperators.opguard.api.config.OpGuardConfig;
-import com.github.guardedoperators.opguard.api.message.Loggable;
-import com.github.guardedoperators.opguard.api.message.Punishable;
-import com.github.guardedoperators.opguard.api.message.Warnable;
+import com.github.guardedoperators.opguard.config.OpGuardConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
-public final class Context implements Loggable, Warnable, Punishable
+public final class Context
 {
     public enum Cause
     {
@@ -38,9 +34,9 @@ public final class Context implements Loggable, Warnable, Punishable
     private boolean punishmentActionTaken = false;
     private final OpGuardConfig config;
     
-    public Context(OpGuardAPI api)
+    public Context(OpGuard api)
     {
-        this.config = api.getConfig();
+        this.config = api.config();
     }
     
     public Context(Context existing, boolean full)
@@ -123,7 +119,6 @@ public final class Context implements Loggable, Warnable, Punishable
         return this;
     }
     
-    @Override
     public boolean isLoggable()
     {
         if (punishmentActionTaken) { return true; }
@@ -138,7 +133,6 @@ public final class Context implements Loggable, Warnable, Punishable
         return true;
     }
     
-    @Override
     public boolean isWarnable()
     {
         if (status == Status.SECURITY) { return config.canSendSecurityWarnings(); }
@@ -172,7 +166,6 @@ public final class Context implements Loggable, Warnable, Punishable
         return true;
     }
     
-    @Override
     public boolean isPunishable()
     {
         switch (source)
@@ -212,20 +205,17 @@ public final class Context implements Loggable, Warnable, Punishable
         return text;
     }
     
-    @Override
     public Context setMessage(String message)
     {
         this.message = prepare(message);
         return this;
     }
     
-    @Override
     public String getMessage()
     {
         return message;
     }
     
-    @Override
     public boolean hasMessage()
     {
         return message != null && !message.isEmpty();

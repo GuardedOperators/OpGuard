@@ -1,6 +1,5 @@
 package com.github.guardedoperators.opguard;
 
-import com.github.guardedoperators.opguard.api.OpGuardAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,9 +13,9 @@ import java.util.stream.Stream;
 
 final class PluginDisableHijack implements Listener
 {    
-    private final OpGuardAPI api;
+    private final OpGuard api;
     
-    PluginDisableHijack(OpGuardAPI api)
+    PluginDisableHijack(OpGuard api)
     {
         this.api = api;
         
@@ -26,7 +25,7 @@ final class PluginDisableHijack implements Listener
     @EventHandler
     public void on(PluginDisableEvent event)
     {
-        if (event.getPlugin() == api.getPlugin() && api.getConfig().canShutDownOnDisable())
+        if (event.getPlugin() == api.plugin() && api.config().canShutDownOnDisable())
         {
             Messenger.console("&c[&fOpGuard was disabled&c] Shutting server down.");
             Bukkit.shutdown();
@@ -44,12 +43,12 @@ final class PluginDisableHijack implements Listener
     {
         boolean isPlugMan = plugin != null && plugin.getName().equalsIgnoreCase("PlugMan");
         
-        if (!isPlugMan || !api.getConfig().canExemptSelfFromPlugMan())
+        if (!isPlugMan || !api.config().canExemptSelfFromPlugMan())
         {
             return;
         }
         
-        Plugin instance = api.getPlugin();
+        Plugin instance = api.plugin();
         
         Runnable task = () ->
         {
