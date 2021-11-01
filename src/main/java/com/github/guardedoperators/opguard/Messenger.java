@@ -12,7 +12,7 @@ public class Messenger
         return ChatColor.translateAlternateColorCodes('&', message);
     }
     
-    public static void send(String message)
+    public static void console(String message)
     {
         Bukkit.getServer().getConsoleSender().sendMessage(colorful(message));
     }
@@ -32,6 +32,6 @@ public class Messenger
     {
         String content = colorful(message);
         Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission(permission)).forEach(p -> p.sendMessage(content));
-        send(message);
+        console(message);
     }
 }

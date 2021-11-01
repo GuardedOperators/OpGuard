@@ -18,7 +18,6 @@ final class CommandInterceptor implements Listener
     public CommandInterceptor(OpGuardAPI api) 
     {
         this.api = api;
-        api.registerEvents(this);
     }
     
     @EventHandler(priority = EventPriority.LOWEST)

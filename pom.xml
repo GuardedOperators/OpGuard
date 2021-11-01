@@ -46,7 +46,7 @@
 
     <build>
         <defaultGoal>package</defaultGoal>
-        <finalName>${name}-${version}</finalName>
+        <finalName>${project.name}-${project.version}</finalName>
         <plugins>
             <!-- Compile project -->
             <plugin>

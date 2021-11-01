@@ -32,7 +32,7 @@ public class UpdateCheckTask extends BukkitRunnable
         
         if (hours < 1)
         {
-            Messenger.send("[OpGuard] Invalid update check interval " + hours + ". Defaulting to 12 hours.");
+            Messenger.console("[OpGuard] Invalid update check interval " + hours + ". Defaulting to 12 hours.");
             hours = 12;
         }
         
@@ -61,7 +61,7 @@ public class UpdateCheckTask extends BukkitRunnable
             
             if (api.getVersion().lessThan(version))
             {
-                Messenger.send(
+                Messenger.console(
                     "[OpGuard] &eAn update is available!&r Download &fv" + version + "&r here: &6" + DOWNLOAD_URL
                 );
             }

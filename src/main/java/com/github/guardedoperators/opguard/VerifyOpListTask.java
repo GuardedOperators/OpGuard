@@ -20,7 +20,7 @@ final class VerifyOpListTask extends BukkitRunnable
     
         if (interval <= 0)
         {
-            Messenger.send("[OpGuard] Invalid inspection interval " + interval + ". Defaulting to 4 ticks.");
+            Messenger.console("[OpGuard] Invalid inspection interval " + interval + ". Defaulting to 4 ticks.");
             interval = 4;
         }
     

@@ -11,6 +11,9 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.security.SecureRandom;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PermissionChecker implements Listener
 {
@@ -19,19 +22,16 @@ public class PermissionChecker implements Listener
     
     public PermissionChecker(OpGuardAPI api)
     {
-        api.registerEvents(this);
         this.api = api;
         
-        String chars = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";
-        SecureRandom random = new SecureRandom();
-        StringBuilder str = new StringBuilder();
+        Random random = new SecureRandom();
         
-        while (str.length() < 50)
-        {
-            str.append(chars.charAt(random.nextInt(chars.length())));
-        }
-    
-        permission = str.toString();
+        this.permission = IntStream.range(0, 50)
+            .mapToObj(i -> {
+                String alphabet = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";
+                return String.valueOf(alphabet.charAt(random.nextInt(alphabet.length())));
+            })
+            .collect(Collectors.joining());
     }
     
     public void check(PlayerEvent event)

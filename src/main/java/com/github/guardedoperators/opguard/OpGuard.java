@@ -41,6 +41,8 @@ public final class OpGuard extends JavaPlugin implements Listener
         }
     }
     
+    
+    
     private static final class GuardedDependencies implements OpGuardAPI
     {
         private final OpGuard instance;
@@ -59,11 +61,17 @@ public final class OpGuard extends JavaPlugin implements Listener
             this.verifier = new OpVerifier(new DataStorage(this));
             this.command = new OpGuardCommand(this);
             
-            new CommandInterceptor(this);
-            new PluginDisableHijack(this);
-            new PermissionChecker(this);
+            register(new CommandInterceptor(this));
+            register(new PluginDisableHijack(this));
+            register(new PermissionChecker(this));
         }
-    
+        
+        private <L extends Listener> L register(L listener)
+        {
+            Bukkit.getPluginManager().registerEvents(listener, instance);
+            return listener;
+        }
+        
         @Override
         public Plugin getPlugin()
         {
@@ -92,12 +100,6 @@ public final class OpGuard extends JavaPlugin implements Listener
         public void reloadConfig()
         {
             config.reload();
-        }
-    
-        @Override
-        public void registerEvents(Listener listener)
-        {
-            Bukkit.getPluginManager().registerEvents(listener, instance);
         }
         
         @Override
@@ -161,7 +163,7 @@ public final class OpGuard extends JavaPlugin implements Listener
                 return;
             }
             
-            Context context = ((Context) punishable).copy().punish(); 
+            Context context = ((Context) punishable).copy().punishment();
             
             for (String command : config.getPunishmentCommands())
             {

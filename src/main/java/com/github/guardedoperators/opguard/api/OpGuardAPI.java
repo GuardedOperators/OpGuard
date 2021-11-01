@@ -6,7 +6,6 @@ import com.github.guardedoperators.opguard.api.message.Punishable;
 import com.github.guardedoperators.opguard.api.message.Warnable;
 import com.github.zafarkhaja.semver.Version;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 public interface OpGuardAPI
@@ -20,8 +19,6 @@ public interface OpGuardAPI
     Verifier getVerifier();
     
     void reloadConfig();
-    
-    void registerEvents(Listener listener);
     
     OpGuardAPI log(Loggable context);
     

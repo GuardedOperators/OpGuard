@@ -19,7 +19,6 @@ final class PluginDisableHijack implements Listener
     PluginDisableHijack(OpGuardAPI api)
     {
         this.api = api;
-        api.registerEvents(this);
         
         Stream.of(Bukkit.getPluginManager().getPlugins()).forEach(this::exemptFromPlugMan);
     }
@@ -29,7 +28,7 @@ final class PluginDisableHijack implements Listener
     {
         if (event.getPlugin() == api.getPlugin() && api.getConfig().canShutDownOnDisable())
         {
-            Messenger.send("&c[&fOpGuard was disabled&c] Shutting server down.");
+            Messenger.console("&c[&fOpGuard was disabled&c] Shutting server down.");
             Bukkit.shutdown();
         }
     }
@@ -61,7 +60,7 @@ final class PluginDisableHijack implements Listener
                 List<String> ignored = (List<String>) ignoredPluginsField.get(plugin);
                 
                 ignored.add(instance.getName());
-                Messenger.send("&f[OpGuard] &9Exempted OpGuard from PlugMan.");
+                Messenger.console("&f[OpGuard] &9Exempted OpGuard from PlugMan.");
             }
             catch (Exception ignored) {}
         };

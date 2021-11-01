@@ -34,8 +34,8 @@ public final class Context implements Loggable, Warnable, Punishable
     private Cause cause = null;
     private Source source = null;
     private Status status = Status.OKAY;
-    private boolean punish = false;
     private String message = "";
+    private boolean punishmentActionTaken = false;
     private final OpGuardConfig config;
     
     public Context(OpGuardAPI api)
@@ -52,8 +52,8 @@ public final class Context implements Loggable, Warnable, Punishable
         if (full)
         {
             this.status = existing.status;
-            this.punish = existing.punish;
             this.message = existing.message;
+            this.punishmentActionTaken = existing.punishmentActionTaken;
         }
     }
     
@@ -117,16 +117,16 @@ public final class Context implements Loggable, Warnable, Punishable
         return setMessage(message);
     }
     
-    public Context punish()
+    public Context punishment()
     {
-        punish = true;
+        punishmentActionTaken = true;
         return this;
     }
     
     @Override
     public boolean isLoggable()
     {
-        if (punish) { return true; }
+        if (punishmentActionTaken) { return true; }
         
         switch (source)
         {
