@@ -15,8 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.guardedoperators.opguard;
+package com.github.guardedoperators.opguard.listeners;
 
+import com.github.guardedoperators.opguard.Context;
+import com.github.guardedoperators.opguard.OpGuard;
+import com.github.guardedoperators.opguard.PluginStackChecker;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -32,26 +35,26 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class PermissionChecker implements Listener
+public final class PermissionCheckListener implements Listener
 {
 	private final OpGuard opguard;
 	private final String permission;
 	
-	public PermissionChecker(OpGuard opguard)
+	public PermissionCheckListener(OpGuard opguard)
 	{
 		this.opguard = Objects.requireNonNull(opguard, "opguard");
 		
 		Random random = new SecureRandom();
 		
 		this.permission = IntStream.range(0, 50)
-		.mapToObj(i -> {
-			String alphabet = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";
-			return String.valueOf(alphabet.charAt(random.nextInt(alphabet.length())));
-		})
-		.collect(Collectors.joining());
+			.mapToObj(i -> {
+				String alphabet = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";
+				return String.valueOf(alphabet.charAt(random.nextInt(alphabet.length())));
+			})
+			.collect(Collectors.joining());
 	}
 	
-	public void check(PlayerEvent event)
+	public void checkPermissions(PlayerEvent event)
 	{
 		if (!opguard.config().canCheckPermissions()) { return; }
 		
@@ -107,12 +110,12 @@ public class PermissionChecker implements Listener
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event)
 	{
-		check(event);
+		checkPermissions(event);
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerInteract(PlayerInteractEvent event)
 	{
-		check(event);
+		checkPermissions(event);
 	}
 }

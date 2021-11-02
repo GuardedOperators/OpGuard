@@ -19,6 +19,10 @@ package com.github.guardedoperators.opguard;
 
 import com.github.guardedoperators.opguard.config.DataStorage;
 import com.github.guardedoperators.opguard.config.OpGuardConfig;
+import com.github.guardedoperators.opguard.listeners.CommandListener;
+import com.github.guardedoperators.opguard.listeners.PermissionCheckListener;
+import com.github.guardedoperators.opguard.listeners.PluginDisableListener;
+import com.github.guardedoperators.opguard.listeners.PlugmanExemptListener;
 import com.github.zafarkhaja.semver.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -44,9 +48,10 @@ public final class OpGuard
 		this.verifier = new OpVerifier(new DataStorage(this));
 		this.command = new OpGuardCommand(this);
 		
-		register(new CommandInterceptor(this));
-		register(new PluginDisableHijack(this));
-		register(new PermissionChecker(this));
+		register(new CommandListener(this));
+		register(new PermissionCheckListener(this));
+		register(new PluginDisableListener(this));
+		register(new PlugmanExemptListener(this));
 	}
 	
 	private <L extends Listener> L register(L listener)

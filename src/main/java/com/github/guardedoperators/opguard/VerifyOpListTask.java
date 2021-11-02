@@ -55,9 +55,8 @@ final class VerifyOpListTask extends BukkitRunnable
 			{
 				String name = operator.getName();
 				operator.setOp(false);
-				Context context = new Context(opguard).pluginAttempt().setOp().warning
-				(
-				"An unknown plugin attempted to op <!>" + name + "&f. A recently-installed plugin may be to blame"
+				Context context = new Context(opguard).pluginAttempt().setOp().warning(
+					"An unknown plugin attempted to op <!>" + name + "&f. A recently-installed plugin may be to blame"
 				);
 				opguard.warn(context).log(context).punish(context, name);
 			}

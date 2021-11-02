@@ -29,7 +29,7 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-public class UpdateCheckTask extends BukkitRunnable
+final class UpdateCheckTask extends BukkitRunnable
 {
 	public static final String DOWNLOAD_URL = "https://www.spigotmc.org/resources/opguard.23200/";
 	public static final String SPIGET_URL = "https://api.spiget.org/v2/resources/23200/versions/latest";
@@ -83,6 +83,6 @@ public class UpdateCheckTask extends BukkitRunnable
 				);
 			}
 		}
-		catch (Exception ignored) { }
+		catch (Exception ignored) {}
 	}
 }

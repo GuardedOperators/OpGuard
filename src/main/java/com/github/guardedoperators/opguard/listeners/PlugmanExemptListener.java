@@ -15,12 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.guardedoperators.opguard;
+package com.github.guardedoperators.opguard.listeners;
 
+import com.github.guardedoperators.opguard.Messenger;
+import com.github.guardedoperators.opguard.OpGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -29,29 +30,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-final class PluginDisableHijack implements Listener
+public class PlugmanExemptListener implements Listener
 {
 	private final OpGuard opguard;
 	
-	PluginDisableHijack(OpGuard opguard)
+	public PlugmanExemptListener(OpGuard opguard)
 	{
 		this.opguard = Objects.requireNonNull(opguard, "opguard");
-		
 		Stream.of(Bukkit.getPluginManager().getPlugins()).forEach(this::exemptFromPlugMan);
 	}
 	
 	@EventHandler
-	public void on(PluginDisableEvent event)
-	{
-		if (event.getPlugin() == opguard.plugin() && opguard.config().canShutDownOnDisable())
-		{
-			Messenger.console("&c[&fOpGuard was disabled&c] Shutting server down.");
-			Bukkit.shutdown();
-		}
-	}
-	
-	@EventHandler
-	public void on(PluginEnableEvent event)
+	public void onPluginLoad(PluginEnableEvent event)
 	{
 		exemptFromPlugMan(event.getPlugin());
 	}
@@ -59,9 +49,8 @@ final class PluginDisableHijack implements Listener
 	@SuppressWarnings("unchecked")
 	private void exemptFromPlugMan(Plugin plugin)
 	{
-		boolean isPlugMan = plugin.getName().equalsIgnoreCase("PlugMan");
-		
-		if (!isPlugMan || !opguard.config().canExemptSelfFromPlugMan()) { return; }
+		if (!plugin.getName().equalsIgnoreCase("PlugMan")) { return; }
+		if (!opguard.config().canExemptSelfFromPlugMan()) { return; }
 		
 		Runnable task = () ->
 		{
@@ -71,10 +60,15 @@ final class PluginDisableHijack implements Listener
 				ignoredPluginsField.setAccessible(true);
 				List<String> ignored = (List<String>) ignoredPluginsField.get(plugin);
 				
-				ignored.add(opguard.plugin().getName());
-				Messenger.console("&f[OpGuard] &9Exempted OpGuard from PlugMan.");
+				String name = opguard.plugin().getName();
+				
+				if (!ignored.contains(name))
+				{
+					ignored.add(name);
+					Messenger.console("&f[OpGuard] &9Exempted " + name + " from PlugMan.");
+				}
 			}
-			catch (Exception ignored) { }
+			catch (Exception ignored) {}
 		};
 		
 		Bukkit.getScheduler().scheduleSyncDelayedTask(opguard.plugin(), task, 1L);

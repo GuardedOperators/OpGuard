@@ -15,8 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.guardedoperators.opguard;
+package com.github.guardedoperators.opguard.listeners;
 
+import com.github.guardedoperators.opguard.Context;
+import com.github.guardedoperators.opguard.OpGuard;
+import com.github.guardedoperators.opguard.PluginStackChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -26,17 +29,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
-final class CommandInterceptor implements Listener
+public final class CommandListener implements Listener
 {
 	private final OpGuard api;
 	
-	public CommandInterceptor(OpGuard api)
+	public CommandListener(OpGuard api)
 	{
 		this.api = api;
 	}
 	
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void on(PlayerCommandPreprocessEvent event)
+	public void onPlayerCommand(PlayerCommandPreprocessEvent event)
 	{
 		String command = event.getMessage();
 		
@@ -47,7 +50,7 @@ final class CommandInterceptor implements Listener
 	}
 	
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void on(ServerCommandEvent event)
+	public void onConsoleCommand(ServerCommandEvent event)
 	{
 		String command = event.getCommand();
 		
@@ -79,10 +82,9 @@ final class CommandInterceptor implements Listener
 		{
 			String name = stack.getPlugin().getName();
 			
-			context.pluginAttempt().warning
-			(
-			"The plugin <!>" + name + "&f attempted to make &7" + sender.getName() +
-			"&f execute <!>" + ((!command.startsWith("/")) ? "/" : "") + command
+			context.pluginAttempt().warning(
+				"The plugin <!>" + name + "&f attempted to make &7" + sender.getName() +
+				"&f execute <!>" + ((!command.startsWith("/")) ? "/" : "") + command
 			);
 			api.warn(context).log(context);
 			
@@ -94,11 +96,10 @@ final class CommandInterceptor implements Listener
 			Context allowed = context.copy();
 			String name = stack.getTopAllowedPlugin().getName();
 			
-			allowed.okay
-			(
-			"The plugin &7" + name + "&f was allowed to execute &7" +
-			((!base.startsWith("/")) ? "/" : "") + base +
-			"&f on behalf of &7" + sender.getName()
+			allowed.okay(
+				"The plugin &7" + name + "&f was allowed to execute &7" +
+				((!base.startsWith("/")) ? "/" : "") + base +
+				"&f on behalf of &7" + sender.getName()
 			);
 			api.warn(allowed).log(allowed);
 		}
