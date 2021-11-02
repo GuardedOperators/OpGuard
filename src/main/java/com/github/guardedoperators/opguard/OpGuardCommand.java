@@ -131,7 +131,7 @@ final class OpGuardCommand
 		
 		String name = args.get(1);
 		@NullOr OfflinePlayer player = getPlayer(name, onlineOnly);
-		@NullOr OpPassword password = (passwordEnabled) ? new OpPassword(args.get(2)) : null;
+		@NullOr Password password = (passwordEnabled) ? Password.Algorithm.SHA_256.passwordFromPlainText(args.get(2)) : null;
 		
 		if (player == null)
 		{
@@ -210,7 +210,7 @@ final class OpGuardCommand
 			if (args.size() > 2) { Messenger.send(sender, "&8&o(Don't include spaces)"); }
 			return;
 		}
-		verifier.setPassword(new OpPassword(args.get(1)));
+		verifier.setPassword(Password.Algorithm.SHA_256.passwordFromPlainText(args.get(1)));
 		Context context = new Context(api).attemptFrom(sender).okay(sender.getName() + " set OpGuard's password");
 		api.warn(context).log(context);
 	}
@@ -234,7 +234,7 @@ final class OpGuardCommand
 		
 		Context context = new Context(api).attemptFrom(sender);
 		
-		if (verifier.removePassword(new OpPassword(args.get(1))))
+		if (verifier.removePassword(Password.Algorithm.SHA_256.passwordFromPlainText(args.get(1))))
 		{
 			context.okay(sender.getName() + " removed Opguard's password");
 			Messenger.send(sender, "&aSuccess: &fRemoved OpGuard's password");
@@ -271,7 +271,7 @@ final class OpGuardCommand
 				return;
 			}
 			
-			OpPassword password = new OpPassword(args.get(1));
+			Password password = Password.Algorithm.SHA_256.passwordFromPlainText(args.get(1));
 			
 			if (!verifier.check(password))
 			{

@@ -52,7 +52,7 @@ public final class OpVerifier
 	
 	private static final class PasswordWrapper
 	{
-		private static @NullOr OpPassword password;
+		private static @NullOr Password password = null;
 	}
 	
 	private final DataStorage storage;
@@ -64,7 +64,7 @@ public final class OpVerifier
 		
 		if (data.contains("hash"))
 		{
-			PasswordWrapper.password = new OpPassword(data.getString("hash"), true);
+			PasswordWrapper.password = Password.Algorithm.SHA_256.passwordFromHash(data.getString("hash"));
 		}
 		if (data.contains("verified"))
 		{
@@ -82,7 +82,7 @@ public final class OpVerifier
 		return PasswordWrapper.password != null;
 	}
 	
-	public boolean setPassword(@NullOr OpPassword password)
+	public boolean setPassword(@NullOr Password password)
 	{
 		if (!hasPassword() && password != null)
 		{
@@ -92,12 +92,12 @@ public final class OpVerifier
 		return false;
 	}
 	
-	public OpPassword getPassword()
+	public Password getPassword()
 	{
-		return new OpPassword(PasswordWrapper.password);
+		return PasswordWrapper.password;
 	}
 	
-	public boolean removePassword(OpPassword password)
+	public boolean removePassword(Password password)
 	{
 		if (check(password))
 		{
@@ -107,9 +107,9 @@ public final class OpVerifier
 		return false;
 	}
 	
-	public boolean check(OpPassword password)
+	public boolean check(Password password)
 	{
-		return !hasPassword() || PasswordWrapper.password.getHash().equals(password.getHash());
+		return !hasPassword() || PasswordWrapper.password.hash().equals(password.hash());
 	}
 	
 	public Collection<OfflinePlayer> getVerifiedOperators()
@@ -122,7 +122,7 @@ public final class OpVerifier
 		return OpListWrapper.getKeys();
 	}
 	
-	public boolean op(OfflinePlayer player, @NullOr OpPassword password)
+	public boolean op(OfflinePlayer player, @NullOr Password password)
 	{
 		if (check(password))
 		{
@@ -133,7 +133,7 @@ public final class OpVerifier
 		return false;
 	}
 	
-	public boolean deop(OfflinePlayer player, @NullOr OpPassword password)
+	public boolean deop(OfflinePlayer player, @NullOr Password password)
 	{
 		if (check(password))
 		{

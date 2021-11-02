@@ -102,7 +102,7 @@ public final class DataStorage extends BaseConfig
 	
 	public void reset(OpVerifier verifier)
 	{
-		config.set("hash", (verifier.hasPassword()) ? verifier.getPassword().getHash() : null);
+		config.set("hash", (verifier.hasPassword()) ? verifier.getPassword().hash() : null);
 		config.set("verified", uuidStringList(verifier.getVerifiedOperators()));
 	}
 	
