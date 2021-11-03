@@ -21,6 +21,10 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public final class OpGuardPlugin extends JavaPlugin implements Listener
 {
 	// https://bstats.org/plugin/bukkit/OpGuard/540
@@ -29,17 +33,20 @@ public final class OpGuardPlugin extends JavaPlugin implements Listener
 	@Override
 	public void onEnable()
 	{
-		if (getDataFolder().mkdir())
+		Path dir = getDataFolder().toPath();
+		
+		if (!Files.isDirectory(dir))
 		{
-			getLogger().info("Created directory: " + getDataFolder().getPath());
+			try { Files.createDirectories(dir); }
+			catch (IOException e) { throw new RuntimeException(e); }
 		}
 		
-		OpGuard api = new OpGuard(this);
+		OpGuard opguard = new OpGuard(this);
 		
-		new VerifyOpListTask(api);
-		new UpdateCheckTask(api);
+		new VerifyOpListTask(opguard);
+		new UpdateCheckTask(opguard);
 		
-		if (api.config().metricsAreEnabled())
+		if (opguard.config().metricsAreEnabled())
 		{
 			new Metrics(this, BSTATS);
 		}

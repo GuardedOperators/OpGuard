@@ -28,6 +28,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import pl.tlinkowski.annotation.basic.NullOr;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -60,12 +61,12 @@ public final class OpVerifier
 		private static @NullOr Password password = null;
 	}
 	
-	private final OpGuard api;
+	private final OpGuard opguard;
 	private final OpData storage;
 	
 	OpVerifier(OpGuard opguard)
 	{
-		this.api = Objects.requireNonNull(opguard, "opguard");
+		this.opguard = Objects.requireNonNull(opguard, "opguard");
 		this.storage = new OpData();
 		
 		FileConfiguration data = storage.yaml();
@@ -192,32 +193,30 @@ public final class OpVerifier
 	{
 		public OpData()
 		{
-			super(api.plugin(), ".opdata", null);
+			super(opguard.plugin(), ".opdata");
 			
-			boolean firstLoad = false;
-			
-			try { firstLoad = file.createNewFile(); }
-			catch (IOException io) { io.printStackTrace(); }
-			
-			if (firstLoad)
+			if (!Files.isRegularFile(path()))
 			{
+				try { Files.createFile(path()); }
+				catch (IOException io) { io.printStackTrace(); }
+				
 				FileConfiguration old = plugin().getConfig();
-				Context context = new Context(api);
+				Context context = new Context(opguard);
 				
 				if (old.contains("verified") || old.contains("password.hash"))
 				{
 					// Transferring old data
-					config.set("hash", old.getString("password.hash")); // "old" hash can potentially be null, which is okay.
-					config.set("verified", (old.contains("verified")) ? old.getStringList("verified") : null);
+					yaml().set("hash", old.getString("password.hash")); // "old" hash can potentially be null, which is okay.
+					yaml().set("verified", (old.contains("verified")) ? old.getStringList("verified") : null);
 					context.okay("Migrating old data to OpGuard's new data storage format...");
 				}
 				else
 				{
 					// Fresh install: no old data to transfer
-					config.set("verified", uuidStringList(Bukkit.getOperators()));
+					yaml().set("verified", uuidStringList(Bukkit.getOperators()));
 					context.okay("Loading for the first time... Adding all existing operators to the verified list");
 				}
-				api.warn(context).log(context);
+				opguard.warn(context).log(context);
 				save(false); // Saving the new data file; must be in sync to properly save inside OpGuard's onEnable() method.
 			}
 		}
@@ -233,7 +232,7 @@ public final class OpVerifier
 				@Override
 				public void run()
 				{
-					try { config.save(file); }
+					try { yaml().save(path().toFile()); }
 					catch (IOException io) { io.printStackTrace(); }
 				}
 			};
@@ -244,8 +243,8 @@ public final class OpVerifier
 		
 		public void reset(OpVerifier verifier)
 		{
-			config.set("hash", (verifier.hasPassword()) ? verifier.getPassword().hash() : null);
-			config.set("verified", uuidStringList(verifier.getVerifiedOperators()));
+			yaml().set("hash", (verifier.hasPassword()) ? verifier.getPassword().hash() : null);
+			yaml().set("verified", uuidStringList(verifier.getVerifiedOperators()));
 		}
 		
 		private List<String> uuidStringList(Collection<OfflinePlayer> offline)

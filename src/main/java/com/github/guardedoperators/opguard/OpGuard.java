@@ -43,7 +43,7 @@ public final class OpGuard
 		this.plugin = Objects.requireNonNull(plugin, "plugin");
 		this.version = Version.valueOf(plugin.getDescription().getVersion());
 		this.log = new Log(plugin, "guard");
-		this.config = new OpGuardConfig(plugin);
+		this.config = new OpGuardConfig(this);
 		this.verifier = new OpVerifier(this);
 		this.command = new OpGuardCommand(this);
 		

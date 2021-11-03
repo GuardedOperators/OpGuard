@@ -23,24 +23,24 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import pl.tlinkowski.annotation.basic.NullOr;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public abstract class WrappedConfig
 {
 	private final Plugin plugin;
-	protected final File file;
-	protected FileConfiguration config;
+	private final Path path;
+	private final FileConfiguration config;
 	
 	private @NullOr Consumer<? super Optional<Exception>> reloadHandler;
 	
-	public WrappedConfig(Plugin plugin, String filename, @NullOr FileConfiguration config)
+	public WrappedConfig(Plugin plugin, String filename)
 	{
 		this.plugin = plugin;
-		this.file = new File(plugin.getDataFolder(), filename);
-		this.config = (config != null) ? config : YamlConfiguration.loadConfiguration(file);
+		this.path = plugin.getDataFolder().toPath().resolve(filename);
+		this.config = YamlConfiguration.loadConfiguration(path.toFile());
 	}
 	
 	protected void reloadsWith(Consumer<? super Optional<Exception>> reloadHandler)
@@ -49,9 +49,11 @@ public abstract class WrappedConfig
 		reloadHandler.accept(Optional.empty());
 	}
 	
-	public FileConfiguration yaml() { return config; }
-	
 	public Plugin plugin() { return plugin; }
+	
+	public Path path() { return path; }
+	
+	public FileConfiguration yaml() { return config; }
 	
 	public void reload()
 	{
@@ -59,7 +61,7 @@ public abstract class WrappedConfig
 		
 		try
 		{
-			config.load(file);
+			config.load(path.toFile());
 		}
 		catch (IOException | InvalidConfigurationException e)
 		{
@@ -68,7 +70,10 @@ public abstract class WrappedConfig
 		}
 		finally
 		{
-			if (reloadHandler != null) { reloadHandler.accept(Optional.ofNullable(exception)); }
+			if (reloadHandler != null)
+			{
+				reloadHandler.accept(Optional.ofNullable(exception));
+			}
 		}
 	}
 }
