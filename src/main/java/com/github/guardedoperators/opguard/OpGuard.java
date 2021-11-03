@@ -17,7 +17,6 @@
  */
 package com.github.guardedoperators.opguard;
 
-import com.github.guardedoperators.opguard.config.DataStorage;
 import com.github.guardedoperators.opguard.config.OpGuardConfig;
 import com.github.guardedoperators.opguard.listeners.CommandListener;
 import com.github.guardedoperators.opguard.listeners.PermissionCheckListener;
@@ -45,7 +44,7 @@ public final class OpGuard
 		this.version = Version.valueOf(plugin.getDescription().getVersion());
 		this.log = new Log(plugin, "guard");
 		this.config = new OpGuardConfig(plugin);
-		this.verifier = new OpVerifier(new DataStorage(this));
+		this.verifier = new OpVerifier(this);
 		this.command = new OpGuardCommand(this);
 		
 		register(new CommandListener(this));

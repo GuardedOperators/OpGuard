@@ -17,21 +17,26 @@
  */
 package com.github.guardedoperators.opguard;
 
-import com.github.guardedoperators.opguard.config.DataStorage;
+import com.github.guardedoperators.opguard.config.WrappedConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import pl.tlinkowski.annotation.basic.NullOr;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public final class OpVerifier
 {
@@ -55,11 +60,14 @@ public final class OpVerifier
 		private static @NullOr Password password = null;
 	}
 	
-	private final DataStorage storage;
+	private final OpGuard api;
+	private final OpData storage;
 	
-	OpVerifier(DataStorage storage)
+	OpVerifier(OpGuard opguard)
 	{
-		this.storage = storage;
+		this.api = Objects.requireNonNull(opguard, "opguard");
+		this.storage = new OpData();
+		
 		FileConfiguration data = storage.yaml();
 		
 		if (data.contains("hash"))
@@ -178,5 +186,74 @@ public final class OpVerifier
 		storage.reset(this);
 		storage.save(async);
 		return true;
+	}
+	
+	private final class OpData extends WrappedConfig
+	{
+		public OpData()
+		{
+			super(api.plugin(), ".opdata", null);
+			
+			boolean firstLoad = false;
+			
+			try { firstLoad = file.createNewFile(); }
+			catch (IOException io) { io.printStackTrace(); }
+			
+			if (firstLoad)
+			{
+				FileConfiguration old = plugin().getConfig();
+				Context context = new Context(api);
+				
+				if (old.contains("verified") || old.contains("password.hash"))
+				{
+					// Transferring old data
+					config.set("hash", old.getString("password.hash")); // "old" hash can potentially be null, which is okay.
+					config.set("verified", (old.contains("verified")) ? old.getStringList("verified") : null);
+					context.okay("Migrating old data to OpGuard's new data storage format...");
+				}
+				else
+				{
+					// Fresh install: no old data to transfer
+					config.set("verified", uuidStringList(Bukkit.getOperators()));
+					context.okay("Loading for the first time... Adding all existing operators to the verified list");
+				}
+				api.warn(context).log(context);
+				save(false); // Saving the new data file; must be in sync to properly save inside OpGuard's onEnable() method.
+			}
+		}
+		
+		// Don't ever reload...
+		@Override
+		public void reload() { }
+		
+		public void save(boolean async)
+		{
+			BukkitRunnable task = new BukkitRunnable()
+			{
+				@Override
+				public void run()
+				{
+					try { config.save(file); }
+					catch (IOException io) { io.printStackTrace(); }
+				}
+			};
+			
+			if (async) { task.runTaskAsynchronously(plugin()); }
+			else { task.run(); }
+		}
+		
+		public void reset(OpVerifier verifier)
+		{
+			config.set("hash", (verifier.hasPassword()) ? verifier.getPassword().hash() : null);
+			config.set("verified", uuidStringList(verifier.getVerifiedOperators()));
+		}
+		
+		private List<String> uuidStringList(Collection<OfflinePlayer> offline)
+		{
+			return offline.stream()
+				.map(OfflinePlayer::getUniqueId)
+				.map(String::valueOf)
+				.collect(Collectors.toList());
+		}
 	}
 }

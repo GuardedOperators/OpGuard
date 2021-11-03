@@ -25,46 +25,50 @@ import pl.tlinkowski.annotation.basic.NullOr;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
+import java.util.function.Consumer;
 
-abstract class BaseConfig
+public abstract class WrappedConfig
 {
-	protected final Plugin plugin;
+	private final Plugin plugin;
 	protected final File file;
 	protected FileConfiguration config;
 	
-	BaseConfig(Plugin plugin, @NullOr String filename)
+	private @NullOr Consumer<? super Optional<Exception>> reloadHandler;
+	
+	public WrappedConfig(Plugin plugin, String filename, @NullOr FileConfiguration config)
 	{
 		this.plugin = plugin;
-		
-		if (filename == null)
-		{
-			this.file = new File(plugin.getDataFolder(), "config.yml");
-			this.config = plugin.getConfig();
-		}
-		else
-		{
-			this.file = new File(plugin.getDataFolder(), filename);
-			this.config = YamlConfiguration.loadConfiguration(file);
-		}
-		
-		load();
+		this.file = new File(plugin.getDataFolder(), filename);
+		this.config = (config != null) ? config : YamlConfiguration.loadConfiguration(file);
 	}
 	
-	BaseConfig(Plugin plugin)
+	protected void reloadsWith(Consumer<? super Optional<Exception>> reloadHandler)
 	{
-		this(plugin, null);
+		this.reloadHandler = reloadHandler;
+		reloadHandler.accept(Optional.empty());
 	}
 	
-	protected abstract void load();
+	public FileConfiguration yaml() { return config; }
 	
-	public FileConfiguration yaml()
-	{
-		return config;
-	}
+	public Plugin plugin() { return plugin; }
 	
 	public void reload()
 	{
-		try { config.load(file); }
-		catch (IOException | InvalidConfigurationException e) { e.printStackTrace(); }
+		@NullOr Exception exception = null;
+		
+		try
+		{
+			config.load(file);
+		}
+		catch (IOException | InvalidConfigurationException e)
+		{
+			exception = e;
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (reloadHandler != null) { reloadHandler.accept(Optional.ofNullable(exception)); }
+		}
 	}
 }

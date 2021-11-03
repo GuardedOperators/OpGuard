@@ -17,6 +17,7 @@
  */
 package com.github.guardedoperators.opguard.config;
 
+import com.github.guardedoperators.opguard.util.Versions;
 import com.github.zafarkhaja.semver.Version;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -30,26 +31,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public final class OpGuardConfig extends BaseConfig
+public final class OpGuardConfig extends WrappedConfig
 {
 	// Update version whenever config requires updates.
 	public static final Version UPDATED = Version.forIntegers(3, 2, 5);
 	
 	public OpGuardConfig(Plugin plugin)
 	{
-		super(plugin);
-	}
-	
-	@SuppressWarnings("ConstantConditions")
-	@Override
-	protected void load()
-	{
-		Version loadedVersion;
+		super(plugin, "config.yml", plugin.getConfig());
 		
-		try { loadedVersion = Version.valueOf(config.getString("version")); }
-		catch (RuntimeException ignored) { loadedVersion = Version.forIntegers(0); }
-		
-		if (loadedVersion.lessThan(UPDATED)) { migrateConfig(config, loadedVersion); }
+		reloadsWith(e ->
+		{
+			Version loadedVersion = Versions.parseOrZero(config.getString("version"));
+			if (loadedVersion.lessThan(UPDATED)) { migrateConfig(config, loadedVersion); }
+		});
 	}
 	
 	private void migrateConfig(FileConfiguration old, Version version)
@@ -57,7 +52,7 @@ public final class OpGuardConfig extends BaseConfig
 		ConfigurationTemplate template = new ConfigurationTemplate(this, "config.template.yml");
 		List<String> lines = template.apply(old);
 		
-		File dir = plugin.getDataFolder();
+		File dir = plugin().getDataFolder();
 		
 		if (file.exists())
 		{
