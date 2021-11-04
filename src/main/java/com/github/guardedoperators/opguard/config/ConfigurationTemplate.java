@@ -74,17 +74,21 @@ class ConfigurationTemplate
 		catch (IOException e) { throw new RuntimeException(e); }
 	}
 	
-	private static final List<String> CONTROL_CHARACTERS = List.of("@", "&", "#", ":", "\n", "\"", "'", "[", "]", "{", "}");
+	private static final List<String> CONTROL_CHARACTERS =
+		List.of("@", "&", "#", ":", "\n", "\"", "'", "[", "]", "{", "}");
 	
 	private static String sanitize(String value)
 	{
-		return CONTROL_CHARACTERS.stream()
-			.filter(value::contains)
-			.findFirst()
-			.map(ignored ->
-				"\"" + value.replace("\"", "\\\"").replace("\n", "\\n") + "\""
-			)
-			.orElse(value);
+		for (String control : CONTROL_CHARACTERS)
+		{
+			if (value.contains(control))
+			{
+				String escaped = value.replace("\"", "\\\"").replace("\n", "\\n");
+				return "\"" + escaped + "\"";
+			}
+		}
+		
+		return value;
 	}
 	
 	private static List<String> getSanitizedExistingValues(ConfigurationSection config, String ... keys)
