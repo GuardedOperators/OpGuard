@@ -17,6 +17,7 @@
  */
 package com.github.guardedoperators.opguard.config;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import pl.tlinkowski.annotation.basic.NullOr;
 
@@ -25,130 +26,141 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 class ConfigurationTemplate
 {
-	private final BufferedReader reader;
-	private @NullOr List<String> content;
-	
-	public ConfigurationTemplate(Object instance, String resource)
+	private static BufferedReader resourceReader(Class<?> clazz, String resource)
 	{
-		this(instance.getClass(), resource);
+		return new BufferedReader(new InputStreamReader(
+			Objects.requireNonNull(
+				clazz.getClassLoader().getResourceAsStream(resource),
+				"Could not get resource: " + resource
+			)
+		));
 	}
 	
-	public ConfigurationTemplate(Class<?> clazz, String resource)
+	private static List<String> resourceLines(Class<?> clazz, String resource)
 	{
-		reader = new BufferedReader(new InputStreamReader(clazz.getClassLoader().getResourceAsStream(resource)));
+		List<String> template = new ArrayList<>();
+		
+		try (BufferedReader reader = resourceReader(clazz, resource))
+		{
+			for (;;)
+			{
+				@NullOr String line = reader.readLine();
+				if (line == null) { break; }
+				template.add(line);
+			}
+		}
+		catch (IOException e) { throw new RuntimeException(e); }
+		
+		return template;
+	}
+	
+	private final List<String> templateLines;
+	
+	public ConfigurationTemplate(String resource)
+	{
+		this.templateLines = resourceLines(getClass(), resource);
 	}
 	
 	public List<String> apply(FileConfiguration config)
 	{
-		if (content != null)
-		{
-			return content;
-		}
-		
-		List<String> lines = new ArrayList<>();
-		
-		try
-		{
-			lines = applyTemplate(config);
-		}
-		catch (IOException io)
-		{
-			io.printStackTrace();
-		}
-		
-		return content = lines;
+		try { return applyTemplate(config); }
+		catch (IOException e) { throw new RuntimeException(e); }
 	}
 	
-	public List<String> getLines()
+	private static final List<String> CONTROL_CHARACTERS = List.of("@", "&", "#", ":", "\n", "\"", "'", "[", "]", "{", "}");
+	
+	private static String sanitize(String value)
 	{
-		if (content != null) { return content; }
-		throw new IllegalStateException("Template hasn't been applied yet.");
+		return CONTROL_CHARACTERS.stream()
+			.filter(value::contains)
+			.findFirst()
+			.map(ignored ->
+				"\"" + value.replace("\"", "\\\"").replace("\n", "\\n") + "\""
+			)
+			.orElse(value);
 	}
+	
+	private static List<String> getSanitizedExistingValues(ConfigurationSection config, String ... keys)
+	{
+		for (String key : keys)
+		{
+			if (key.endsWith("[]"))
+			{
+				List<String> existing =
+					config.getStringList(key.substring(0, key.length() - 2)).stream()
+						.map(ConfigurationTemplate::sanitize)
+						.collect(Collectors.toList());
+				
+				if (!existing.isEmpty()) { return existing; }
+			}
+			else
+			{
+				@NullOr String value = config.getString(key);
+				if (value != null) { return List.of(sanitize(value)); }
+			}
+		}
+		
+		return List.of(sanitize(keys[keys.length - 1])); // default value
+	}
+	
+	private static final Pattern TEMPLATE_COMMENT_PATTERN = Pattern.compile("#@.*$");
+	
+	private static final Pattern OPTIONS_PATTERN = Pattern.compile("@\\(\\s*(?<options>.+)\\s*\\)\\s*$");
+	
+	public static final Pattern OPTIONS_DELIMITER_PATTERN = Pattern.compile("\\s*\\|\\s*");
+	
+	private static final Pattern LIST_HYPHEN_PATTERN = Pattern.compile("^(?<hyphen>\\s*-)\\s");
 	
 	private List<String> applyTemplate(FileConfiguration config) throws IOException
 	{
 		List<String> lines = new ArrayList<>();
-		String regex = "@\\((.+)\\)$";
-		Pattern replaceable = Pattern.compile(regex);
-		String line;
 		
-		while ((line = reader.readLine()) != null)
+		for (final String templateLine : templateLines)
 		{
-			String pure = line;
-			line = line.replaceAll("#@.*$", "");
+			final String uncommentedLine = TEMPLATE_COMMENT_PATTERN.matcher(templateLine).replaceAll("");
 			
-			if (line.isEmpty())
+			if (uncommentedLine.isEmpty())
 			{
-				if (lines.isEmpty() || !line.equals(pure)) { continue; }
+				if (lines.isEmpty()) { continue; }
+				if (!templateLine.equals(uncommentedLine)) { continue; }
 			}
 			
-			boolean lineIsAdded = false;
-			Matcher matcher = replaceable.matcher(line);
+			Matcher optionMatcher = OPTIONS_PATTERN.matcher(uncommentedLine);
 			
-			if (matcher.find())
+			if (!optionMatcher.find())
 			{
-				String origin = matcher.group(1);
-				String[] options = origin.split(" *\\| *");
-				String value = "<Template Error: No default value found>";
-				
-				for (String option : options)
-				{
-					if (!option.endsWith("[]"))
-					{
-						if (config.contains(option))
-						{
-							value = sanitize(config.getString(option));
-							break;
-						}
-					}
-					else
-					{
-						// Removing [] from option.
-						List<String> items = config.getStringList(option.substring(0, option.length() - 2));
-						
-						if (items.size() > 0)
-						{
-							// gets: '  - ' or '- ' etc.
-							String start = line.replaceAll("- .*$", "") + "- ";
-							
-							for (String item : items)
-							{
-								lines.add(start + sanitize(item));
-							}
-							lineIsAdded = true;
-							break;
-						}
-					}
-					value = option; // Default value. (Logic above has not broken away yet)
-				}
-				
-				line = line.replaceAll(regex, value);
+				lines.add(uncommentedLine);
+				continue;
 			}
 			
-			if (!lineIsAdded)
+			List<String> values =
+				getSanitizedExistingValues(
+					config,
+					OPTIONS_DELIMITER_PATTERN.split(optionMatcher.group("options"))
+				);
+			
+			Matcher hyphenMatcher = LIST_HYPHEN_PATTERN.matcher(uncommentedLine);
+			
+			// List
+			if (hyphenMatcher.find())
 			{
-				lines.add(line);
+				String hyphen = hyphenMatcher.group("hyphen");
+				for (String value : values) { lines.add(hyphen + " " + value); }
+			}
+			// Single value
+			else
+			{
+				lines.add(optionMatcher.replaceAll(values.get(0)));
 			}
 		}
-		
-		reader.close();
 		
 		return lines;
-	}
-	
-	private String sanitize(String value)
-	{
-		if (value.contains("@") || value.contains("&") || value.contains("#") || value.contains(":"))
-		{
-			value = value.replace("'", "''");
-			value = value.replace("\n", "\\n");
-			value = "'" + value + "'";
-		}
-		return value;
 	}
 }

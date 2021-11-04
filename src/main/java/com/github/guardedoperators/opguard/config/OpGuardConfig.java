@@ -48,7 +48,7 @@ public final class OpGuardConfig extends WrappedConfig
 	
 	private void migrateConfig(Version version) throws IOException
 	{
-		ConfigurationTemplate template = new ConfigurationTemplate(this, "config.template.yml");
+		ConfigurationTemplate template = new ConfigurationTemplate("config.template.yml");
 		List<String> lines = template.apply(yaml());
 		
 		Path backups = path().getParent().resolve("backups");
@@ -69,7 +69,7 @@ public final class OpGuardConfig extends WrappedConfig
 		
 		Files.write(path(), lines, StandardCharsets.UTF_8);
 		
-		try { yaml().load(String.join("\n", lines)); }
+		try { yaml().loadFromString(String.join("\n", lines)); }
 		catch (InvalidConfigurationException e) { e.printStackTrace(); }
 	}
 	
