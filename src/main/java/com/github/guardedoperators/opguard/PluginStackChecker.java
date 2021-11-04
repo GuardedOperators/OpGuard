@@ -25,6 +25,7 @@ import java.io.File;
 import java.util.Objects;
 import java.util.Stack;
 
+@Deprecated(forRemoval = true)
 public final class PluginStackChecker
 {
 	private final StackTraceElement[] stackTrace;

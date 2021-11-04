@@ -35,6 +35,7 @@ public final class OpGuard
 	private final Version version;
 	private final Log log;
 	private final OpGuardConfig config;
+	private final PluginCallStackChecker callStack;
 	private final OpVerifier verifier;
 	private final OpGuardCommand command;
 	
@@ -44,6 +45,7 @@ public final class OpGuard
 		this.version = Version.valueOf(plugin.getDescription().getVersion());
 		this.log = new Log(plugin, "guard");
 		this.config = new OpGuardConfig(this);
+		this.callStack = new PluginCallStackChecker(this);
 		this.verifier = new OpVerifier(this);
 		this.command = new OpGuardCommand(this);
 		
@@ -64,6 +66,8 @@ public final class OpGuard
 	public Version version() { return version; }
 	
 	public OpGuardConfig config() { return config; }
+	
+	public PluginCallStackChecker callStack() { return callStack; }
 	
 	public OpVerifier verifier() { return verifier; }
 	

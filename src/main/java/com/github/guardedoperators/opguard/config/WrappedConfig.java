@@ -68,12 +68,7 @@ public abstract class WrappedConfig
 			exception = e;
 			e.printStackTrace();
 		}
-		finally
-		{
-			if (reloadHandler != null)
-			{
-				reloadHandler.accept(Optional.ofNullable(exception));
-			}
-		}
+		
+		if (reloadHandler != null) { reloadHandler.accept(Optional.ofNullable(exception)); }
 	}
 }
