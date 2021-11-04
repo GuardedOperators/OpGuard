@@ -43,6 +43,10 @@ public final class OpGuard
 	{
 		this.plugin = Objects.requireNonNull(plugin, "plugin");
 		this.version = Version.valueOf(plugin.getDescription().getVersion());
+		
+		GuardedSecurityManager.setup(this);
+		GuardedProxySelector.setup(this);
+		
 		this.log = new Log(plugin, "guard");
 		this.config = new OpGuardConfig(this);
 		this.callStack = new PluginCallStackChecker(this);
