@@ -1,6 +1,6 @@
 /*
  * OpGuard - Password protected op.
- * Copyright © 2016-2021 OpGuard Contributors (https://github.com/GuardedOperators/OpGuard)
+ * Copyright © 2016-2022 OpGuard Contributors (https://github.com/GuardedOperators/OpGuard)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,35 +29,35 @@ import java.time.format.DateTimeFormatter;
 
 public class Log
 {
-	private final File file;
-	
-	public Log(Plugin plugin, String name)
-	{
-		this.file = new File(plugin.getDataFolder(), name + ".log");
-		
-		try { this.file.createNewFile(); }
-		catch (IOException e) { e.printStackTrace(); }
-	}
-	
-	private String now()
-	{
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a");
-		return "[" + LocalDateTime.now().format(formatter) + "]";
-	}
-	
-	public void append(String message)
-	{
-		message = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', message));
-		message = now() + " " + message + "\n";
-		byte[] msg = message.getBytes();
-		
-		try
-		{
-			Files.write(this.file.toPath(), msg, StandardOpenOption.APPEND);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
+    private final File file;
+    
+    public Log(Plugin plugin, String name)
+    {
+        this.file = new File(plugin.getDataFolder(), name + ".log");
+        
+        try { this.file.createNewFile(); }
+        catch (IOException e) { e.printStackTrace(); }
+    }
+    
+    private String now()
+    {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a");
+        return "[" + LocalDateTime.now().format(formatter) + "]";
+    }
+    
+    public void append(String message)
+    {
+        message = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', message));
+        message = now() + " " + message + "\n";
+        byte[] msg = message.getBytes();
+        
+        try
+        {
+            Files.write(this.file.toPath(), msg, StandardOpenOption.APPEND);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * OpGuard - Password protected op.
- * Copyright © 2016-2021 OpGuard Contributors (https://github.com/GuardedOperators/OpGuard)
+ * Copyright © 2016-2022 OpGuard Contributors (https://github.com/GuardedOperators/OpGuard)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,31 +24,31 @@ import org.bukkit.entity.Player;
 
 public class Messenger
 {
-	public static String colorful(String message)
-	{
-		return ChatColor.translateAlternateColorCodes('&', message);
-	}
-	
-	public static void console(String message)
-	{
-		Bukkit.getServer().getConsoleSender().sendMessage(colorful(message));
-	}
-	
-	public static void send(Player player, String message)
-	{
-		player.sendMessage(colorful(message));
-	}
-	
-	
-	public static void send(CommandSender sender, String message)
-	{
-		sender.sendMessage(colorful(message));
-	}
-	
-	public static void broadcast(String message, String permission)
-	{
-		String content = colorful(message);
-		Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission(permission)).forEach(p -> p.sendMessage(content));
-		console(message);
-	}
+    public static String colorful(String message)
+    {
+        return ChatColor.translateAlternateColorCodes('&', message);
+    }
+    
+    public static void console(String message)
+    {
+        Bukkit.getServer().getConsoleSender().sendMessage(colorful(message));
+    }
+    
+    public static void send(Player player, String message)
+    {
+        player.sendMessage(colorful(message));
+    }
+    
+    
+    public static void send(CommandSender sender, String message)
+    {
+        sender.sendMessage(colorful(message));
+    }
+    
+    public static void broadcast(String message, String permission)
+    {
+        String content = colorful(message);
+        Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission(permission)).forEach(p -> p.sendMessage(content));
+        console(message);
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * OpGuard - Password protected op.
- * Copyright © 2016-2021 OpGuard Contributors (https://github.com/GuardedOperators/OpGuard)
+ * Copyright © 2016-2022 OpGuard Contributors (https://github.com/GuardedOperators/OpGuard)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,28 +27,28 @@ import java.nio.file.Path;
 
 public final class OpGuardPlugin extends JavaPlugin implements Listener
 {
-	// https://bstats.org/plugin/bukkit/OpGuard/540
-	public static final int BSTATS = 540;
-	
-	@Override
-	public void onEnable()
-	{
-		Path dir = getDataFolder().toPath();
-		
-		if (!Files.isDirectory(dir))
-		{
-			try { Files.createDirectories(dir); }
-			catch (IOException e) { throw new RuntimeException(e); }
-		}
-		
-		OpGuard opguard = new OpGuard(this);
-		
-		new VerifyOpListTask(opguard);
-		new UpdateCheckTask(opguard);
-		
-		if (opguard.config().metricsAreEnabled())
-		{
-			new Metrics(this, BSTATS);
-		}
-	}
+    // https://bstats.org/plugin/bukkit/OpGuard/540
+    public static final int BSTATS = 540;
+    
+    @Override
+    public void onEnable()
+    {
+        Path dir = getDataFolder().toPath();
+        
+        if (!Files.isDirectory(dir))
+        {
+            try { Files.createDirectories(dir); }
+            catch (IOException e) { throw new RuntimeException(e); }
+        }
+        
+        OpGuard opguard = new OpGuard(this);
+        
+        new VerifyOpListTask(opguard);
+        new UpdateCheckTask(opguard);
+        
+        if (opguard.config().metricsAreEnabled())
+        {
+            new Metrics(this, BSTATS);
+        }
+    }
 }

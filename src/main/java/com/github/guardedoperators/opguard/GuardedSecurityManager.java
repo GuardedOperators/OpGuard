@@ -1,6 +1,6 @@
 /*
  * OpGuard - Password protected op.
- * Copyright © 2016-2021 OpGuard Contributors (https://github.com/GuardedOperators/OpGuard)
+ * Copyright © 2016-2022 OpGuard Contributors (https://github.com/GuardedOperators/OpGuard)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,52 +24,52 @@ import java.util.Objects;
 
 final class GuardedSecurityManager extends SecurityManager
 {
-	static void setup(OpGuard opguard)
-	{
-		@NullOr SecurityManager existing = System.getSecurityManager();
-		GuardedSecurityManager manager = new GuardedSecurityManager(opguard, existing);
-		System.setSecurityManager(manager);
-	}
-	
-	private final OpGuard opguard;
-	private final @NullOr SecurityManager prior;
-	
-	private GuardedSecurityManager(OpGuard opguard, @NullOr SecurityManager prior)
-	{
-		this.opguard = Objects.requireNonNull(opguard, "opguard");
-		this.prior = prior;
-	}
-	
-	@Override
-	public void checkPermission(Permission perm, Object context)
-	{
-		if (prior != null) { prior.checkPermission(perm, context); }
-	}
-	
-	@Override
-	public void checkPermission(Permission perm)
-	{
-		if (prior != null) { prior.checkPermission(perm); }
-	}
-	
-	@Override
-	public void checkAccept(String host, int port)
-	{
-		Messenger.console("&6>>>>&f CHECK ACCEPT: &e" + host + ":" + port);
-		if (prior != null) { prior.checkAccept(host, port); }
-	}
-	
-	@Override
-	public void checkConnect(String host, int port, Object context)
-	{
-		Messenger.console("&6>>>>&f CHECK CONNECT: &e" + host + ":" + port + " (" + context + ")");
-		if (prior != null) { prior.checkConnect(host, port, context); }
-	}
-	
-	@Override
-	public void checkConnect(String host, int port)
-	{
-		Messenger.console("&6>>>>&f CHECK CONNECT: &e" + host + ":" + port);
-		if (prior != null) { prior.checkConnect(host, port); }
-	}
+    static void setup(OpGuard opguard)
+    {
+        @NullOr SecurityManager existing = System.getSecurityManager();
+        GuardedSecurityManager manager = new GuardedSecurityManager(opguard, existing);
+        System.setSecurityManager(manager);
+    }
+    
+    private final OpGuard opguard;
+    private final @NullOr SecurityManager prior;
+    
+    private GuardedSecurityManager(OpGuard opguard, @NullOr SecurityManager prior)
+    {
+        this.opguard = Objects.requireNonNull(opguard, "opguard");
+        this.prior = prior;
+    }
+    
+    @Override
+    public void checkPermission(Permission perm, Object context)
+    {
+        if (prior != null) { prior.checkPermission(perm, context); }
+    }
+    
+    @Override
+    public void checkPermission(Permission perm)
+    {
+        if (prior != null) { prior.checkPermission(perm); }
+    }
+    
+    @Override
+    public void checkAccept(String host, int port)
+    {
+        Messenger.console("&6>>>>&f CHECK ACCEPT: &e" + host + ":" + port);
+        if (prior != null) { prior.checkAccept(host, port); }
+    }
+    
+    @Override
+    public void checkConnect(String host, int port, Object context)
+    {
+        Messenger.console("&6>>>>&f CHECK CONNECT: &e" + host + ":" + port + " (" + context + ")");
+        if (prior != null) { prior.checkConnect(host, port, context); }
+    }
+    
+    @Override
+    public void checkConnect(String host, int port)
+    {
+        Messenger.console("&6>>>>&f CHECK CONNECT: &e" + host + ":" + port);
+        if (prior != null) { prior.checkConnect(host, port); }
+    }
 }

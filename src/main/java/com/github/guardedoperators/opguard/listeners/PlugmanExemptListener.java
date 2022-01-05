@@ -1,6 +1,6 @@
 /*
  * OpGuard - Password protected op.
- * Copyright © 2016-2021 OpGuard Contributors (https://github.com/GuardedOperators/OpGuard)
+ * Copyright © 2016-2022 OpGuard Contributors (https://github.com/GuardedOperators/OpGuard)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,45 +32,45 @@ import java.util.stream.Stream;
 
 public class PlugmanExemptListener implements Listener
 {
-	private final OpGuard opguard;
-	
-	public PlugmanExemptListener(OpGuard opguard)
-	{
-		this.opguard = Objects.requireNonNull(opguard, "opguard");
-		Stream.of(Bukkit.getPluginManager().getPlugins()).forEach(this::exemptFromPlugMan);
-	}
-	
-	@EventHandler
-	public void onPluginLoad(PluginEnableEvent event)
-	{
-		exemptFromPlugMan(event.getPlugin());
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void exemptFromPlugMan(Plugin plugin)
-	{
-		if (!plugin.getName().equalsIgnoreCase("PlugMan")) { return; }
-		if (!opguard.config().canExemptSelfFromPlugMan()) { return; }
-		
-		Runnable task = () ->
-		{
-			try
-			{
-				Field ignoredPluginsField = plugin.getClass().getDeclaredField("ignoredPlugins");
-				ignoredPluginsField.setAccessible(true);
-				List<String> ignored = (List<String>) ignoredPluginsField.get(plugin);
-				
-				String name = opguard.plugin().getName();
-				
-				if (!ignored.contains(name))
-				{
-					ignored.add(name);
-					Messenger.console("&f[OpGuard] &9Exempted " + name + " from PlugMan.");
-				}
-			}
-			catch (Exception ignored) {}
-		};
-		
-		Bukkit.getScheduler().scheduleSyncDelayedTask(opguard.plugin(), task, 1L);
-	}
+    private final OpGuard opguard;
+    
+    public PlugmanExemptListener(OpGuard opguard)
+    {
+        this.opguard = Objects.requireNonNull(opguard, "opguard");
+        Stream.of(Bukkit.getPluginManager().getPlugins()).forEach(this::exemptFromPlugMan);
+    }
+    
+    @EventHandler
+    public void onPluginLoad(PluginEnableEvent event)
+    {
+        exemptFromPlugMan(event.getPlugin());
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void exemptFromPlugMan(Plugin plugin)
+    {
+        if (!plugin.getName().equalsIgnoreCase("PlugMan")) { return; }
+        if (!opguard.config().canExemptSelfFromPlugMan()) { return; }
+        
+        Runnable task = () ->
+        {
+            try
+            {
+                Field ignoredPluginsField = plugin.getClass().getDeclaredField("ignoredPlugins");
+                ignoredPluginsField.setAccessible(true);
+                List<String> ignored = (List<String>) ignoredPluginsField.get(plugin);
+                
+                String name = opguard.plugin().getName();
+                
+                if (!ignored.contains(name))
+                {
+                    ignored.add(name);
+                    Messenger.console("&f[OpGuard] &9Exempted " + name + " from PlugMan.");
+                }
+            }
+            catch (Exception ignored) {}
+        };
+        
+        Bukkit.getScheduler().scheduleSyncDelayedTask(opguard.plugin(), task, 1L);
+    }
 }
