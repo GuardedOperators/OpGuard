@@ -19,15 +19,18 @@ package com.github.guardedoperators.opguard;
 
 import com.github.guardedoperators.opguard.config.OpGuardConfig;
 import com.github.guardedoperators.opguard.listeners.CommandListener;
+import com.github.guardedoperators.opguard.listeners.OfflineModeCheckListener;
 import com.github.guardedoperators.opguard.listeners.PermissionCheckListener;
 import com.github.guardedoperators.opguard.listeners.PluginDisableListener;
 import com.github.guardedoperators.opguard.listeners.PlugmanExemptListener;
 import com.github.zafarkhaja.semver.Version;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public final class OpGuard
 {
@@ -35,7 +38,7 @@ public final class OpGuard
     private final Version version;
     private final Log log;
     private final OpGuardConfig config;
-    private final PluginCallStackChecker callStack;
+    private final PluginStackTraceChecker callStack;
     private final OpVerifier verifier;
     private final OpGuardCommand command;
     
@@ -49,11 +52,12 @@ public final class OpGuard
         
         this.log = new Log(plugin, "guard");
         this.config = new OpGuardConfig(this);
-        this.callStack = new PluginCallStackChecker(this);
+        this.callStack = new PluginStackTraceChecker(this);
         this.verifier = new OpVerifier(this);
         this.command = new OpGuardCommand(this);
         
         register(new CommandListener(this));
+        register(new OfflineModeCheckListener(this));
         register(new PermissionCheckListener(this));
         register(new PluginDisableListener(this));
         register(new PlugmanExemptListener(this));
@@ -67,11 +71,15 @@ public final class OpGuard
     
     public OpGuardPlugin plugin() { return plugin; }
     
+    public Server server() { return plugin.getServer(); }
+    
+    public Logger logger() { return plugin.getLogger(); }
+    
     public Version version() { return version; }
     
     public OpGuardConfig config() { return config; }
     
-    public PluginCallStackChecker callStack() { return callStack; }
+    public PluginStackTraceChecker callStack() { return callStack; }
     
     public OpVerifier verifier() { return verifier; }
     

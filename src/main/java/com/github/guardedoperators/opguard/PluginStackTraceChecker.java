@@ -20,6 +20,7 @@ package com.github.guardedoperators.opguard;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +28,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class PluginCallStackChecker
+public final class PluginStackTraceChecker
 {
     public static Stream<Plugin> pluginsOnStack()
     {
@@ -42,7 +43,7 @@ public final class PluginCallStackChecker
     
     private final OpGuard opguard;
     
-    PluginCallStackChecker(OpGuard opguard)
+    PluginStackTraceChecker(OpGuard opguard)
     {
         this.opguard = Objects.requireNonNull(opguard, "opguard");
     }
@@ -51,7 +52,7 @@ public final class PluginCallStackChecker
     {
         return new Result(
             pluginsOnStack()
-                .filter(plugin -> !(plugin instanceof OpGuardPlugin))
+                .filter(plugin -> plugin.getClass() != OpGuardPlugin.class)
                 .map(plugin ->
                     (opguard.config().shouldExemptPlugins())
                         ? new FoundPlugin(plugin, opguard.config().getExemptPlugins().contains(plugin.getName()))
@@ -87,15 +88,17 @@ public final class PluginCallStackChecker
         {
             this.plugins = plugins;
             
-            this.exemptPlugins = plugins.stream()
-                .filter(FoundPlugin::isExempt)
-                .map(FoundPlugin::plugin)
-                .collect(Collectors.toList());
+            List<Plugin> exempt = new ArrayList<>();
+            List<Plugin> caught = new ArrayList<>();
             
-            this.caughtPlugins = plugins.stream()
-                .filter(Predicate.not(FoundPlugin::isExempt))
-                .map(FoundPlugin::plugin)
-                .collect(Collectors.toList());
+            for (FoundPlugin found : plugins)
+            {
+                List<Plugin> list = (found.isExempt()) ? exempt : caught;
+                list.add(found.plugin());
+             }
+            
+            this.exemptPlugins = List.copyOf(exempt);
+            this.caughtPlugins = List.copyOf(caught);
         }
         
         public List<Plugin> allPlugins()
