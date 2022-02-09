@@ -95,7 +95,7 @@ public final class OpVerifier
         
         for (OfflinePlayer operator : operators)
         {
-            if (!isVerified(operator))
+            if (!isVerified(operator.getUniqueId()))
             {
                 @NullOr String name = operator.getName();
                 operator.setOp(false);
@@ -169,11 +169,6 @@ public final class OpVerifier
     public boolean isVerified(UUID uuid)
     {
         return verifiedOperators.containsKey(uuid);
-    }
-    
-    public boolean isVerified(OfflinePlayer player)
-    {
-        return isVerified(player.getUniqueId());
     }
     
     public boolean isVerified(CommandSender sender)

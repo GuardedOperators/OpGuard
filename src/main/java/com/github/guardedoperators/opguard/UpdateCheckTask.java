@@ -49,13 +49,13 @@ final class UpdateCheckTask extends BukkitRunnable
         
         if (hours < 1)
         {
-            Messenger.console("[OpGuard] Invalid update check interval " + hours + ". Defaulting to 12 hours.");
+            opguard.logger().warning("Invalid update check interval: " + hours + ". Defaulting to every 12 hours.");
             hours = 12;
         }
         
         if (config.canCheckForUpdates())
         {
-            runTaskTimerAsynchronously(opguard.plugin(), 100L, hours * 60L * 60L * 20L);
+            runTaskTimerAsynchronously(opguard.plugin(), 20L, hours * 60L * 60L * 20L);
         }
     }
     
