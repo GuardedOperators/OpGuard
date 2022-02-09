@@ -38,7 +38,7 @@ public final class OpGuard
     private final Version version;
     private final Log log;
     private final OpGuardConfig config;
-    private final PluginStackTraceChecker callStack;
+    private final PluginStackVerifier callStack;
     private final OpVerifier verifier;
     private final OpGuardCommand command;
     
@@ -52,7 +52,7 @@ public final class OpGuard
         
         this.log = new Log(plugin, "guard");
         this.config = new OpGuardConfig(this);
-        this.callStack = new PluginStackTraceChecker(this);
+        this.callStack = new PluginStackVerifier(this);
         this.verifier = new OpVerifier(this);
         this.command = new OpGuardCommand(this);
         
@@ -79,7 +79,7 @@ public final class OpGuard
     
     public OpGuardConfig config() { return config; }
     
-    public PluginStackTraceChecker callStack() { return callStack; }
+    public PluginStackVerifier callStack() { return callStack; }
     
     public OpVerifier verifier() { return verifier; }
     

@@ -19,7 +19,7 @@ package com.github.guardedoperators.opguard.listeners;
 
 import com.github.guardedoperators.opguard.Context;
 import com.github.guardedoperators.opguard.OpGuard;
-import com.github.guardedoperators.opguard.PluginStackTraceChecker;
+import com.github.guardedoperators.opguard.PluginStackVerifier;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -101,7 +101,7 @@ public final class PermissionCheckListener implements Listener
         if (opguard.verifier().isVerified(player)) { return; }
         
         Context context = new Context(opguard).playerAttempt().hasInvalidPermissions();
-        PluginStackTraceChecker.Result result = opguard.callStack().findPluginsOnStack();
+        PluginStackVerifier.Result result = opguard.callStack().findPluginsOnStack();
         
         // Only exempted plugins found -> exit method.
         if (result.hasOnlyExemptPlugins())

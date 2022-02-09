@@ -35,7 +35,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class PluginStackTraceChecker
+public final class PluginStackVerifier
 {
     public static Stream<Plugin> pluginsOnStack()
     {
@@ -50,7 +50,7 @@ public final class PluginStackTraceChecker
     
     private final OpGuard opguard;
     
-    PluginStackTraceChecker(OpGuard opguard)
+    PluginStackVerifier(OpGuard opguard)
     {
         this.opguard = Objects.requireNonNull(opguard, "opguard");
     }
@@ -160,7 +160,7 @@ public final class PluginStackTraceChecker
             if (!hasCaughtPlugins()) { return; }
             
             Plugin caught = topCaughtPlugin();
-            PluginStackTraceChecker.FoundPlugin found = foundPluginsByName.get(caught.getName());
+            PluginStackVerifier.FoundPlugin found = foundPluginsByName.get(caught.getName());
     
             Placeholders placeholders = new Placeholders();
             placeholders.map("plugin").to(caught::getName);
