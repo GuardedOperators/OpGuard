@@ -19,6 +19,7 @@ package com.github.guardedoperators.opguard.listeners;
 
 import com.github.guardedoperators.opguard.OpGuard;
 import com.github.guardedoperators.opguard.util.AuthenticationMode;
+import com.github.guardedoperators.opguard.util.Cooldown;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -55,10 +56,7 @@ public class OfflineModeCheckListener implements Listener
         // TODO: add config option to disable warning
         // if (opguard.config().offlineMode()) { return; }
         
-        if (warning != null)
-        {
-            if (Duration.between(Instant.now(), warning).toMinutes() < 30) { return; }
-        }
+        if (!Cooldown.of30Minutes().since(warning)) { return; }
         
         warning = Instant.now();
         Logger logger = opguard.logger();

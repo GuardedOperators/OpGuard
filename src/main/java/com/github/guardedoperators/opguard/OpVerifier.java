@@ -18,6 +18,7 @@
 package com.github.guardedoperators.opguard;
 
 import com.github.guardedoperators.opguard.config.WrappedConfig;
+import com.github.guardedoperators.opguard.util.Cooldown;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -29,7 +30,6 @@ import pl.tlinkowski.annotation.basic.NullOr;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,7 +49,7 @@ public final class OpVerifier
     private final OpData storage;
     
     private Password password = Password.NO_PASSWORD;
-    private Instant lastOpListSizeWarning = Instant.MIN;
+    private @NullOr Instant lastOpListSizeWarning = null;
     
     OpVerifier(OpGuard opguard)
     {
@@ -84,8 +84,9 @@ public final class OpVerifier
     {
         Set<OfflinePlayer> operators = opguard.server().getOperators();
         
-        if (operators.size() > 75 && Duration.between(Instant.now(), lastOpListSizeWarning).toMinutes() >= 30L)
+        if (operators.size() > 75 && Cooldown.of30Minutes().since(lastOpListSizeWarning))
         {
+            lastOpListSizeWarning = Instant.now();
             opguard.logger().warning(
                 "The op list is large: there are currently " + operators.size() + " operators on this server. " +
                 "Consider deopping any unnecessary operators, since OpGuard continuously checks the list. " +
