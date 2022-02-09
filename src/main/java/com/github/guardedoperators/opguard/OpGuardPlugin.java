@@ -43,7 +43,6 @@ public final class OpGuardPlugin extends JavaPlugin implements Listener
         
         OpGuard opguard = new OpGuard(this);
         
-        new VerifyOpListTask(opguard);
         new UpdateCheckTask(opguard);
         
         if (opguard.config().metricsAreEnabled())

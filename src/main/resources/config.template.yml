@@ -98,14 +98,6 @@ exempt-opguard-from-plugman: @(exempt-opguard-from-plugman | true)
 #   Inspections   #
 # --------------- #
 
-# [Op List Inspection]
-# Duration of time (in ticks) that OpGuard should verify the op list.
-# Remember: 20 ticks = 1 second, so 4 ticks = 1/5 of a second.
-# This value cannot be negative or zero.
-# ---
-# Default: 4
-inspection-interval: @(inspection-interval | 4)
-
 # ['*' Permission Check]
 # OpGuard will check for players with the '*' permission node (all permissions).
 # If a player has '*' and isn't a verified operator, OpGuard will punish them.

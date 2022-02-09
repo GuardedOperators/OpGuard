@@ -115,23 +115,29 @@ final class OpGuardCommand
     {
         String command = args.get(0).toLowerCase();
         Context context = new Context(api).attemptFrom(sender);
-        boolean passwordEnabled = verifier.hasPassword();
         boolean onlineOnly = (op) ? config.canOnlyOpIfOnline() : config.canOnlyDeopIfOnline();
         
-        if (passwordEnabled && args.size() != 3)
+        String name = (args.size() <= 1) ? "" : args.get(1);
+        String plainTextPassword = (args.size() <= 2) ? "" : args.get(2);
+        
+        if (verifier.hasPassword())
         {
-            Messenger.send(sender, "&c&oCorrect Usage:&f /opguard " + command + " <player> <password>");
-            return;
+            if (plainTextPassword.isEmpty())
+            {
+                Messenger.send(sender, "&c&oCorrect Usage:&f /opguard " + command + " <player> <password>");
+                return;
+            }
         }
-        else if (!passwordEnabled && args.size() != 2)
+        else
         {
-            Messenger.send(sender, "&c&oCorrect Usage:&f /opguard " + command + " <player>");
-            return;
+            if (name.isEmpty())
+            {
+                Messenger.send(sender, "&c&oCorrect Usage:&f /opguard " + command + " <player>");
+                return;
+            }
         }
         
-        String name = args.get(1);
         @NullOr OfflinePlayer player = getPlayer(name, onlineOnly);
-        @NullOr Password password = (passwordEnabled) ? Password.Algorithm.SHA_256.passwordFromPlainText(args.get(2)) : null;
         
         if (player == null)
         {
@@ -144,7 +150,7 @@ final class OpGuardCommand
         
         if (op)
         {
-            if (verifier.op(player, password))
+            if (verifier.op(player, plainTextPassword))
             {
                 context.okay(sender.getName() + " set op for &7" + name);
                 Messenger.send(sender, "&aSuccess: &f" + name + " is now a verified operator");
@@ -164,7 +170,7 @@ final class OpGuardCommand
         }
         else
         {
-            if (verifier.deop(player, password))
+            if (verifier.deop(player, plainTextPassword))
             {
                 context.okay(sender.getName() + " removed op from &7" + player.getName());
                 Messenger.send(sender, "&aSuccess: &f" + name + " is no longer a verified operator");
@@ -195,10 +201,7 @@ final class OpGuardCommand
     
     private void setPassword(CommandSender sender, List<String> args)
     {
-        if (preventPasswordManagement(sender))
-        {
-            return;
-        }
+        if (preventPasswordManagement(sender)) { return; }
         if (verifier.hasPassword())
         {
             Messenger.send(sender, "&cError:&f Password is already set. Reset the password to modify");
@@ -210,7 +213,8 @@ final class OpGuardCommand
             if (args.size() > 2) { Messenger.send(sender, "&8&o(Don't include spaces)"); }
             return;
         }
-        verifier.setPassword(Password.Algorithm.SHA_256.passwordFromPlainText(args.get(1)));
+        
+        verifier.updatePassword(args.get(1));
         Context context = new Context(api).attemptFrom(sender).okay(sender.getName() + " set OpGuard's password");
         api.warn(context).log(context);
     }
@@ -234,7 +238,7 @@ final class OpGuardCommand
         
         Context context = new Context(api).attemptFrom(sender);
         
-        if (verifier.removePassword(Password.Algorithm.SHA_256.passwordFromPlainText(args.get(1))))
+        if (verifier.removePassword(args.get(1)))
         {
             context.okay(sender.getName() + " removed Opguard's password");
             Messenger.send(sender, "&aSuccess: &fRemoved OpGuard's password");
@@ -271,9 +275,7 @@ final class OpGuardCommand
                 return;
             }
             
-            Password password = Password.Algorithm.SHA_256.passwordFromPlainText(args.get(1));
-            
-            if (!verifier.check(password))
+            if (!verifier.isPassword(args.get(1)))
             {
                 context.incorrectlyUsedOpGuard().warning(name + " attempted to reload OpGuard's config using an incorrect password");
                 api.warn(context).log(context);

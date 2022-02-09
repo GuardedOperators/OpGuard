@@ -29,9 +29,11 @@ import pl.tlinkowski.annotation.basic.NullOr;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -41,28 +43,13 @@ import java.util.stream.Collectors;
 
 public final class OpVerifier
 {
-    private static final class OpListWrapper
-    {
-        private static final Map<UUID, OfflinePlayer> verified = new LinkedHashMap<>();
-        
-        private static Set<UUID> getKeys()
-        {
-            return new LinkedHashSet<>(verified.keySet());
-        }
-        
-        private static Set<OfflinePlayer> getValues()
-        {
-            return new LinkedHashSet<>(verified.values());
-        }
-    }
-    
-    private static final class PasswordWrapper
-    {
-        private static @NullOr Password password = null;
-    }
+    private final Map<UUID, OfflinePlayer> verifiedOperators = new LinkedHashMap<>();
     
     private final OpGuard opguard;
     private final OpData storage;
+    
+    private Password password = Password.NO_PASSWORD;
+    private Instant lastOpListSizeWarning = Instant.MIN;
     
     OpVerifier(OpGuard opguard)
     {
@@ -70,83 +57,109 @@ public final class OpVerifier
         this.storage = new OpData();
         
         FileConfiguration data = storage.yaml();
+        @NullOr String hash = data.getString("hash");
         
-        if (data.contains("hash"))
+        if (hash != null)
         {
-            PasswordWrapper.password = Password.Algorithm.SHA_256.passwordFromHash(data.getString("hash"));
+            this.password = (hash.indexOf('$') >= 0)
+                ? Password.Algorithm.BCRYPT.passwordFromHash(hash)
+                : Password.Algorithm.SHA_256.passwordFromHash(hash);
         }
+        
         if (data.contains("verified"))
         {
             for (String operator : data.getStringList("verified"))
             {
                 UUID uuid = UUID.fromString(operator);
                 OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-                OpListWrapper.verified.put(uuid, player);
+                verifiedOperators.put(uuid, player);
+            }
+        }
+        
+        // Verify op list once per tick
+        opguard.server().getScheduler().runTaskTimer(opguard.plugin(), this::verifyOpList, 0L, 1L);
+    }
+    
+    private void verifyOpList()
+    {
+        Set<OfflinePlayer> operators = opguard.server().getOperators();
+        
+        if (operators.size() > 75 && Duration.between(Instant.now(), lastOpListSizeWarning).toMinutes() >= 30L)
+        {
+            opguard.logger().warning(
+                "The op list is large: there are currently " + operators.size() + " operators on this server. " +
+                "Consider deopping any unnecessary operators, since OpGuard continuously checks the list. " +
+                "There may be a performance impact if the op list continues to grow."
+            );
+        }
+        
+        for (OfflinePlayer operator : operators)
+        {
+            if (!isVerified(operator))
+            {
+                @NullOr String name = operator.getName();
+                operator.setOp(false);
+                Context context = new Context(opguard).pluginAttempt().setOp().warning(
+                    "An unknown plugin attempted to op <!>" + name + "&f. A recently-installed plugin may be to blame"
+                );
+                opguard.warn(context).log(context).punish(context, name);
             }
         }
     }
     
-    public boolean hasPassword()
+    Password password() { return password; }
+    
+    boolean hasPassword() { return password.algorithm() != Password.Algorithm.NONE; }
+    
+    Password.Algorithm algorithm() { return (hasPassword()) ? password.algorithm() : Password.Algorithm.BCRYPT; }
+    
+    void updatePassword(String plainTextPassword)
     {
-        return PasswordWrapper.password != null;
+        if (hasPassword())
+        {
+            throw new IllegalStateException("Password already exists: remove current password first");
+        }
+        
+        this.password = algorithm().passwordFromPlainText(plainTextPassword);
+        save();
     }
     
-    public boolean setPassword(@NullOr Password password)
+    boolean removePassword(String plainTextPassword)
     {
-        if (!hasPassword() && password != null)
+        if (isPassword(plainTextPassword))
         {
-            PasswordWrapper.password = password;
+            this.password = Password.NO_PASSWORD;
             return save();
         }
         return false;
     }
     
-    public Password getPassword()
+    boolean isPassword(String plainTextPassword)
     {
-        return PasswordWrapper.password;
+        return password.equalsPlainText(plainTextPassword);
     }
     
-    public boolean removePassword(Password password)
+    Collection<OfflinePlayer> getVerifiedOperators()
     {
-        if (check(password))
+        return Collections.unmodifiableCollection(verifiedOperators.values());
+    }
+    
+    boolean op(OfflinePlayer player, String plainTextPassword)
+    {
+        if (isPassword(plainTextPassword))
         {
-            PasswordWrapper.password = null;
-            return save();
-        }
-        return false;
-    }
-    
-    public boolean check(Password password)
-    {
-        return !hasPassword() || PasswordWrapper.password.hash().equals(password.hash());
-    }
-    
-    public Collection<OfflinePlayer> getVerifiedOperators()
-    {
-        return OpListWrapper.getValues();
-    }
-    
-    public Collection<UUID> getVerifiedUUIDs()
-    {
-        return OpListWrapper.getKeys();
-    }
-    
-    public boolean op(OfflinePlayer player, @NullOr Password password)
-    {
-        if (check(password))
-        {
-            OpListWrapper.verified.put(player.getUniqueId(), player);
+            verifiedOperators.put(player.getUniqueId(), player);
             player.setOp(true);
             return save();
         }
         return false;
     }
     
-    public boolean deop(OfflinePlayer player, @NullOr Password password)
+    boolean deop(OfflinePlayer player, String plainTextPassword)
     {
-        if (check(password))
+        if (isPassword(plainTextPassword))
         {
-            OpListWrapper.verified.remove(player.getUniqueId());
+            verifiedOperators.remove(player.getUniqueId());
             player.setOp(false);
             return save();
         }
@@ -155,7 +168,7 @@ public final class OpVerifier
     
     public boolean isVerified(UUID uuid)
     {
-        return OpListWrapper.verified.containsKey(uuid);
+        return verifiedOperators.containsKey(uuid);
     }
     
     public boolean isVerified(OfflinePlayer player)
@@ -177,14 +190,14 @@ public final class OpVerifier
         return false;
     }
     
-    public boolean save()
+    boolean save()
     {
         return save(true);
     }
     
-    public boolean save(boolean async)
+    boolean save(boolean async)
     {
-        storage.reset(this);
+        storage.reset();
         storage.save(async);
         return true;
     }
@@ -241,9 +254,10 @@ public final class OpVerifier
             else { task.run(); }
         }
         
-        public void reset(OpVerifier verifier)
+        private void reset()
         {
-            yaml().set("hash", (verifier.hasPassword()) ? verifier.getPassword().hash() : null);
+            OpVerifier verifier = OpVerifier.this;
+            yaml().set("hash", (verifier.hasPassword()) ? verifier.password().hash() : null);
             yaml().set("verified", uuidStringList(verifier.getVerifiedOperators()));
         }
         

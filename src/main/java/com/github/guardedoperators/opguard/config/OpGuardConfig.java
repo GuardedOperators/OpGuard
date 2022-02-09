@@ -110,11 +110,6 @@ public final class OpGuardConfig extends WrappedConfig
     
     // Inspections
     
-    public long getOpListInspectionInterval()
-    {
-        return yaml().getLong("inspection-interval");
-    }
-    
     public boolean canCheckPermissions()
     {
         return yaml().getBoolean("check-permissions");
