@@ -17,9 +17,8 @@
  */
 package com.github.guardedoperators.opguard.listeners;
 
-import com.github.guardedoperators.opguard.Context;
 import com.github.guardedoperators.opguard.OpGuard;
-import com.github.guardedoperators.opguard.PluginStackVerifier;
+import com.github.guardedoperators.opguard.PluginStackTrace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -84,9 +83,8 @@ public final class PermissionCheckListener implements Listener
             if (!player.hasPermission(permission)) { continue; }
             if (opguard.verifier().isVerified(player)) { continue; }
             
-            Context context = new Context(opguard).playerAttempt().hasInvalidPermissions();
-            context.warning("Player <!>" + player.getName() + "&f has access to all permissions but isn't a verified operator");
-            opguard.warn(context).log(context).punish(context, player.getName());
+            opguard.notifications().playerHasAccessToAllPermissions(player);
+            opguard.punishments().punishPlayer(player);
         }
     }
     
@@ -100,38 +98,26 @@ public final class PermissionCheckListener implements Listener
         if (!player.hasPermission(permission)) { return; }
         if (opguard.verifier().isVerified(player)) { return; }
         
-        Context context = new Context(opguard).playerAttempt().hasInvalidPermissions();
-        PluginStackVerifier.Result result = opguard.callStack().findPluginsOnStack();
+        PluginStackTrace stack = opguard.findPluginsOnStack();
         
         // Only exempted plugins found -> exit method.
-        if (result.hasOnlyExemptPlugins())
+        if (stack.hasOnlyExemptPlugins())
         {
-            Context allowed = context.copy();
-            String name = result.topExemptPlugin().getName();
-            
-            allowed.okay(
-                "The plugin &7" + name + "&f was allowed to grant all permissions to &7" + player.getName()
-            );
-            opguard.warn(allowed).log(allowed);
-            
+            opguard.notifications().pluginAllowedToGrantAllPermissions(stack.topExemptPlugin(), player);
             return;
         }
         
         // Non-exempt plugin found -> warn and continue to punishment below.
-        if (result.hasCaughtPlugins())
+        if (stack.hasCaughtPlugins())
         {
-            // TODO: make %player% work
-            result.handleCaughtPlugins("The plugin %plugin% attempted to grant all permissions to %player%");
+            opguard.notifications().pluginAttemptedToGrantAllPermissions(stack.topCaughtPlugin(), player);
+            opguard.punishments().handleCaughtPlugins(stack);
         }
         
-        if (event instanceof Cancellable)
-        {
-            ((Cancellable) event).setCancelled(true);
-        }
+        if (event instanceof Cancellable) { ((Cancellable) event).setCancelled(true); }
         
-        context.warning("Player <!>" + player.getName() + "&f has access to all permissions but isn't a verified operator");
-        opguard.warn(context).log(context).punish(context, player.getName());
-        
+        opguard.notifications().playerHasAccessToAllPermissions(player);
+        opguard.punishments().punishPlayer(player);
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)

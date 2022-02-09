@@ -38,7 +38,8 @@ public final class OpGuard
     private final Version version;
     private final Log log;
     private final OpGuardConfig config;
-    private final PluginStackVerifier callStack;
+    private final NotificationHandler notifications;
+    private final PunishmentHandler punishments;
     private final OpVerifier verifier;
     private final OpGuardCommand command;
     
@@ -52,7 +53,8 @@ public final class OpGuard
         
         this.log = new Log(plugin, "guard");
         this.config = new OpGuardConfig(this);
-        this.callStack = new PluginStackVerifier(this);
+        this.notifications = new NotificationHandler(this);
+        this.punishments = new PunishmentHandler(this);
         this.verifier = new OpVerifier(this);
         this.command = new OpGuardCommand(this);
         
@@ -79,10 +81,15 @@ public final class OpGuard
     
     public OpGuardConfig config() { return config; }
     
-    public PluginStackVerifier callStack() { return callStack; }
+    public NotificationHandler notifications() { return notifications; }
+    
+    public PunishmentHandler punishments() { return punishments; }
+    
+    public PluginStackTrace findPluginsOnStack() { return PluginStackTrace.generate(this); }
     
     public OpVerifier verifier() { return verifier; }
     
+    @Deprecated
     public OpGuard log(Context context)
     {
         if (context.hasMessage() && context.isLoggable())
@@ -92,6 +99,7 @@ public final class OpGuard
         return this;
     }
     
+    @Deprecated
     public OpGuard log(String message)
     {
         if (config.loggingIsEnabled())
@@ -101,6 +109,7 @@ public final class OpGuard
         return this;
     }
     
+    @Deprecated
     public OpGuard warn(Context context)
     {
         if (context.hasMessage() && context.isWarnable())
@@ -110,6 +119,7 @@ public final class OpGuard
         return this;
     }
     
+    @Deprecated
     public OpGuard warn(CommandSender sender, Context context)
     {
         if (context.hasMessage() && context.isWarnable())
@@ -119,6 +129,7 @@ public final class OpGuard
         return this;
     }
     
+    @Deprecated
     public OpGuard warn(String message)
     {
         Messenger.broadcast(message, "opguard.warn");
@@ -130,6 +141,7 @@ public final class OpGuard
         command.execute(sender, args);
     }
     
+    @Deprecated
     public void punish(Context context, String username)
     {
         if (!context.isPunishable()) { return; }
