@@ -19,6 +19,7 @@ package com.github.guardedoperators.opguard.listeners;
 
 import com.github.guardedoperators.opguard.OpGuard;
 import com.github.guardedoperators.opguard.PluginStackTrace;
+import com.github.guardedoperators.opguard.PunishmentReason;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -33,8 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public final class PermissionCheckListener implements Listener
 {
@@ -52,19 +51,19 @@ public final class PermissionCheckListener implements Listener
         int total = 100;
         List<String> nodes = new ArrayList<>(total);
         
-        for (int i = 0; i < total; i++) { nodes.add(generateRandomPermissionNode()); }
+        for (int i = 0; i < total; i++) { nodes.add(generateRandomPermissionNode(random)); }
         this.permissions = List.copyOf(nodes);
         
-        opguard.server().getScheduler().runTaskTimer(opguard.plugin(), this::checkAllOnlinePlayers, 0L, 1L);
+        // Check all online players once per tick.
+        opguard.server().getScheduler()
+            .runTaskTimer(opguard.plugin(), this::checkAllOnlinePlayers, 0L, 1L);
     }
     
-    private String generateRandomPermissionNode()
+    private static String generateRandomPermissionNode(Random random)
     {
-        return IntStream.range(0, 50)
-            .mapToObj(i ->
-                String.valueOf(ALPHABET.charAt(random.nextInt(ALPHABET.length())))
-            )
-            .collect(Collectors.joining());
+        StringBuilder node = new StringBuilder();
+        for (int i = 0; i < 50; i++) { node.append(ALPHABET.charAt(random.nextInt(ALPHABET.length()))); }
+        return node.toString();
     }
     
     private String randomPermissionNode()
@@ -76,6 +75,7 @@ public final class PermissionCheckListener implements Listener
     {
         if (!opguard.config().canCheckPermissions()) { return; }
         
+        // Get a random permission node to check all players against.
         String permission = randomPermissionNode();
         
         for (Player player : opguard.server().getOnlinePlayers())
@@ -84,7 +84,7 @@ public final class PermissionCheckListener implements Listener
             if (opguard.verifier().isVerified(player)) { continue; }
             
             opguard.notifications().playerHasAccessToAllPermissions(player);
-            opguard.punishments().punishPlayer(player);
+            opguard.punishments().punishPlayer(PunishmentReason.UNAUTHORIZED_ALL_PERMISSIONS, player);
         }
     }
     
@@ -92,15 +92,15 @@ public final class PermissionCheckListener implements Listener
     {
         if (!opguard.config().canCheckPermissions()) { return; }
         
-        String permission = randomPermissionNode();
         Player player = event.getPlayer();
+        String permission = randomPermissionNode();
         
         if (!player.hasPermission(permission)) { return; }
         if (opguard.verifier().isVerified(player)) { return; }
         
         PluginStackTrace stack = opguard.findPluginsOnStack();
         
-        // Only exempted plugins found -> exit method.
+        // Only exempted plugins found -> exit.
         if (stack.hasOnlyExemptPlugins())
         {
             opguard.notifications().pluginAllowedToGrantAllPermissions(stack.topExemptPlugin(), player);
@@ -111,13 +111,13 @@ public final class PermissionCheckListener implements Listener
         if (stack.hasCaughtPlugins())
         {
             opguard.notifications().pluginAttemptedToGrantAllPermissions(stack.topCaughtPlugin(), player);
-            opguard.punishments().handleCaughtPlugins(stack);
+            opguard.punishments().handleCaughtPlugins(PunishmentReason.UNAUTHORIZED_ALL_PERMISSIONS, stack);
         }
         
         if (event instanceof Cancellable) { ((Cancellable) event).setCancelled(true); }
         
         opguard.notifications().playerHasAccessToAllPermissions(player);
-        opguard.punishments().punishPlayer(player);
+        opguard.punishments().punishPlayer(PunishmentReason.UNAUTHORIZED_ALL_PERMISSIONS, player);
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)

@@ -36,7 +36,7 @@ public final class PunishmentHandler
         this.opguard = opguard;
     }
     
-    public void punishUsername(String username)
+    public void punishUsername(PunishmentReason reason, String username)
     {
         Placeholders placeholders = new Placeholders();
         
@@ -50,9 +50,9 @@ public final class PunishmentHandler
         opguard.notifications().usernamePunished(username);
     }
     
-    public void punishPlayer(Player player)
+    public void punishPlayer(PunishmentReason reason, Player player)
     {
-        punishUsername(player.getName());
+        punishUsername(reason, player.getName());
     }
     
     private static Path renameJarFile(Path path) throws IOException
@@ -60,7 +60,7 @@ public final class PunishmentHandler
         Path dir = path.getParent();
         String name = path.getFileName() + ".opguard-disabled";
         
-        for (int i = 1; ; i++)
+        for (int i = 1 ;; i++)
         {
             String numericName = (i <= 1) ? name : name + "." + i;
             Path renamedPath = dir.resolve(numericName);
@@ -74,7 +74,7 @@ public final class PunishmentHandler
     }
     
     // TODO: announce these log warnings
-    public void handleCaughtPlugins(PluginStackTrace stack)
+    public void handleCaughtPlugins(PunishmentReason reason, PluginStackTrace stack)
     {
         if (!stack.hasCaughtPlugins()) { return; }
         
