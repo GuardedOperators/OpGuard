@@ -42,8 +42,11 @@ public class OfflineModeCheckListener implements Listener
     public OfflineModeCheckListener(OpGuard opguard)
     {
         this.opguard = Objects.requireNonNull(opguard, "opguard");
-        this.mode = AuthenticationMode.ofServer(opguard.server());
         
+        AuthenticationMode.Detected startup = AuthenticationMode.ofServer(opguard.server());
+        opguard.logger().info("Detected " + startup);
+        
+        this.mode = startup.mode();
         warnIfOfflineMode();
         
         long delay = Duration.ofMinutes(30).toSeconds() * 20;
@@ -78,7 +81,8 @@ public class OfflineModeCheckListener implements Listener
         
         if (AuthenticationMode.ofUuid(uuid) == AuthenticationMode.OFFLINE)
         {
-            mode = AuthenticationMode.OFFLINE;
+            // An offline-mode player joined, server must be in offline mode
+            if (mode != AuthenticationMode.OFFLINE) { mode = AuthenticationMode.OFFLINE; }
             
             // TODO: check same warning config option mentioned above
             opguard.logger().warning(player.getName() + " joined with unauthenticated offline UUID: " + uuid);

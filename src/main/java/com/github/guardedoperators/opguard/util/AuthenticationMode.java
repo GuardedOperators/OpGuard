@@ -18,9 +18,11 @@
 package com.github.guardedoperators.opguard.util;
 
 import org.bukkit.Server;
+import pl.tlinkowski.annotation.basic.NullOr;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,28 +32,73 @@ public enum AuthenticationMode
     OFFLINE,
     PROXY;
     
-    private static boolean isBungeecordEnabled(Server server)
+    public enum ProxyType
+    {
+        BUNGEE("BungeeCord"),
+        VELOCITY("Velocity");
+        
+        final String branding;
+        
+        ProxyType(String branding) { this.branding = branding; }
+        
+        @Override
+        public String toString() { return branding; }
+    }
+    
+    public static AuthenticationMode ofUuid(UUID uuid)
+    {
+        return (uuid.version() == 4) ? ONLINE : OFFLINE;
+    }
+    
+    public static Detected ofServer(Server server)
+    {
+        // Online mode - server cannot be behind a proxy
+        if (server.getOnlineMode()) { return new Detected(ONLINE); }
+        
+        boolean bungee = isBungeeCordEnabled(server);
+        
+        // Spigot server - check if BungeeCord enabled in spigot.yml
+        if (!isPaper())
+        {
+            return (bungee)
+                ? new Detected(PROXY, ProxyType.BUNGEE)
+                : new Detected(OFFLINE);
+        }
+        
+        // Paper server - could have BungeeCord or Velocity
+        if (bungee) { return new Detected(paperBungeeCordMode(), ProxyType.BUNGEE); }
+        if (isVelocityEnabled()) { return new Detected(paperVelocityMode(), ProxyType.VELOCITY); }
+        
+        // Offline mode without any configured proxy settings
+        return new Detected(OFFLINE);
+    }
+    
+    private static boolean isBungeeCordEnabled(Server server)
     {
         try { return server.spigot().getConfig().getBoolean("bungeecord", false); }
         catch (RuntimeException ignored) { return false; }
     }
     
-    private static Optional<Class<?>> paperConfigClass()
+    private static Class<?> paperConfigClass() throws ClassNotFoundException
     {
-        try { return Optional.of(Class.forName("com.destroystokyo.paper.PaperConfig")); }
-        catch (ClassNotFoundException ignored) { return Optional.empty(); }
+        return Class.forName("com.destroystokyo.paper.PaperConfig");
     }
     
     private static boolean isPaper()
     {
-        return paperConfigClass().isPresent();
+        try
+        {
+            paperConfigClass();
+            return true;
+        }
+        catch (ClassNotFoundException ignored) { return false; }
     }
     
-    private static AuthenticationMode paperBungeecordMode()
+    private static AuthenticationMode paperBungeeCordMode()
     {
         try
         {
-            Method isProxyOnlineMode = paperConfigClass().orElseThrow().getDeclaredMethod("isProxyOnlineMode");
+            Method isProxyOnlineMode = paperConfigClass().getDeclaredMethod("isProxyOnlineMode");
             boolean online = (boolean) isProxyOnlineMode.invoke(null);
             return (online) ? ONLINE : OFFLINE;
         }
@@ -62,7 +109,7 @@ public enum AuthenticationMode
     {
         try
         {
-            Field velocitySupport = paperConfigClass().orElseThrow().getDeclaredField("velocitySupport");
+            Field velocitySupport = paperConfigClass().getDeclaredField("velocitySupport");
             return (boolean) velocitySupport.get(null);
         }
         catch (ReflectiveOperationException | RuntimeException ignored) { return false; }
@@ -72,28 +119,52 @@ public enum AuthenticationMode
     {
         try
         {
-            Field velocityOnlineMode = paperConfigClass().orElseThrow().getDeclaredField("velocityOnlineMode");
+            Field velocityOnlineMode = paperConfigClass().getDeclaredField("velocityOnlineMode");
             boolean online = (boolean) velocityOnlineMode.get(null);
             return (online) ? ONLINE : OFFLINE;
         }
         catch (ReflectiveOperationException | RuntimeException ignored) { return PROXY; }
     }
     
-    public static AuthenticationMode ofServer(Server server)
+    public static class Detected
     {
-        if (server.getOnlineMode()) { return ONLINE; }
+        private final AuthenticationMode mode;
+        private final @NullOr ProxyType proxy;
         
-        boolean bungee = isBungeecordEnabled(server);
-        if (!isPaper()) { return (bungee) ? PROXY : OFFLINE; }
+        public Detected(AuthenticationMode mode, @NullOr ProxyType proxy)
+        {
+            if (mode == PROXY && proxy == null)
+            {
+                throw new IllegalArgumentException("Received PROXY authentication mode but missing proxy type");
+            }
+            
+            this.mode = mode;
+            this.proxy = proxy;
+        }
         
-        if (bungee) { return paperBungeecordMode(); }
-        if (isVelocityEnabled()) { return paperVelocityMode(); }
-        
-        return OFFLINE;
-    }
+        public Detected(AuthenticationMode mode)
+        {
+            this(mode, null);
+        }
     
-    public static AuthenticationMode ofUuid(UUID uuid)
-    {
-        return (uuid.version() == 4) ? ONLINE : OFFLINE;
+        public AuthenticationMode mode() { return mode; }
+        
+        public Optional<ProxyType> proxy() { return Optional.ofNullable(proxy); }
+        
+        @Override
+        public String toString()
+        {
+            String lowercaseMode = mode.name().toLowerCase(Locale.ROOT);
+            
+            // No proxy configured
+            if (proxy == null)
+            {
+                return lowercaseMode + " authentication mode accepting direct connections (no proxy)";
+            }
+            
+            return (mode == PROXY)
+                ? "undetermined authentication mode behind " + proxy + " proxy"
+                : lowercaseMode + " authentication mode behind " + proxy + " proxy";
+        }
     }
 }
