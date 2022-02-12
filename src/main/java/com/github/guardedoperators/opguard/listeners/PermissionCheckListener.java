@@ -20,6 +20,7 @@ package com.github.guardedoperators.opguard.listeners;
 import com.github.guardedoperators.opguard.OpGuard;
 import com.github.guardedoperators.opguard.PluginStackTrace;
 import com.github.guardedoperators.opguard.PunishmentReason;
+import com.github.guardedoperators.opguard.util.Debug;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -54,6 +55,17 @@ public final class PermissionCheckListener implements Listener
         for (int i = 0; i < total; i++) { nodes.add(generateRandomPermissionNode(random)); }
         this.permissions = List.copyOf(nodes);
         
+        Debug.ifEnabled(() ->
+        {
+            Debug.log(() -> "Generated " + total + " permission nodes:");
+            
+            for (int i = 0; i < permissions.size(); i++)
+            {
+                int number = i;
+                Debug.log(() -> "#" + (number + 1) + ": " + permissions.get(number));
+            }
+        });
+        
         // Check all online players once per tick.
         opguard.server().getScheduler()
             .runTaskTimer(opguard.plugin(), this::checkAllOnlinePlayers, 0L, 1L);
@@ -62,7 +74,26 @@ public final class PermissionCheckListener implements Listener
     private static String generateRandomPermissionNode(Random random)
     {
         StringBuilder node = new StringBuilder();
-        for (int i = 0; i < 50; i++) { node.append(ALPHABET.charAt(random.nextInt(ALPHABET.length()))); }
+        
+        int length = 0; // get random length between 15 and 50
+        while (length < 15) { length = random.nextInt(51); }
+        
+        int placedDotAgo = 0;
+        
+        for (int i = 0; i < length; i++)
+        {
+            if (i >= 10 && placedDotAgo++ > 0)
+            {
+                if (random.nextInt(50) < placedDotAgo)
+                {
+                    node.append('.');
+                    placedDotAgo = 0;
+                }
+            }
+            
+            node.append(ALPHABET.charAt(random.nextInt(ALPHABET.length())));
+        }
+        
         return node.toString();
     }
     
