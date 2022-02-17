@@ -18,6 +18,7 @@
 package com.github.guardedoperators.opguard;
 
 import com.github.guardedoperators.opguard.util.Connections;
+import com.github.guardedoperators.opguard.util.Debug;
 import pl.tlinkowski.annotation.basic.NullOr;
 
 import java.io.IOException;
@@ -48,7 +49,7 @@ public final class GuardedProxySelector extends ProxySelector
     @Override
     public List<Proxy> select(URI uri)
     {
-        Messenger.console("&3>>>>&r SELECT: &b" + uri + " (" + uri.getHost() + ")");
+        Debug.log(() -> "[Proxy Selector] >>> SELECT: " + uri + " (" + uri.getHost() + ")");
         
         if (Connections.isBlockedDomain(uri.getHost()))
         {

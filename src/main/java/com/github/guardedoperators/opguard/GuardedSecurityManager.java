@@ -17,6 +17,7 @@
  */
 package com.github.guardedoperators.opguard;
 
+import com.github.guardedoperators.opguard.util.Debug;
 import pl.tlinkowski.annotation.basic.NullOr;
 
 import java.security.Permission;
@@ -55,21 +56,21 @@ final class GuardedSecurityManager extends SecurityManager
     @Override
     public void checkAccept(String host, int port)
     {
-        Messenger.console("&6>>>>&f CHECK ACCEPT: &e" + host + ":" + port);
+        Debug.log(() -> "[Security Manager] >>> CHECK ACCEPT: " + host + ":" + port);
         if (prior != null) { prior.checkAccept(host, port); }
     }
     
     @Override
     public void checkConnect(String host, int port, Object context)
     {
-        Messenger.console("&6>>>>&f CHECK CONNECT: &e" + host + ":" + port + " (" + context + ")");
+        Debug.log(() -> "[Security Manager] >>> CHECK CONNECT: " + host + ":" + port + " (" + context + ")");
         if (prior != null) { prior.checkConnect(host, port, context); }
     }
     
     @Override
     public void checkConnect(String host, int port)
     {
-        Messenger.console("&6>>>>&f CHECK CONNECT: &e" + host + ":" + port);
+        Debug.log(() -> "[Security Manager] >>> CHECK CONNECT: " + host + ":" + port);
         if (prior != null) { prior.checkConnect(host, port); }
     }
 }

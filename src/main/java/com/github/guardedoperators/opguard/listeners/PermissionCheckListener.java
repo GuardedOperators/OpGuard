@@ -55,14 +55,13 @@ public final class PermissionCheckListener implements Listener
         for (int i = 0; i < total; i++) { nodes.add(generateRandomPermissionNode(random)); }
         this.permissions = List.copyOf(nodes);
         
-        Debug.ifEnabled(() ->
+        Debug.with(logger ->
         {
-            Debug.log(() -> "Generated " + total + " permission nodes:");
+            logger.info("[Permission Check] Generated " + total + " permission nodes:");
             
             for (int i = 0; i < permissions.size(); i++)
             {
-                int number = i;
-                Debug.log(() -> "#" + (number + 1) + ": " + permissions.get(number));
+                logger.info(String.format("[Permission Check] #%03d: %s", i + 1, permissions.get(i)));
             }
         });
         

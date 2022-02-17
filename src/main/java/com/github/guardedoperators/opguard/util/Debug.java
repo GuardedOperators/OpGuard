@@ -25,11 +25,9 @@ public class Debug
 {
     private static final boolean ENABLED = Boolean.getBoolean("com.github.guardedoperators.opguard.debug");
     
-    private static final Consumer<Supplier<String>> PRINTER = (ENABLED)
-        ? Logger.getLogger("OpGuard (Debug)")::info
-        : message -> {};
+    private static final Logger LOGGER = Logger.getLogger("OpGuard (Debug)");
     
-    public static void log(Supplier<String> message) { PRINTER.accept(message); }
+    public static void log(Supplier<String> message) { if (ENABLED) { LOGGER.info(message); } }
     
-    public static void ifEnabled(Runnable action) { if (ENABLED) { action.run(); } }
+    public static void with(Consumer<Logger> action) { if (ENABLED) { action.accept(LOGGER); } }
 }
